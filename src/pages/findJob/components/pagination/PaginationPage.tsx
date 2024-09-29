@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Pagination from '../Pagination';
-import FindJobCardSection from '../FindJobCardSection';
 import Images from '../../../../components/constant/Images';
 import { httpGetWithoutToken } from '../../../../utils/http_utils';
 import { useLocation } from 'react-router-dom';
+import FindJobCardSection from '../FindJobCardSection';
 
 const jobData = [
     {

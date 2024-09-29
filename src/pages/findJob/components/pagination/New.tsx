@@ -1,6 +1,6 @@
 import React from 'react'
-import CardSection from '../../../home/components/jobs_tabs/CardSection'
 import Images from '../../../../components/constant/Images'
+import CardSection from '../../../home/components/jobs_tabs/CardSection'
 
 const New: React.FC = () => {
   return (
