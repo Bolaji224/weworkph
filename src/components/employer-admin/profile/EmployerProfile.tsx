@@ -142,7 +142,7 @@ const EmployerProfile: React.FC = () => {
 
 
   const addLink = async () => {
-    if (newLink == "" || newLinkValue == "") return;
+    if (newLink === "" || newLinkValue === "") return;
     if (loading) return;
     setLoading(true)
     const fd = {
@@ -150,7 +150,7 @@ const EmployerProfile: React.FC = () => {
       value: newLinkValue,
     }
     const resp = await httpPostWithToken("profile/social-add", fd)
-    if (resp.status == "success") {
+    if (resp.status === "success") {
       getProfile()
 
       toast({

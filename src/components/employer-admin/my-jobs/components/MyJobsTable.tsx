@@ -15,6 +15,7 @@ interface JobAlert {
   dateCreated: string;
   applicate: string;
   status: string;
+  slug: string;
 
   
 }
@@ -63,13 +64,13 @@ const SubmitJobsTable: React.FC = () => {
 
   const navigate = useNavigate();
 
-const handleActionClick = (alert: JobAlert, actionType: string) => {
+const handleActionClick = (alert: any, actionType: string) => {
   setSelectedAlert(alert);
   setAction(actionType);
   setShowDropdown(null);
 
   if (actionType === "View") {
-    navigate(`/jobs/:slug`); // Navigate to JobDetailsPage
+    navigate(`/all-applicant/`+alert.slug); // Navigate to JobDetailsPage
   }
 };
   const handleDelete = () => {
@@ -225,7 +226,7 @@ const handleActionClick = (alert: JobAlert, actionType: string) => {
                 </tr>
               ))}
               {
-                jobAlerts.length == 0 
+                jobAlerts.length === 0 
                 && 
                 <p className="text-red-700">No job found!</p>
               }

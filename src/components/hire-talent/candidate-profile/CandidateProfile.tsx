@@ -1,9 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CandidateDetails from './components/CandidateDetails';
 import PersonalProfile from './components/PersonalProfile';
 import { UilAngleRight } from '@iconscout/react-unicons';
+import { httpGetWithoutToken } from '../../../utils/http_utils';
+import { useParams } from 'react-router-dom';
+import { useToast } from '@chakra-ui/react';
+
 
 const CandidateProfile = () => {
+  const [candidate,  setCandidate] = useState<any>(null)
+  const param = useParams();
+  const toast = useToast();
+
+
+
+
+  
+  
+  const getCandidate = async () => {
+    const response = await httpGetWithoutToken(`candidates/${param.candidateId}`)
+    try {
+      if(response.status === "success") {
+        setCandidate(response.data)
+      }
+    } catch (error) {
+      console.error("Error fetching candidate:", error);
+      toast({
+        status: "error",
+        title: "Failed to load candidate profile.",
+        isClosable: true,
+        duration: 5000,
+      });
+    }
+  }
+
+  useEffect( () => {
+  getCandidate();
+  }, []);
+  
+
   return (
     <section>
       <header className="flex items-center justify-center bg-[#f5f5f5] py-[4rem] md:py-[8rem] mb-6">
@@ -20,10 +55,12 @@ const CandidateProfile = () => {
         </div>
       </header>
 
-      <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-[4rem] max-w-[95%] md:max-w-[1300px] mx-auto px-4">
-        <CandidateDetails />
-        <PersonalProfile  />
-      </div>
+      {
+       candidate && <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-[4rem] max-w-[95%] md:max-w-[1300px] mx-auto px-4">
+       <CandidateDetails candidate={candidate} />
+       <PersonalProfile profileData={candidate} />
+     </div>
+      }
     </section>
   );
 }

@@ -51,14 +51,12 @@ import ForgotPassword from "./components/registration/ForgetPass";
 import AccountVerification from "./components/registration/Verification";
 import PasswordVerificationCode from "./components/registration/PasswordVerificationCode";
 import AdminLogin from "./components/master-admin/components/AdminLogin";
-<<<<<<< HEAD
 import AdminJobList from "./components/master-admin/components/JobList";
 import AdminJobDetails from "./components/master-admin/components/JobDetails";
-=======
-import JobList from "./components/master-admin/components/JobList";
-import AdminJobDetails from "./components/master-admin/components/JobDetails";
 import AppliedJobs from "./components/candidate-admin/applied-job/AppliedJobs";
->>>>>>> 257849e77e090e56153d4c3e482d474f4f05ab01
+import AllApplicates from "./components/employer-admin/all-applicates/AllApplicates";
+import JobDetailsPage from "./components/employer-admin/my-jobs/ApplicateJob/ApplicateJobsPage";
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -109,6 +107,7 @@ function Main({
     "/verify-account",
     "/verification-code",
     "/forget-password",
+    "/all-applicant/:slug"
   ];
   return (
     <div>
@@ -123,7 +122,7 @@ function Main({
         <Route path="login" element={<LoginForm />} />
         <Route path="register" element={<RegisterForm />} />
         <Route path="hire-talent" element={<CandidatesHireTalent />} />
-        <Route path="candidate-profile" element={<CandidateProfile />} />
+        <Route path="candidate-profile/:candidateId" element={<CandidateProfile />} />
         {/* <Route path="job-details" element={<JobDataPage />} /> */}
         <Route path="job-details/:slug" element={<JobDataPage />} />
         <Route path="application-details" element={<JobDataPage />} />
@@ -140,13 +139,12 @@ function Main({
 
        
        {/* Master Admin Routing Section */}
-<<<<<<< HEAD
+
        <Route path={"/admin"} >
           <Route path="" element={<AdminLogin />} />
           <Route path="admin-jobs" element={<AdminJobList />} />
           <Route path="job-details/:id" element={<AdminJobDetails />} />
         </Route>
-=======
        {/* {!isLoggedIn ? (
           <Route path="admin-login" element={<AdminLogin onLoginSuccess={handleLoginSuccess} />} />
         ) : (
@@ -158,12 +156,12 @@ function Main({
         <Route path="job-details/:id" element={<JobDetails />} />
         <Route path="*" element={<Navigate to="admin-jobs" />} /> */}
 
-          <Route path={"/master-admin-dashboard"} >
+          {/* <Route path={"/master-admin-dashboard"} >
           <Route path="admin-jobs" element={<JobList />} />
           <Route path="job-details/:id" element={<AdminJobDetails  />} />
         </Route>
-        <Route path="admin-login" element={<AdminLogin onLoginSuccess={handleLoginSuccess} />} />
->>>>>>> 257849e77e090e56153d4c3e482d474f4f05ab01
+        <Route path="admin-login" element={<AdminLogin onLoginSuccess={handleLoginSuccess} />} /> */}
+
   
         {/* Candidates Admin routing section */}
         <Route
@@ -225,6 +223,15 @@ function Main({
           path="my-jobs"
           element={<EmployersLayout element={<MyJobs />} />}
         />
+         {/* <Route
+          path="all-applicant"
+          element={<EmployersLayout element={<AllApplicates />} />}
+        /> */}
+         <Route
+          path="all-applicant/:slug"
+          element={<EmployersLayout element={<AllApplicates />} />}
+        />
+         <Route path="/jobs/:jobId/details" element={<JobDetailsPage />} />
         <Route
           path="employers-messages"
           element={<EmployersLayout element={<EmployersMessage />} />}

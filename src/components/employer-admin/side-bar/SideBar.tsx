@@ -143,6 +143,7 @@ const SideNav: React.FC = () => {
                 <FaFileAlt size={25} /> My Jobs
               </li>
             </Link>
+            {/*  */}
             <Link to='/employers-messages'>
               <li className={`py-2 hover:text-[#2aa100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-messages') ? 'bg-[#F5E2EF] rounded-lg px-[1rem] text-[#2aa100]' : 'text-[#ee009d] hover:text-[#2aa100]'}`}>
                 <FaEnvelope size={25} /> Message

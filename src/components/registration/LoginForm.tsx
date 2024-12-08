@@ -63,7 +63,7 @@ const LoginForm: React.FC = () => {
     setIsSubmitting(false)
 
     if(response.status === "success") {
-      toast({
+      toast({ 
         status : "success",
         title : "Login successful!",
         isClosable : true,

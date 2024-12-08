@@ -128,7 +128,7 @@ const SideNav: React.FC = () => {
         <nav className="mt-4 flex-1">
           <ul>
             <Link to='/candidate-dashboard'>
-              <li className={`py-2 hover:bg-[#F5E2EF] hover:rounded-lg hover:px-[1rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/dashboard') ? 'bg-[#F5E2EF] rounded-lg px-[1rem] mx-[1rem] text-[#2aa100]' : 'text-[#ee009d] hover:text-[#2aa100]'}`}>
+              <li className={`py-2 hover:bg-[#F5E2EF] hover:rounded-lg hover:px-[1rem] text-[16px] mx-[2rem] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/dashboard') ? 'bg-[#F5E2EF] rounded-lg px-[1rem] mx-[1rem] text-[#2aa100]' : 'text-[#ee009d] hover:text-[#2aa100]'}`}>
                 <UilCreateDashboard size={25} color={isActive('/dashboard') ? '#2aa100' : '#2aa100'} /> Dashboard
               </li>
             </Link>
@@ -138,7 +138,7 @@ const SideNav: React.FC = () => {
               </li>
             </Link>
             <Link to='/resume-page'>
-              <li className={`py-2 hover:text-[#2aa100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/resume') ? 'bg-[#F5E2EF] rounded-lg px-[1rem] text-[#2aa100]' : 'text-[#ee009d] hover:text-[#2aa100]'}`}>
+              <li className={`py-2 hover:text-[#2aa100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/resume-page') ? 'bg-[#F5E2EF] rounded-lg px-[1rem] text-[#2aa100]' : 'text-[#ee009d] hover:text-[#2aa100]'}`}>
                 <FaFileAlt size={25} /> Resume
               </li>
             </Link>

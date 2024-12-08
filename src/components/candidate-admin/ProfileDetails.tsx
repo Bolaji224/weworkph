@@ -92,7 +92,7 @@ const ProfileImageUpload: React.FC = () => {
   const updateLinkEditing = (id: number, val: string) => {
     let l = links;
     l.forEach(link => {
-      if (link.id == id) link.value = val;
+      if (link.id === id) link.value = val;
     });
     setEditingLink(val)
     setLinks(l)
@@ -105,7 +105,7 @@ const ProfileImageUpload: React.FC = () => {
     setBio(res.data.bio)
     setUserCity(res.data.city)
     setUserCountry(res.data.country)
-    if (res.data.country != "") {
+    if (res.data.country !== "") {
       getStates(res.data.country)
     }
     setUserState(res.data.state)
@@ -328,7 +328,7 @@ const ProfileImageUpload: React.FC = () => {
           <div className="w-full sm:w-1/2 px-2 mb-4">
             <label className="block font-semibold text-green-600 text-lg mb-2">Country*</label>
             <select onChange={(e) => {
-              if (e.target.value == "") {
+              if (e.target.value === "") {
                 setStates([]);
               } else {
                 getStates(e.target.value)

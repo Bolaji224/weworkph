@@ -204,7 +204,7 @@ const PostNewJob: React.FC = () => {
 
     const res = await httpPostWithToken("employer/jobs", fd);
     // console.log(res)
-    if (res.status == "success") {
+    if (res.status === "success") {
       toast({
         title: "Job created successful1",
         isClosable: true,

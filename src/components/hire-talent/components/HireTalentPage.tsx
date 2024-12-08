@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import JobSearch from "../../../pages/home/components/JobSearch";
 import Images from "../../constant/Images";
-import { httpGetWithoutToken } from "../../../utils/http_utils";
+import { httpGetWithoutToken, httpPostWithToken } from "../../../utils/http_utils";
 import { Link } from "react-router-dom";
+import Modal from "../../employer-admin/all-applicates/components/Modal";
+import { useToast } from "@chakra-ui/react";
 
 interface SocialMedia {
   id: number;
@@ -21,10 +23,11 @@ interface Resume {
   resume_title: string | null;
   portfolio: string[];
   expected_salary: string | null;
-  experience: string | null;
+  year_of_experience: string | null;
 }
 
 interface Candidate {
+  job_title: string;
   id: number;
   name: string;
   email: string;
@@ -51,6 +54,43 @@ const CandidatesHireTalent: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [messageText, setMessageText] = useState("");
+  const [selectedApplicantId, setSelectedApplicantId] = useState<any | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const toast = useToast();
+
+
+
+  const messageApplicant = async (id: number) => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      const message = {
+        "user_id" : id,
+        "message" : messageText,
+      }
+      await httpPostWithToken("chat/send-chat", message)
+      toast({
+        status: "success",
+        title: "Message sent successfully!",
+        isClosable: true,
+        duration: 5000,
+      });
+    } catch (error) {
+      console.error("Error messaging applicant:", error);
+      toast({
+        status: "error",
+        title: "Failed to send message.",
+        isClosable: true,
+        duration: 5000,
+      });
+    } finally {
+      setLoading(false);
+      setModalVisible(false)
+    }
+  };
 
   useEffect(() => {
     const fetchCandidates = async () => {
@@ -170,7 +210,7 @@ const CandidatesHireTalent: React.FC = () => {
                   </span>
                 )}
                 <p className="bg-[#ee009d] text-[#fff] text-[12px] px-2 py-1 rounded-full">
-                  {candidate.Resume?.experience || "No experience available"}
+                  {candidate.Resume?.year_of_experience || "No experience available"}
                 </p>
               </div>
               <section className="flex items-center justify-around mb-4">
@@ -194,16 +234,45 @@ const CandidatesHireTalent: React.FC = () => {
                 </div>
               </section>
               <div className="flex justify-around">
-                <Link to="/candidate-profile">
+                <Link to={`/candidate-profile/${candidate.id}`}>
                   <button className="bg-[#EE009D] text-[14px] font-sans font-semibold text-white px-4 py-2 rounded-[5px]">
                     View Profile
                   </button>
                 </Link>
-                <Link to="/candidate-profile">
-                  <button className="border-[1.5px] border-[#2AA100] text-[14px] font-sans font-semibold text-[#6A] px-4 py-2 rounded">
-                    Message
-                  </button>
-                </Link>
+               
+                <button
+  className="border-[1.5px] border-[#2AA100] text-[14px] font-sans font-semibold text-[#6A] px-4 py-2 rounded"
+  onClick={() => {
+    setSelectedApplicantId(candidate);
+    setModalVisible(true);
+  }}
+>
+  Message
+</button>
+                
+                <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} title={`Send Message : ${selectedApplicantId?.name}`}>
+        <div className="relative">
+          {/* Close Icon */}
+          <button
+            onClick={() => setModalVisible(false)}
+            className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+          >
+            <span className="text-2xl">×</span>
+          </button>
+          <textarea
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+            className="w-full border p-2 rounded"
+            placeholder="Type your message here..."
+          />
+          <button
+            onClick={() => selectedApplicantId && messageApplicant(selectedApplicantId.id)}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Send
+          </button>
+        </div>
+      </Modal>
               </div>
             </div>
           </div>

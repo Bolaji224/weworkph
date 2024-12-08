@@ -43,7 +43,7 @@ const JobAlertTable: React.FC = () => {
   const totalPages = Math.ceil(jobAlerts.length / itemsPerPage);
   const getJobAlert = async () => {
     const res = await httpGetWithToken("jobs-alert");
-    if(res.status == "success") {
+    if(res.status === "success") {
       setJobAlerts(res.data)
     }
     console.log(res)
