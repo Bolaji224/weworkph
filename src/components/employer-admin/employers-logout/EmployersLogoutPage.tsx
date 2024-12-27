@@ -7,7 +7,8 @@ const EmployersLogoutPage: React.FC = () => {
   const handleLogout = () => {
     // Perform logout logic here
     // Example: Clearing user session or token
-    localStorage.removeItem('authToken');
+    localStorage.clear();
+    sessionStorage.clear();
     // Redirect to login page or home page
     navigate('/login');
   };

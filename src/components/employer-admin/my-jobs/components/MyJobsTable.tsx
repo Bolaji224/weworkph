@@ -4,90 +4,22 @@ import { UilAngleDown, UilAngleUp, UilEye, UilShare, UilTrashAlt } from "@iconsc
 import { FaCheckCircle, FaCircle, FaHourglassHalf, FaTimesCircle } from "react-icons/fa";
 import { httpGetWithToken } from "../../../../utils/http_utils";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 
 interface JobAlert {
+  id: any;
   title: string;
   jobType: string;
   location: string;
   dateCreated: string;
   applicate: string;
   status: string;
+  slug: string;
 
   
 }
 
-const initialJobAlerts: JobAlert[] = [
-  {
-    title: "Account Executive",
-    jobType: "Contract. ",
-    location: " Spain",
-    dateCreated: "05 Jun, 2024",
-    applicate: "30 Applications",
-    status: "Pending",
-  },
-  
-  {
-    title: "Brand & Producr Designer",
-    jobType: "Fulltime. ",
-    location: " London",
-    dateCreated: "13 Aug, 2023",
-    applicate: "20 Applications",
-    status: "Active",
-  },
-  {
-    title: "Accounting Manager",
-    jobType: "Fulltime. ",
-    location: "Spain",
-    dateCreated: "09 May, 2024",
-    applicate: "80 Applications",
-    status: "Pending",
-  },
-  
-  {
-    title: "Account Executive",
-    jobType: "Contract. ",
-    location: "Spain",
-    dateCreated: "05 Jun, 2024",
-    applicate: "30 Applications",
-    status: "Pending",
-  },
-  {
-    title: "Account Executive",
-    jobType: "Contract. ",
-    location: "Spain",
-    dateCreated: "05 Jun, 2024",
-    applicate: "30 Applications",
-    status: "Expired",
-  },
-  
-  {
-    title: "Account Executive",
-    jobType: "Contract. ",
-    location: "Spain",
-    dateCreated: "05 Jun, 2024",
-    applicate: "30 Applications",
-    status: "Active",
-  },
-  {
-    title: "Account Executive",
-    jobType: "Contract. ",
-    location: "Spain",
-    dateCreated: "05 Jun, 2024",
-    applicate: "30 Applications",
-    status: "Expired",
-  },
-  
-  {
-    title: "Account Executive",
-    jobType: "Contract. ",
-    location: "Spain",
-    dateCreated: "05 Jun, 2024",
-    applicate: "30 Applications",
-    status: "Pending",
-  },
- 
-];
 
 const categories = [
   { value: "Active", label: "Active", color: "#2aa100" },
@@ -130,12 +62,17 @@ const SubmitJobsTable: React.FC = () => {
     setCurrentPage(page);
   };
 
-  const handleActionClick = (alert: JobAlert, actionType: string) => {
-    setSelectedAlert(alert);
-    setAction(actionType);
-    setShowDropdown(null);
-  };
+  const navigate = useNavigate();
 
+const handleActionClick = (alert: any, actionType: string) => {
+  setSelectedAlert(alert);
+  setAction(actionType);
+  setShowDropdown(null);
+
+  if (actionType === "View") {
+    navigate(`/all-applicant/`+alert.slug); // Navigate to JobDetailsPage
+  }
+};
   const handleDelete = () => {
     if (selectedAlert) {
       setJobAlerts(jobAlerts.filter((jobAlert) => jobAlert !== selectedAlert));
@@ -289,7 +226,7 @@ const SubmitJobsTable: React.FC = () => {
                 </tr>
               ))}
               {
-                jobAlerts.length == 0 
+                jobAlerts.length === 0 
                 && 
                 <p className="text-red-700">No job found!</p>
               }

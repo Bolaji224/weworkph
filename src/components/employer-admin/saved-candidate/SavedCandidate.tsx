@@ -65,7 +65,7 @@ const SavedCandidates: React.FC = () => {
   ];
   const fetchCandidates = async () => {
     const res = await httpGetWithToken("employer/saved-candidate")
-    if(res.status == "success") {
+    if(res.status === "success") {
       setSavedJobs(res.data)
     }
   }

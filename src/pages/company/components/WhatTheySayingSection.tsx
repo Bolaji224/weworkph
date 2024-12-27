@@ -46,7 +46,7 @@ const WhatTheySayingSection: React.FC = () => {
             transition={{ duration: 1.5, delay: 0.6, ease: 'easeInOut' }}
             className='lg:text-[14px] md:text-[14px] text-[10px] text-[#646A73] font-sans font-normal lg:w-[65%] md:w-[90%] mt-[1rem]'
           >
-            By joining us, you will enjoy the full facilities that we have provided, as for testimonials from Weworkperhour members.
+           Our customers have testified to the qaulity of our services and the support system we offer. Clientas say we are easy to talk to and very supportive.
           </motion.p>
           <motion.div
             variants={fadeInVariants}

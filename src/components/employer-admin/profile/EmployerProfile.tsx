@@ -122,7 +122,7 @@ const EmployerProfile: React.FC = () => {
     const resp = await httpPostWithToken("profile", profile)
     setSaveLoading(false)
 
-    if (resp.status == "success") {
+    if (resp.status === "success") {
       toast({
         status: "success",
         title: "Profile updated",
@@ -142,7 +142,7 @@ const EmployerProfile: React.FC = () => {
 
 
   const addLink = async () => {
-    if (newLink == "" || newLinkValue == "") return;
+    if (newLink === "" || newLinkValue === "") return;
     if (loading) return;
     setLoading(true)
     const fd = {
@@ -150,7 +150,7 @@ const EmployerProfile: React.FC = () => {
       value: newLinkValue,
     }
     const resp = await httpPostWithToken("profile/social-add", fd)
-    if (resp.status == "success") {
+    if (resp.status === "success") {
       getProfile()
 
       toast({
@@ -217,7 +217,7 @@ const EmployerProfile: React.FC = () => {
     setBio(res.data.about_company)
     setUserCity(res.data.city)
     setUserCountry(res.data.country)
-    if (res.data.country != "") {
+    if (res.data.country !== "") {
       // getStates(res.data.country)
     }
     setLinks(res.data.social_medias)

@@ -27,7 +27,7 @@ const ChatBox: React.FC = () => {
     if(loading) return;
     setLoading(true)
     const message = {
-      "user_id" : user.id == selectedChat.user1.id ?  selectedChat.user2.id :  selectedChat.user1.id,
+      "user_id" : user.id === selectedChat.user1.id ?  selectedChat.user2.id :  selectedChat.user1.id,
       "message" : newMessage,
       "chat_id" : selectedChat.id
     }

@@ -3,7 +3,7 @@ import axios from 'axios';
 import Images from '../constant/Images';
 import { FaGoogle, FaApple, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import { httpPostWithoutToken } from '../../utils/http_utils';
+import { generateToken, httpPostWithoutToken } from '../../utils/http_utils';
 import { useToast } from '@chakra-ui/react';
 
 interface State {
@@ -79,14 +79,15 @@ const CandidateRegisterForm: React.FC = () => {
       const response = await httpPostWithoutToken("register", data)
       setIsSubmitting(false)
 
-      if(response.status == "success") {
+      if(response.status === "success") {
         toast({
           status : "success",
           title : "Registration successful, proceed to login",
           isClosable : true,
         })
+        let userEmail = state.email
         setTimeout(() => {
-          navigate("/login")
+          navigate(`/verify-account?token${generateToken(20)}=&u=${userEmail}`)
         }, 1000);
       }else{
 

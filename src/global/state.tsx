@@ -5,11 +5,7 @@ import { iProfile } from "../models/profle";
 
 export const AppContext = createContext({});
 export default function AppStateProvider(props:any) {
-  const [user, setUser] = useState<iProfile>({
-        name : "",
-        avatar : "",
-    }
-  );
+  const [user, setUser] = useState<iProfile|null>(ls.get("wwph_usr", {decrypt : true}));
 
   const updateUser = (u:iProfile) => {
     ls.set("wwph_usr", u, {encrypt : true});

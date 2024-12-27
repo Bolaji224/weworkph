@@ -1,25 +1,15 @@
 import {
   Box,
   Button,
-  Checkbox,
-  Divider,
   Flex,
   Image,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Modal,
   ModalBody,
-  ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
-  SimpleGrid,
   Text,
-  Heading,
   useToast,
-  useCheckboxGroup,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import Images from './constant/Images';

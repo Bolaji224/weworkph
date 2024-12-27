@@ -23,6 +23,7 @@ const courses = [
     price: 59.99,
     instructor: 'Jane Smith',
     videoUrl: Videos.CardTwoVi,
+
     content: [
       'TypeScript Basics',
       'Interfaces & Types',
@@ -137,10 +138,7 @@ const courses = [
       'Building a Large-Scale Project',
     ],
   },
-  // Add more courses here
 ];
-
-
 const COURSES_PER_PAGE = 8; // Number of courses per page
 
 const CourseList = () => {

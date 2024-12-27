@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { FaXTwitter } from 'react-icons/fa6';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
-import { UilEnvelope, UilMailbox } from '@iconscout/react-unicons';
+import { UilEnvelope } from '@iconscout/react-unicons';
 
 const FooterSection: React.FC = () => {
   const { ref, inView } = useInView({

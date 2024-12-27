@@ -42,7 +42,7 @@ const JoinUsSection: React.FC = () => {
             <span className="text-[#ee009d]"> interesting features.</span>
           </h2>
           <div className="py-[1rem]">
-            <Link to="/">
+            <Link to="/register">
               <button className="font-sans text-[14px] font-medium text-[#FFFFFF] bg-[#EE009D] hover:bg-[#2AA100] py-[6px] px-[10px] rounded-[5px] justify-center">
                 Get Started
               </button>

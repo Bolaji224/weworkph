@@ -47,7 +47,7 @@ const EasyManageSection: React.FC = () => {
             A platform that allows teams to find, and select talented talent who will be part of your team.
           </p>
           <div className='py-[1rem]'>
-            <Link to="/">
+            <Link to="/hire-talent">
               <button className="font-sans text-[10px] sm:text-[14px] font-medium text-[#FFFFFF] bg-[#EE009D] hover:bg-[#2AA100] py-[8px] px-[10px] rounded-[5px] flex items-center justify-center gap-[0.5rem]">
                 Learn more <FaArrowRightLong />
               </button>

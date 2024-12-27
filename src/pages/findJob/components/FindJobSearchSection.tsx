@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import Dropdown from '../../../components/reusable/DropDownButton';
 import { useNavigate } from 'react-router-dom';
-import { httpGetWithoutToken } from '../../../utils/http_utils';
+import { httpGetWithoutToken, httpGetWithToken } from '../../../utils/http_utils';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
 
 const FindJobSearchSection: React.FC = () => {
   const [jobQuery, setJobQuery] = useState('');
   const [jobTypes, setJobTypes] = useState([]);
+  const [location, setLocation] = useState<any[]>([]);
   const [locationQuery, setLocationQuery] = useState('');
   const [selectedOption, setSelectedOption] = useState('Full-time');
-
+// location
   const navigate = useNavigate();
 
   const handleJobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,8 +28,14 @@ const FindJobSearchSection: React.FC = () => {
 
   useEffect(() => {
     fetchJobTypes();
+    getResoures();
   }, []);
-
+  const getResoures = async () => {
+    let resp = await httpGetWithToken("resources");
+    if(resp.status == "success") {
+      setLocation(resp.data.location)
+    }
+  }
   const fetchJobTypes = async () => {
     let resp = await httpGetWithoutToken("fetch-job-types");
     if (resp.status === "success") {
@@ -70,13 +77,16 @@ const FindJobSearchSection: React.FC = () => {
           />
         </div>
         <div className="w-[100%]">
-          <input
-            type="text"
-            placeholder="Enter location"
-            value={locationQuery}
-            onChange={handleLocationChange}
+          <select 
             className="w-[100%] p-4 rounded-[px] focus:outline-none bg-[#fff] shadow-md focus:border-none"
-          />
+            onChange={(v)=>setLocationQuery(v.target.value)} value={locationQuery} name="location" id="location">
+            <option value="">Select</option>
+            {
+              location.map((l:any, i)=> (
+                <option key={`${l.state}${i}`} value={l.state}>{l.state}, {l.country}</option>
+              ))
+            }
+          </select>
         </div>
         <div className="w-[100%]">
           <select

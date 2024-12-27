@@ -62,18 +62,20 @@ const LoginForm: React.FC = () => {
     const response = await httpPostWithoutToken("login", d)
     setIsSubmitting(false)
 
-    if(response.status == "success") {
-      toast({
+    if(response.status === "success") {
+      toast({ 
         status : "success",
         title : "Login successful!",
         isClosable : true,
       })
+      sessionStorage.setItem("wwph_token", response.access_token);
+      sessionStorage.setItem("wwph_usr", JSON.stringify(response.user));
       ls.set("wwph_token", response.access_token, {encrypt : true});
       ls.set("wwph_usr", response.user, {encrypt : true});
       updateUser(response.user)
       setTimeout(() => {
-      if(response.user.role == "Company") {
-        if(response.user.about_company == "" || !response.user.about_company) {
+      if(response.user.role === "Company") {
+        if(response.user.about_company === "" || !response.user.about_company) {
           navigate("/employers-profile")
         }else {
           navigate("/employers-dashboard")
@@ -115,7 +117,7 @@ const LoginForm: React.FC = () => {
               <input
                 type="email"
                 id="email"
-                className="w-full px-6 py-2 mt-2 border-b-[1.5px] focus:outline-none focus:ring-2 focus:ring-[#2aa100]"
+                className="w-full px-6 py-2 mt-2 border-b-[1px] focus:outline-none focus:ring-[1px] focus:ring-[#2aa100]"
                 value={state.email}
                 onChange={(e) => dispatch({ type: 'SET_EMAIL', payload: e.target.value })}
                 required
@@ -126,7 +128,7 @@ const LoginForm: React.FC = () => {
               <input
                 type={state.showPassword ? 'text' : 'password'}
                 id="password"
-                className="w-full px-6 py-2 mt-2 border-b-[1.5px] focus:outline-none focus:ring-2 focus:ring-[#2aa100]"
+                className="w-full px-6 py-2 mt- border-b-[1px] focus:outline-none focus:ring-[1px] focus:ring-[#2aa100]"
                 value={state.password}
                 onChange={(e) => dispatch({ type: 'SET_PASSWORD', payload: e.target.value })}
                 required
@@ -140,7 +142,9 @@ const LoginForm: React.FC = () => {
               </button>
             </div>
             <div className="flex justify-between items-center">
-              <a href="/forgot-password" className="text-sm text-blue-600 hover:underline">Forgot Password?</a>
+             <Link to="/forget-password">
+             <button className="text-sm text-blue-600 hover:underline">Forgot Password?</button>
+             </Link>
             </div>
             <div>
               <button
@@ -148,7 +152,7 @@ const LoginForm: React.FC = () => {
                 className="w-full px-6 py-3 text-white bg-[#ee009d] rounded-md hover:bg-[#2AA100] focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 disabled={isSubmitting}
               >
-                Sign in
+                {isSubmitting ? "Sending..." : "Sign In"}
               </button>
             </div>
           </form>

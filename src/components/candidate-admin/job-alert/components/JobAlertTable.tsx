@@ -14,64 +14,8 @@ interface JobAlert {
   categories: string;
   jobsFound: string;
   frequency: string;
+  departments: string;
 }
-
-const initialJobAlerts: JobAlert[] = [
-  {
-    title: "UI/UX Designer",
-    alert: "Full-Time",
-    salary: "$50,000 - $70,000",
-    location: "New York, NY",
-    categories: "Design",
-    jobsFound: "20+",
-    frequency: "Weekly",
-  },
-  {
-    title: "Product Manager",
-    alert: "Part-Time",
-    salary: "$70,000 - $90,000",
-    location: "San Francisco, CA",
-    categories: "Product",
-    jobsFound: "15",
-    frequency: "Monthly",
-  },
-  {
-    title: "Account Executive",
-    alert: "Contract",
-    salary: "$60,000 - $80,000",
-    location: "Remote",
-    categories: "Account",
-    jobsFound: "10",
-    frequency: "Daily",
-  },
-  {
-    title: "Marketing Specialist",
-    alert: "Internship",
-    salary: "$30,000 - $40,000",
-    location: "Austin, TX",
-    categories: "Marketing",
-    jobsFound: "5",
-    frequency: "Weekly",
-  },
-  {
-    title: "Graphic Designer",
-    alert: "Full-Time",
-    salary: "$40,000 - $60,000",
-    location: "Chicago, IL",
-    categories: "Design",
-    jobsFound: "25",
-    frequency: "Monthly",
-  },
-  {
-    title: "Senior Developer",
-    alert: "Full-Time",
-    salary: "$100,000 - $120,000",
-    location: "Boston, MA",
-    categories: "Product",
-    jobsFound: "8",
-    frequency: "Daily",
-  },
-];
 
 const categories = [
   { value: "design", label: "Design", color: "#FF6347" },
@@ -99,7 +43,7 @@ const JobAlertTable: React.FC = () => {
   const totalPages = Math.ceil(jobAlerts.length / itemsPerPage);
   const getJobAlert = async () => {
     const res = await httpGetWithToken("jobs-alert");
-    if(res.status == "success") {
+    if(res.status === "success") {
       setJobAlerts(res.data)
     }
     console.log(res)
@@ -248,11 +192,14 @@ const JobAlertTable: React.FC = () => {
                     {alert.title}
                   </td>
                   <td className="py-8 px-4 text-green-700">
-                    {alert.title ? alert.title : alert.job_role}
-                    <p className="text-gray-800">{alert.salary}</p>
-                    <p className="text-gray-800">{alert.departments[0].title}</p>
+                    {/* {alert.title ? alert.title : alert.job_role} */}
+                    {alert.work_type.title}
+                    <p className="text-gray-800 lg:w-[300px]">{alert?.salary_narration || 'N/A'}, {alert.location}</p>
+                    <p className="text-gray-800">{alert?.departments.title || "no deparment"}</p>
+                    {/* <p className="text-gray-800">{alert.salary}</p>
+                    <p className="text-gray-800">{alert.departments[0].title}</p> */}
                   </td>
-                  <td className="py-8 px-4 text-gray-800">{alert.work_type.title}</td>
+                  <td className="py-8 px-4 text-gray-800">{alert?.work_type.title}</td>
                   <td className="py-8 px-4 text-gray-800">{alert.job_type.title}</td>
                   <td className="py-8 px-4 text-gray-800 relative">
                     <button onClick={() => setShowDropdown(index)}>

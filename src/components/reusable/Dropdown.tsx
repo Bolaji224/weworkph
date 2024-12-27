@@ -1,7 +1,5 @@
 import React from 'react';
-import { faEye, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Job } from './Job';
-import { FaCircle } from 'react-icons/fa6';
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
 
 

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import Navbar from "./components/navigation/Navbar";
 import { Home } from "./pages/home/Home";
@@ -47,17 +48,39 @@ import EmployersLogoutPage from "./components/employer-admin/employers-logout/Em
 import Loader from "./components/reusable/loader/loader";
 import Courses from "./components/reusable/training/Courses";
 
+import ForgotPassword from "./components/registration/ForgetPass";
+import AccountVerification from "./components/registration/Verification";
+import PasswordVerificationCode from "./components/registration/PasswordVerificationCode";
+import AdminLogin from "./components/master-admin/components/AdminLogin";
+import AdminJobList from "./components/master-admin/components/JobList";
+import AdminJobDetails from "./components/master-admin/components/JobDetails";
+import AppliedJobs from "./components/candidate-admin/applied-job/AppliedJobs";
+import AllApplicates from "./components/employer-admin/all-applicates/AllApplicates";
+import JobDetailsPage from "./components/employer-admin/my-jobs/ApplicateJob/ApplicateJobsPage";
+
+
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
   return (
     <Router>
       <ScrollToTop />
       <Loader />
-      <Main />
+      <Main isLoggedIn={isLoggedIn} handleLoginSuccess={handleLoginSuccess} />
     </Router>
   );
 }
 
-function Main() {
+function Main({
+  isLoggedIn,
+  handleLoginSuccess,
+}: {
+  isLoggedIn: boolean;
+  handleLoginSuccess: () => void;
+}) {
   const location = useLocation();
   const hideNavbarPaths = [
     "/login",
@@ -68,18 +91,25 @@ function Main() {
     "/messages",
     "/job-alerts",
     "/saved-jobs",
+    "/my-jobs",
+    "/employers-messages",
+    "/employers-account-settings",
     "/account-setting",
     "/delete-account",
     "/employers-dashboard",
     "/employers-profile",
     "/submit-jobs",
     "/saved-candidate",
+    "/applied-jobs",
     "/employers-wallet-account",
     "/candidate-dashboard",
     "/candidate-wallet-account",
     "/logout-account",
+    "/verify-account",
+    "/verification-code",
+    "/forget-password",
+    "/all-applicant/:slug"
   ];
-
   return (
     <div>
       {!hideNavbarPaths.includes(location.pathname) && <Navbar />}
@@ -93,7 +123,7 @@ function Main() {
         <Route path="login" element={<LoginForm />} />
         <Route path="register" element={<RegisterForm />} />
         <Route path="hire-talent" element={<CandidatesHireTalent />} />
-        <Route path="candidate-profile" element={<CandidateProfile />} />
+        <Route path="candidate-profile/:candidateId" element={<CandidateProfile />} />
         {/* <Route path="job-details" element={<JobDataPage />} /> */}
         <Route path="job-details/:slug" element={<JobDataPage />} />
         <Route path="application-details" element={<JobDataPage />} />
@@ -102,6 +132,38 @@ function Main() {
         <Route path="faq" element={<Faq />} />
         <Route path="testimonial" element={<TestimonialsPage />} />
         <Route path="free-courses" element={<Courses />} />
+        <Route path="forget-password" element={<ForgotPassword />} />
+        <Route path="verify-account" element={<AccountVerification />} />
+       <Route path="verification-code" element={<PasswordVerificationCode length={6}  onSubmit={(code: string) => {
+              console.log("Code submitted:", code);
+            }}  />} />
+
+       
+       {/* Master Admin Routing Section */}
+
+       <Route path={"/admin"} >
+          <Route path="" element={<AdminLogin />} />
+          <Route path="admin-jobs" element={<AdminJobList />} />
+          <Route path="job-details/:id" element={<AdminJobDetails />} />
+        </Route>
+       {/* {!isLoggedIn ? (
+          <Route path="admin-login" element={<AdminLogin onLoginSuccess={handleLoginSuccess} />} />
+        ) : (
+          <Route path="master-admin-dashboard" element={<MsAdminDashboard />} />
+        )} */}
+        {/* <Route path="admin-login" element={<AdminLogin onLoginSuccess={handleLoginSuccess} />} />
+        <Route path="master-admin-dashboard" element={<MsAdminDashboard />} />
+        <Route path="admin-jobs" element={<JobList />} />
+        <Route path="job-details/:id" element={<JobDetails />} />
+        <Route path="*" element={<Navigate to="admin-jobs" />} /> */}
+
+          {/* <Route path={"/master-admin-dashboard"} >
+          <Route path="admin-jobs" element={<JobList />} />
+          <Route path="job-details/:id" element={<AdminJobDetails  />} />
+        </Route>
+        <Route path="admin-login" element={<AdminLogin onLoginSuccess={handleLoginSuccess} />} /> */}
+
+
         {/* Candidates Admin routing section */}
         <Route
           path="candidate-dashboard"
@@ -126,6 +188,10 @@ function Main() {
         <Route
           path="saved-jobs"
           element={<AdminLayout element={<SavedJobs />} />}
+        />
+         <Route
+          path="applied-jobs"
+          element={<AdminLayout element={<AppliedJobs />} />}
         />
         <Route
           path="account-setting"
@@ -158,6 +224,15 @@ function Main() {
           path="my-jobs"
           element={<EmployersLayout element={<MyJobs />} />}
         />
+         {/* <Route
+          path="all-applicant"
+          element={<EmployersLayout element={<AllApplicates />} />}
+        /> */}
+         <Route
+          path="all-applicant/:slug"
+          element={<EmployersLayout element={<AllApplicates />} />}
+        />
+         <Route path="/jobs/:jobId/details" element={<JobDetailsPage />} />
         <Route
           path="employers-messages"
           element={<EmployersLayout element={<EmployersMessage />} />}
@@ -184,7 +259,7 @@ function Main() {
         />
         <Route
           path="employers-logout-account"
-          element={<EmployersLayout element={<EmployersLogoutPage />} />}
+          element={<EmployersLayout element={<EmployersLogoutPage  />} />}
         />
       </Routes>
       

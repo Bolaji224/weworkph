@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { UilGoogle, UilFacebook } from '@iconscout/react-unicons';
 import CandidateRegisterForm from './CandidateRegisterForm';
 import EmployersRegisterForm from './EmployersRegisterForm';
 

@@ -13,7 +13,7 @@ const AdminLayout: React.FC<AdminLayoutProps>  = ({element}) => {
   const navigate = useNavigate()
   const toast = useToast();
   useEffect(()=> {
-    if(ls.get("wwph_token", {decrypt : true})){
+    if(sessionStorage.getItem("wwph_token")){
       
     }else {
       toast({

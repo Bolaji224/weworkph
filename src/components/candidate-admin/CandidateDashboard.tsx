@@ -8,7 +8,7 @@ import ChartData from './barchart/ChartData';
 const CandidateDashboard: React.FC = () => {
   return (
     <div className='mt-[8rem]'>
-      <h2 className='px-[2rem] text-[#2aa100] text-[38px] font-sans font-semibold'>Dashboard</h2>
+      <h2 className='px-[2rem] text-[#2aa100] text-[38px] font-sans font-semibold'>Candidate Dashboard</h2>
       <div className="grid grid-cols-2 md:grid-cols-2 mt-[2rem] lg:grid-cols-4 gap-8 px-[2rem]">
       <div className="bg-white flex flex-col-reverse sm:flex-row items-center justify-center gap-4 sm:gap-8 px-4 py-6 sm:px-6 sm:py-6 rounded-[30px] shadow">
   <div className='space-y-4 text-center sm:text-left'>

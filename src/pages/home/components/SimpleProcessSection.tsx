@@ -46,7 +46,7 @@ const SimpleProcessSection: React.FC = () => {
               className='text-center'
               initial={{ opacity: 0, y: -50 }}
               animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
-              transition={{ duration: 1, delay: index * 0.1 }}
+              transition={{ duration: 1.5, delay: index * 0.1 }}
             >
               <div className='mx-auto max-w-[150px]'>
                 <img src={item.img} alt={item.title.toLowerCase()} className='w-full h-auto object-cover' />

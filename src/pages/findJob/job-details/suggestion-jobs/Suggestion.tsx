@@ -36,6 +36,7 @@ useEffect(()=> {
             slug={item.slug}
             workType={item.work_type.title}
             jobType={item.job_type.title}
+            datePosted={item.date_posted}
           />
         ))
       }

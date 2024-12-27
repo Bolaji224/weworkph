@@ -19,6 +19,7 @@ const DeletePage: React.FC = () => {
     const res = await httpPostWithToken("user/delete");
     if (res.status === "success") {
       ls.remove("wwph_token");
+      sessionStorage.clear();
       ls.remove("wwph_usr");
       toast({
         status: "success",
