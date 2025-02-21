@@ -85,8 +85,8 @@ const ProfileForm: React.FC = () => {
     try {
       const fd = {
         salary,
-        jobTitle,
-        experience,
+        job_title: jobTitle,
+        year_of_experience: experience
       };
   
       const res = await httpPostWithToken("resume/update", fd);

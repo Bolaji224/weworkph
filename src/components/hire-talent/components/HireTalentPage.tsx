@@ -23,7 +23,7 @@ interface Resume {
   resume_title: string | null;
   portfolio: string[];
   expected_salary: string | null;
-  year_of_experience: string | null;
+  experience: string | null;
 }
 
 interface Candidate {
@@ -210,7 +210,7 @@ const CandidatesHireTalent: React.FC = () => {
                   </span>
                 )}
                 <p className="bg-[#ee009d] text-[#fff] text-[12px] px-2 py-1 rounded-full">
-                  {candidate.Resume?.year_of_experience || "No experience available"}
+                  {candidate.Resume?.experience || "No experience available"}
                 </p>
               </div>
               <section className="flex items-center justify-around mb-4">
