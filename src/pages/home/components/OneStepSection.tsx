@@ -20,7 +20,7 @@ const OneStepSection: React.FC = () => {
           animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
           transition={{ duration: 1}}
         >
-          <img src={Images.OneStepImage} alt="onestep" />
+          <img src={Images.OneStepImage} alt="onestep" className="rounded-[5px]"/>
         </motion.div>
         <motion.div
           className="lg:w-[50%] py-[rem]"

@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { BiSearch } from "react-icons/bi";
-import JobSearch from "../../../pages/home/components/JobSearch";
 import Images from "../../constant/Images";
 import { httpGetWithoutToken, httpPostWithToken } from "../../../utils/http_utils";
 import { Link } from "react-router-dom";
@@ -148,7 +146,7 @@ const CandidatesHireTalent: React.FC = () => {
         <p className="text-gray-600 mb-6">
           Find your desired talents & make your work done
         </p>
-        <JobSearch />
+        {/* <JobSearch /> */}
       </div>
 
       <div className="bg-white p-4 rounded shadow mb-8 flex flex-wrap">

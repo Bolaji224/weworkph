@@ -4,6 +4,7 @@ import { useToast } from '@chakra-ui/react';
 
 import { useInView } from 'react-intersection-observer';
 import { httpPostWithoutToken } from '../../../utils/http_utils';
+import { Link } from 'react-router-dom';
 
 const ComeJoinUsSection: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -39,7 +40,7 @@ const ComeJoinUsSection: React.FC = () => {
       <section className="lg:flex md:flex gap-[4rem] justify-center items-center p-[2.5rem]">
         <div>
           <h2 className="lg:text-[38px] md:text-[24px] text-[20px] mt-[1rem] font-sans font-semibold tracking-[1px]">
-            Come join us and don't miss our latest <span className="text-[#ee009d]">job vacancies</span>
+            Come join us and don't miss our latest <Link to="/find-job"><span className="text-[#ee009d]">job vacancies</span></Link>
           </h2>
         </div>
         <div>

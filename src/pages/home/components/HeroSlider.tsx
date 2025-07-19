@@ -84,12 +84,12 @@ const HeroSlider: FC = () => {
   };
 
   return (
-    <div className='bg-[#ffffff] w-full mx-auto py-[1rem] mt-[3rem]'>
+    <div className='bg-[#ffffff] w-full mx-auto py-[1rem] mt-[4rem]'>
       <Slider {...settings}>
         {slidesData.map((slide, index) => (
-          <section key={index} className='flex items-center justify-center mt-[2rem]'>
-            <div className='relative lg:max-h-[900px] flex items-center justify-center gap-[12rem] ' >
-              <div className="text-white slide-item lg:relative absolute top-[30%] left-[6%] w-[70%]">
+          <section key={index} className='flex items-center justify-center mt-[2rem] px-[4.5rem]'>
+            <div className='relative lg:max-h-[900px] flex items-center justify-center gap-[8rem] ' >
+              <div className="text-white slide-item lg:relative absolute w-[50%]">
                 <h1 className="font-sans lg:text-[48px] md:text-[38px] text-[20px] text-[#2AA100] font-bold">{slide.title}</h1>
                 <p className='text-md text-[#646A73] tracking-[0.5px] font-sans font-normal'>{slide.content}</p>
                <div className='py-[1rem]'>
@@ -98,8 +98,8 @@ const HeroSlider: FC = () => {
                 </Link>
                </div>
               </div>
-              <div>
-              <img src={slide.image} alt={`slide-${index}`} className='' />
+              <div className='w-[50%]'>
+              <img src={slide.image} alt={`slide-${index}`} className='w-[100%] h-[100%] rounded-[5px]' />
               </div>
             </div>
           </section>

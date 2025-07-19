@@ -17,7 +17,7 @@ const WhatTheySayingSection: React.FC = () => {
   };
 
   return (
-    <section className='opacity-[0.9] lg:py-[10rem] py-[4rem]'>
+    <section className='lg:py-[10rem] py-[4rem]'>
       <motion.section
         ref={sectionRef}
         initial="hidden"
@@ -65,7 +65,7 @@ const WhatTheySayingSection: React.FC = () => {
           transition={{ duration: 1.5, delay: 1, ease: 'easeInOut' }}
           className='lg:w-[50%] md:w-[50%] w-[100%]'
         >
-          <ImageCardSliderSection />
+          <div className='w-[100%]'><ImageCardSliderSection /></div>
         </motion.section>
       </motion.section>
     </section>

@@ -65,20 +65,20 @@ const CareerTipsHeroSection: FC = () => {
       <Slider {...settings}>
         <CardSliderCareer 
           sliderImage={Images.CareerSliderImageOne}
-          sliderTitle="CAREER TIPS ON BECOMING VIRTUAL ASSISTANT
+          sliderTitle="CAREER TIPS ON BECOMING A VIRTUAL ASSISTANT
 "
           sliderDescription="Becoming a virtual assistant (VA) offers flexibility, a diverse workload, the opportunity to manage a variety of tasks, and the potential to carve out a rewarding career in a growing field. Whether you're starting out or enhancing your..."
         />
         <CardSliderCareer 
           sliderImage={Images.CareerSliderImageTwo}
-          sliderTitle="CAREER TIPS ON BECOMING VIRTUAL ASSISTANT
+          sliderTitle="CAREER TIPS ON BECOMING A VIRTUAL ASSISTANT
 "
           sliderDescription="Becoming a virtual assistant (VA) offers flexibility, a diverse workload, the opportunity to manage a variety of tasks, and the potential to carve out a rewarding career in a growing field. Whether you're starting out or enhancing your..."
          
         />
         <CardSliderCareer 
           sliderImage={Images.CareerSliderImageThree}
-          sliderTitle="CAREER TIPS ON BECOMING VIRTUAL ASSISTANT
+          sliderTitle="CAREER TIPS ON BECOMING A VIRTUAL ASSISTANT
 "
           sliderDescription="Becoming a virtual assistant (VA) offers flexibility, a diverse workload, the opportunity to manage a variety of tasks, and the potential to carve out a rewarding career in a growing field. Whether you're starting out or enhancing your..."
         />

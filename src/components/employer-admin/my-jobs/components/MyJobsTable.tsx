@@ -73,13 +73,20 @@ const handleActionClick = (alert: any, actionType: string) => {
     navigate(`/all-applicant/`+alert.slug); // Navigate to JobDetailsPage
   }
 };
-  const handleDelete = () => {
-    if (selectedAlert) {
-      setJobAlerts(jobAlerts.filter((jobAlert) => jobAlert !== selectedAlert));
+const handleDelete = async () => {
+  if (selectedAlert) {
+    try {
+      await httpGetWithToken(`employer/jobs/delete/${selectedAlert.id}`);
+      setJobAlerts(jobAlerts.filter((jobAlert) => jobAlert.id !== selectedAlert.id));
       setSelectedAlert(null);
       setAction(null);
+      fetchJobs()
+    } catch (error) {
+      console.error("Failed to delete the job alert:", error);
     }
-  };
+  }
+};
+
 
    
     //.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -114,20 +121,20 @@ const handleActionClick = (alert: any, actionType: string) => {
     }
   };
 
-  useEffect(()=> {
-    async function fetchJobs() {
-      const rsp  = await httpGetWithToken('employer/jobs?status='+status)
-      if(rsp.status == "success") {
-        setJobAlerts(rsp.data)
-      }
+  async function fetchJobs() {
+    const rsp  = await httpGetWithToken('employer/jobs?status='+status)
+    if(rsp.status === "success") {
+      setJobAlerts(rsp.data)
     }
+  }
+  useEffect(()=> {
     fetchJobs()
   }, [status])
   return (
     <section className="mt-[8rem] px-[2.5rem]">
       <section className="flex flex-col md:flex-row gap-4 md:gap-12 justify-between items-center">
         <h2 className="text-green-700 text-2xl sm:text-3xl md:text-4xl font-poppins font-semibold">
-          Job Alerts
+          My Jobs
         </h2>
         <div className="w-full md:w-auto flex flex-col md:flex-row items-center gap-2 mb-4">
         <div className="flex justify-center">

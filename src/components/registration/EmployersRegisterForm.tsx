@@ -201,7 +201,7 @@ const EmployersRegisterForm: React.FC = () => {
           </div>
         </div>
         <div className="w-full lg:w-1/2 mt-8 lg:mt-0 lg:ml-8">
-          <img src={Images.CareerCardImageTen} alt="register" className="w-full rounded-[10px]" />
+          <img src={Images.EmployerRegisterImage} alt="register" className="w-full rounded-[10px]" />
         </div>
       </div>
     </section>

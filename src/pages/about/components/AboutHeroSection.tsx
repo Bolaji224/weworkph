@@ -10,7 +10,7 @@ const AboutHeroSection: React.FC = () => {
           <img
             src={Images.AboutHeroImage}
             alt=""
-            className="rounded-tr-[50px] rounded-bl-[50px]"
+            className="rounded-[5px]"
           />
         </section>
         <div className="lg:w-[50%]">

@@ -16,9 +16,9 @@ const SimpleProcessSection: React.FC = () => {
     <section className='py-[4rem] bg-[#f5f5f5] w-full'>
       <div className='text-center' ref={ref}>
         <motion.div
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
-          transition={{ duration: 1 }}
+          // initial={{ opacity: 0, y: -50 }}
+          // animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
+          // transition={{ duration: 1 }}
         >
           <div className='flex items-center justify-center'>
             <p className='text-[#2AA100] flex justify-center text-center items-center gap-2 py-[0.5rem] px-[0.5rem] w-[100px] rounded-[5px] bg-[#D1FFBD]'>
@@ -42,11 +42,11 @@ const SimpleProcessSection: React.FC = () => {
             { img: Images.CongratulationImage, title: 'Congratulations', desc: 'You have completed step by step; it is time for an employment contract.' }
           ].map((item, index) => (
             <motion.div
-              key={index}
+              // key={index}
               className='text-center'
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
-              transition={{ duration: 1.5, delay: index * 0.1 }}
+              // initial={{ opacity: 0, y: -50 }}
+              // animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
+              // transition={{ duration: 1.5, delay: index * 0.1 }}
             >
               <div className='mx-auto max-w-[150px]'>
                 <img src={item.img} alt={item.title.toLowerCase()} className='w-full h-auto object-cover' />
@@ -62,9 +62,9 @@ const SimpleProcessSection: React.FC = () => {
           <Link to="/register">
             <motion.button
               className="text-sm sm:text-base font-medium text-white bg-[#ee009d] flex items-center gap-4 justify-center hover:bg-green-600 py-2 px-4 sm:py-3 sm:px-6 rounded-lg"
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
-              transition={{ duration: 1 }}
+              // initial={{ opacity: 0, y: -50 }}
+              // animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
+              // transition={{ duration: 1 }}
             >
               Get Started <FaArrowRightLong />
             </motion.button>

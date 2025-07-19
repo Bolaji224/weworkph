@@ -16,8 +16,8 @@ const CardSliderCareer: React.FC<CardSlideCareerProps> = ({
     return (
        <section className='flex items-center justify-center '>
          <section className=" relative px-[2rem] py-[2rem]">
-            <div className="z-[-20]">
-                <img src={sliderImage} alt="slider" className="w-full h-auto rounded-md" />
+            <div className="z-[-20] max-w-[1200px] h-[500px]">
+                <img src={sliderImage} alt="slider" className=" w-[100%] h-[100%s] rounded-md" />
             </div>
            <section className='flex items-center justify-center'>
            <section className="flex flex-col absolute top-[20%] sm:flex-row sm:justify-between items-center gap-2 sm:gap-[20rem]">

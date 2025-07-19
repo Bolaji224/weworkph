@@ -90,7 +90,7 @@ const SideNav: React.FC = () => {
           {isSidebarOpen ? <UilTimes color='#2aa100' className='text-[#2aa100]' size={24} /> : <FaBarsStaggered size={25} color='#2aa100' className='font-bold' />}
         </button>
       </div>
-      <div className={`h-full w-60 bg-[#f5f5f5] text-white flex flex-col fixed lg:static transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      <div className={`h-full w-60 bg-[#f5f5f5] z-100 text-white flex flex-col fixed lg:static transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         <div className="p-6 flex items-center flex-col">
           <div onClick={toggleSidebar} className='lg:hidden block'>
             {isSidebarOpen ? <UilTimes size={35} color='#2aa100' className='absolute top-2 left-[12rem]' /> : <FaBars size={24} />}

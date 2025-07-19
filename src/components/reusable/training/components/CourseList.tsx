@@ -22,7 +22,7 @@ const courses = [
     description: 'in conclusion of our virtual assistant course',
     price: 59.99,
     instructor: 'Jane Smith',
-    videoUrl: Videos.CardTwoVi,
+    videoUrl: Videos.CardOneVi,
 
     content: [
       'TypeScript Basics',
@@ -38,7 +38,7 @@ const courses = [
     description: 'Here are the list of the essential needed to become a virtual assistant',
     price: 59.99,
     instructor: "John",
-    videoUrl: Videos.CardThreeVi,
+    videoUrl: Videos.CardOneVi,
     content: [
       'TypeScript Basics',
       'Interfaces & Types',
@@ -53,7 +53,7 @@ const courses = [
     description: 'Here are the .',
     price: 59.99,
     instructor: 'Jane Smith',
-    videoUrl: Videos.CardFourVi,
+    videoUrl: Videos.CardOneVi,
     content: [
       'TypeScript Basics',
       'Interfaces & Types',
@@ -68,7 +68,7 @@ const courses = [
     description: 'Master TypeScript for large-scale applications.',
     price: 59.99,
     instructor: 'Jane Smith',
-    videoUrl: Videos.CardFiveVi,
+    videoUrl: Videos.CardOneVi,
     content: [
       'TypeScript Basics',
       'Interfaces & Types',
@@ -83,7 +83,7 @@ const courses = [
     description: 'Master TypeScript for large-scale applications.',
     price: 59.99,
     instructor: 'Jane Smith',
-    videoUrl: Videos.CardSixVi,
+    videoUrl: Videos.CardOneVi,
     content: [
       'TypeScript Basics',
       'Interfaces & Types',
@@ -98,7 +98,7 @@ const courses = [
     description: 'Master TypeScript for large-scale applications.',
     price: 59.99,
     instructor: 'Jane Smith',
-    videoUrl: Videos.CardSevenVi,
+    videoUrl: Videos.CardOneVi,
     content: [
       'TypeScript Basics',
       'Interfaces & Types',
@@ -113,7 +113,7 @@ const courses = [
     description: 'Master TypeScript for large-scale applications.',
     price: 59.99,
     instructor: 'Jane Smith',
-    videoUrl: Videos.CardEightVi,
+    videoUrl: Videos.CardOneVi,
     content: [
       'TypeScript Basics',
       'Interfaces & Types',
@@ -128,7 +128,7 @@ const courses = [
     description: 'Master TypeScript for large-scale applications.',
     price: 59.99,
     instructor: 'Jane Smith',
-    videoUrl: Videos.CardNineVi,
+    videoUrl: Videos.CardOneVi,
     content: [
       'TypeScript Basics',
       'Interfaces & Types',

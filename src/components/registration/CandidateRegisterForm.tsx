@@ -216,7 +216,7 @@ const CandidateRegisterForm: React.FC = () => {
           </div>
         </div>
         <div className="w-full lg:w-1/2 mt-8 lg:mt-0 lg:ml-8">
-          <img src={Images.LoginImage} alt="register" className="w-full rounded-[10px]" />
+          <img src={Images.LoginImage} alt="register" className="w-full h-full rounded-[10px]" />
         </div>
       </div>
     </section>
