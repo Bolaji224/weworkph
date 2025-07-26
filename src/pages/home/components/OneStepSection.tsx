@@ -1,9 +1,33 @@
 import React from "react";
-import { FaArrowRightLong, FaUsersViewfinder } from "react-icons/fa6";
+import { FaArrowRightLong, FaCamera, FaUsersViewfinder } from "react-icons/fa6";
 import Images from "../../../components/constant/Images";
 import { Link } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import { motion } from "framer-motion";
+import { FaChalkboardTeacher, FaPencilAlt, FaUserFriends } from "react-icons/fa";
+
+const categories = [
+  {
+    icon: <FaChalkboardTeacher className="text-red-500 text-3xl"/>,
+    title: "Courses for Sale",
+    description: "Learn pratical skills from top experts online",
+  },
+  {
+    icon: <FaPencilAlt className="text-pink-500 text-3xl"/>,
+    title: "Custom Editing",
+    description: "Professional editing services for your in-house needs.",
+  },
+  {
+    icon: <FaUserFriends className="text-green-600 text-3xl"/>,
+    title: "Hire Freelancers",
+    description: "Find top-rated editors and creatives worldwide.",
+  },
+  {
+    icon: <FaCamera className="text-blue-500 text-3xl"/>,
+    title: "Studio Booking",
+    description: "Book our Lagos studio for your next big production."
+  },
+];
 
 const OneStepSection: React.FC = () => {
   const { ref, inView } = useInView({
@@ -13,7 +37,8 @@ const OneStepSection: React.FC = () => {
 
   return (
     <section className="py-[4rem]">
-      <section className="lg:flex items-center justify-center gap-[4rem] lg:px-[4rem] px-[2rem]" ref={ref}>
+      <section ref={ref}>
+      <div className="lg:flex items-center justify-center gap-[4rem] lg:px-[4rem] px-[2rem]">
         <motion.div
           className="lg:w-[50%]"
           initial={{ opacity: 0, y: -50 }}
@@ -48,6 +73,24 @@ const OneStepSection: React.FC = () => {
               </button>
             </Link>
           </div>
+        </motion.div>
+        </div>
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
+          transition={{ duration: 1}}>
+        <section className="py-12 px-4 md:px-16 bg-white">
+      <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-10">Explore Our Services</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {categories.map((item, index) => (
+          <div key={index} className="bg-neutral-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-all border border-gray-100">
+            <div className="mb-4">{item.icon}</div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.title}</h3>
+            <p className="text-sm text-gray-600 leading-relaxed">{item.description}</p>
+          </div>
+        ))}
+      </div>
+    </section>
         </motion.div>
         </section>
         </section>

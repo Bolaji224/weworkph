@@ -17,7 +17,7 @@ import FooterSection from '../../components/reusable/FooterSection'
 export const Home = () => {
   return (
     <>
-    <div className='lg:block hidden'>
+    <div className=''>
     <HeroSlider />
     </div>
     <div className=" w-full my-8 bg-[#f5f5f5] py-[4rem]">
