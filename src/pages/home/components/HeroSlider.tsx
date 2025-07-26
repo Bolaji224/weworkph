@@ -123,7 +123,7 @@ const HeroSlider: FC = () => {
           </div>
           
           {/* Image */}
-          <div className='w-full sm:w-[80%] lg:w-[50%] order-1 lg:order-2 flex justify-center lg:justify-start'>
+          <div className='w-full sm:w-[80%] lg:w-[50%] order-1 lg:order-2 flex justify-center lg:justify-end'>
             <img 
               src={Images.HeroImg} 
               alt={`slide-${currentSlide}`} 
