@@ -41,9 +41,9 @@ const Navbar: React.FC = () => {
     () => [
       { label: "Home", path: "/" },
       { label: "About Us", path: "about" },
-      { label: "For Company", path: "company" },
-      { label: "Find Jobs", path: "find-job" },
-      { label: "Career Tips", path: "career-tips" },
+      { label: "SkillStamp", path: "company" },
+      { label: "SmartStart", path: "find-job" },
+      { label: "SmartGuide", path: "career-tips" },
       {
         label: "Courses",
         path: "#", // No direct path for the main dropdown label
@@ -74,7 +74,7 @@ const Navbar: React.FC = () => {
     <div className={isScrolled ? "navbar-wrapper shadow-lg" : "navbar-wrapper"}>
       <div className="navbar-container">
         <Link to="/" className="logo">
-          <img src={Images.Logo} alt="logo" className="w-[150px] h-[40px]" />
+          <img src={Images.Logo} alt="logo" className="w-[150px] h-[120px]" />
         </Link>
         <div className="menu-toggle" onClick={toggleMenu}>
           {isMenuOpen ? (
@@ -157,11 +157,7 @@ const Navbar: React.FC = () => {
                 </button>
               </Link>
             )}
-            <Link to="hire-talent" onClick={toggleMenu}>
-              <button className="font-sans text-[14px] font-medium text-[#FFFFFF] bg-[#EE009D] hover:bg-[#2AA100] py-[6px] px-[10px] rounded-[5px] justify-center ease-in duration-300">
-                Hire Talent
-              </button>
-            </Link>
+          
           </div>
         </nav>
       </div>
