@@ -1,7 +1,4 @@
-import React, { FC } from 'react';
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import React, { FC, useState, useEffect } from 'react';
 import Images from '../../../components/constant/Images';
 import { Link } from 'react-router-dom';
 
@@ -43,68 +40,99 @@ const slidesData: SlideData[] = [
     content: "Access a wealth of career resources, including resume tips, interview guidance, and professional development advice. Stay informed and empowered as you navigate through your career path.",
     buttonText: "Explore Resources"
   },
-  // Add more slides as needed
 ];
 
 const HeroSlider: FC = () => {
-  const settings = {
-    dots: false,
-    infinite: true,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 8000, // Adjust the autoplay speed
-    speed: 2000, // Adjust the transition speed
-    fade: true, // Use fade effect
-    cssEase: 'linear', // Use linear easing for fade effect
-    initialSlide: 0,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1
-        }
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1
-        }
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1
-        }
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [displayedContent, setDisplayedContent] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+  const [showButton, setShowButton] = useState(false);
+
+  useEffect(() => {
+    const currentContent = slidesData[currentSlide].content;
+    let currentIndex = 0;
+    
+    setDisplayedContent('');
+    setIsTyping(true);
+    setShowButton(false);
+
+    const typingInterval = setInterval(() => {
+      if (currentIndex < currentContent.length) {
+        setDisplayedContent(currentContent.slice(0, currentIndex + 1));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+        setIsTyping(false);
+        setShowButton(true);
+        
+        // Wait 3 seconds after typing completes, then move to next slide
+        setTimeout(() => {
+          setCurrentSlide((prev) => (prev + 1) % slidesData.length);
+        }, 3000);
       }
-    ]
-  };
+    }, 50); // Typing speed: 50ms per character
+
+    return () => clearInterval(typingInterval);
+  }, [currentSlide]);
 
   return (
-    <div className='bg-[#ffffff] w-full mx-auto py-[1rem] mt-[4rem]'>
-      <Slider {...settings}>
-        {slidesData.map((slide, index) => (
-          <section key={index} className='flex items-center justify-center mt-[2rem] px-[4.5rem]'>
-            <div className='relative lg:max-h-[900px] flex items-center justify-center gap-[8rem] ' >
-              <div className="text-white slide-item lg:relative absolute w-[50%]">
-                <h1 className="font-sans lg:text-[48px] md:text-[38px] text-[20px] text-[#2AA100] font-bold">{slide.title}</h1>
-                <p className='text-md text-[#646A73] tracking-[0.5px] font-sans font-normal'>{slide.content}</p>
-               <div className='py-[1rem]'>
-               <Link to="/register">
-                  <button className="font-sans text-center text-[16px] font-medium text-[#FFFFFF] bg-[#EE009D] hover:bg-[#2AA100] py-[6px] px-[10px] rounded-[5px]">{slide.buttonText}</button>
-                </Link>
-               </div>
-              </div>
-              <div className='w-[50%]'>
-              <img src={slide.image} alt={`slide-${index}`} className='w-[100%] h-[100%] rounded-[5px]' />
-              </div>
+    <div className='bg-white w-full py-4 mt-16 overflow-hidden'>
+      <section className='flex items-center justify-center mt-[2rem] px-4 lg:px-8'>
+        <div className='relative lg:max-h-[900px] flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-24 lg:gap-20 xl:gap-16 w-full mx-auto lg:mx-24'>
+          
+          {/* Text Content */}
+          <div className="text-white slide-item lg:relative w-full lg:w-[50%] order-2 lg:order-1">
+            {/* Static Title */}
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-[#1E2A38] mb-4 lg:mb-6 leading-tight text-center lg:text-left">
+              {slidesData[currentSlide].title}
+            </h1>
+            
+            {/* Animated Content */}
+            <div className="min-h-[120px] sm:min-h-[100px] lg:min-h-[140px]">
+              <p className='text-sm sm:text-base lg:text-lg text-gray-600 mb-6 lg:mb-8 leading-relaxed text-center lg:text-left max-w-lg mx-auto lg:mx-0'>
+                {displayedContent}
+                {isTyping && (
+                  <span className="inline-block w-[3px] h-[1.2em] bg-gray-600 ml-1 animate-pulse"></span>
+                )}
+              </p>
             </div>
-          </section>
-        ))}
-      </Slider>
+            
+            {/* Button with fade-in animation */}
+            <div className={`py-[1rem] text-center lg:text-left transition-opacity duration-500 ${showButton ? 'opacity-100' : 'opacity-0'}`}>
+              <Link to="/register">
+                <button className="font-sans text-center text-[14px] sm:text-[16px] font-medium text-[#FFFFFF] bg-[#EE009D] hover:bg-[#2AA100] transition-colors duration-300 py-[6px] px-[10px] sm:py-[8px] sm:px-[12px] rounded-[5px] transform hover:scale-105">
+                  {slidesData[currentSlide].buttonText}
+                </button>
+              </Link>
+            </div>
+
+            {/* Slide indicators */}
+            <div className="flex justify-center lg:justify-start space-x-2 mt-4">
+              {slidesData.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentSlide 
+                      ? 'bg-[#EE009D] scale-110' 
+                      : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+          
+          {/* Image */}
+          <div className='w-full sm:w-[80%] lg:w-[50%] order-1 lg:order-2 flex justify-center lg:justify-start'>
+            <img 
+              src={Images.HeroImg} 
+              alt={`slide-${currentSlide}`} 
+              className='w-[70%] h-[200px] sm:h-[300px] lg:h-[100%] rounded-[5px] object-cover transition-opacity duration-500' 
+            />
+          </div>
+          
+        </div>
+      </section>
     </div>
   );
 };
