@@ -41,9 +41,9 @@ const Navbar: React.FC = () => {
     () => [
       { label: "Home", path: "/" },
       { label: "About Us", path: "about" },
-      { label: "For Company", path: "company" },
-      { label: "Find Jobs", path: "find-job" },
-      { label: "Career Tips", path: "career-tips" },
+      { label: "SkillStamp", path: "company" },
+      { label: "SmartGuide", path: "find-job" },
+      { label: "SmrtStart", path: "career-tips" },
       {
         label: "Courses",
         path: "#", // No direct path for the main dropdown label
@@ -156,12 +156,7 @@ const Navbar: React.FC = () => {
                   Sign Up
                 </button>
               </Link>
-            )}
-            <Link to="hire-talent" onClick={toggleMenu}>
-              <button className="font-sans text-[14px] font-medium text-[#FFFFFF] bg-[#EE009D] hover:bg-[#2AA100] py-[6px] px-[10px] rounded-[5px] justify-center ease-in duration-300">
-                Hire Talent
-              </button>
-            </Link>
+            )
           </div>
         </nav>
       </div>
