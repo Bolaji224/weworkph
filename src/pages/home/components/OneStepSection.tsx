@@ -8,12 +8,12 @@ import { FaChalkboardTeacher, FaPencilAlt, FaUserFriends } from "react-icons/fa"
 
 const categories = [
   {
-    icon: <FaChalkboardTeacher className="text-red-500 text-3xl"/>,
+    icon: <FaChalkboardTeacher className="text-pink-500 text-3xl"/>,
     title: "Courses for Sale",
     description: "Learn pratical skills from top experts online",
   },
   {
-    icon: <FaPencilAlt className="text-pink-500 text-3xl"/>,
+    icon: <FaPencilAlt className="text-red-500 text-3xl"/>,
     title: "Custom Editing",
     description: "Professional editing services for your in-house needs.",
   },
