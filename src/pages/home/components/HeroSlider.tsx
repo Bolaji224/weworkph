@@ -12,6 +12,12 @@ interface SlideData {
 const slidesData: SlideData[] = [
   {
     image: Images.SliderOneImage,
+    title: "Unlock Opportunities in Freelance Work",
+    content: "Hire Virtual Assistants and Editors by the Hour",
+    buttonText: "Get Started"
+  },
+  {
+    image: Images.SliderOneImage,
     title: "Explore Exciting Opportunities!",
     content: "Welcome to our job employment platform! Discover a world of career possibilities tailored to your skills and ambitions. Let's find your dream job together.",
     buttonText: "Get Started"
@@ -76,7 +82,7 @@ const HeroSlider: FC = () => {
   }, [currentSlide]);
 
   return (
-    <div className='bg-white w-full py-4 mt-16 overflow-hidden'>
+    <div className='bg-white w-full py-4 mt-32 lg:mt-24 overflow-hidden'>
       <section className='flex items-center justify-center mt-[2rem] px-4 lg:px-8'>
         <div className='relative lg:max-h-[900px] flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-24 lg:gap-20 xl:gap-16 w-full mx-auto lg:mx-24'>
           
@@ -127,7 +133,7 @@ const HeroSlider: FC = () => {
             <img 
               src={Images.HeroImg} 
               alt={`slide-${currentSlide}`} 
-              className='w-[70%] h-[200px] sm:h-[300px] lg:h-[100%] rounded-[5px] object-cover transition-opacity duration-500' 
+              className='w-[70%] h-[100%] sm:h-[300px] lg:h-[100%] rounded-[5px] object-cover transition-opacity duration-500' 
             />
           </div>
           
