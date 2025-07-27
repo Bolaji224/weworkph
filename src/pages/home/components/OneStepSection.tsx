@@ -58,7 +58,7 @@ const OneStepSection: React.FC = () => {
           </p>
           <h1 className="lg:text-[38px] md:text-[28px] text-[20px] mt-[1rem] font-sans font-semibold tracking-[1px]">
             One easy step to <br />
-            change <span className="text-[#ee009d]">your future.</span>
+            change <span className="text-[#3133ca]">your future.</span>
           </h1>
           <p className="lg:text-[14px] md:text-[14px] lg:w-[85%] text-[10px] text-[#646A73] font-sans tracking-[0.5px] font-normal mt-[1rem]">
             Take the first step towards a rewarding career. Whether you're a
