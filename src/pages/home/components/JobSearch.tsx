@@ -107,7 +107,7 @@ const FindJobSearchSection: React.FC = () => {
         <div className="flex gap-2">
           <button
             onClick={handleSearch}
-            className="bg-[#EE009D] text-white lg:px-[2rem] md:px-[2rem] px-[2rem] lg:py-[0.8rem] md:py-[0.8rem] py-[0.5rem] lg:text-[18px] md:text-[18px] text-[12px] rounded-md hover:bg-[#2AA100] hover:tracking-[1px] focus:outline-none ease-in duration-300"
+            className="bg-[#1E2A38] text-white lg:px-[2rem] md:px-[2rem] px-[2rem] lg:py-[0.8rem] md:py-[0.8rem] py-[0.5rem] lg:text-[18px] md:text-[18px] text-[12px] rounded-md hover:bg-[#49B333] hover:tracking-[1px] focus:outline-none ease-in duration-300"
           >
             Search
           </button>

@@ -17,11 +17,11 @@ import FooterSection from '../../components/reusable/FooterSection'
 export const Home = () => {
   return (
     <>
-    <div className='lg:block hidden'>
+    <div className=''>
     <HeroSlider />
     </div>
     <div className=" w-full my-8 bg-[#f5f5f5] py-[4rem]">
-      <h1 className="lg:text-[38px] md:text-[28px] text-center font-semibold font-sans mb-4 tracking-[1px]">FIND A JOB AND <span className='text-[#EE009D]'>BECOME A PROFESSIONAL</span> <br />
+      <h1 className="lg:text-[38px] md:text-[28px] text-center font-semibold font-sans mb-4 tracking-[1px]">FIND A JOB AND <span className='text-[#1E2A38]'>BECOME A PROFESSIONAL</span> <br />
       IN YOUR <span></span>DREAM FIELD. </h1>
       <p className='text-center text-md text-[#646A73] tracking-[0.8px] font-sans font-normal'>We offer thousands of jobs vacancies right now</p>
       <JobSearch />

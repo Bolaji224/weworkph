@@ -1,6 +1,7 @@
 
 import Logo from "../../images/logo.png"
 import SliderOneImage from "../../images/wwph_img_two.jpeg"
+import HeroImg from "../../images/heroimg.png"
 import boy1 from "../../images/boy_one.png"
 import SliderTwoImage from "../../images/wwph_img_two.jpeg"
 import SliderThreeImage from "../../images/wwph_img_one.jpeg"
@@ -116,6 +117,7 @@ interface Assets {
 const assets: Assets = {
   Logo,
   boy1,
+  HeroImg,
   SliderOneImage,
   SliderTwoImage,
   SliderThreeImage,

@@ -8,14 +8,15 @@
     z-index: 1000;
   }
   
-  .navbar-container {
-    width: 100%;
-    margin: 0;
-    padding: 0.5rem 4rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+.navbar-container {
+  width: 100%;
+  margin: 0;
+  padding: 0.5rem 1rem; /* or even 0 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 
   /* Dropdown styles */
 .dropdown {
@@ -97,8 +98,8 @@
   }
 
   .menu-link:hover {
-    border-bottom: 3px solid #EE009D; /* Border line when hovering over navigation links */
-    color: #2AA100;
+    border-bottom: 3px solid #1E2A38; /* Border line when hovering over navigation links */
+    ;
   }
   
   
