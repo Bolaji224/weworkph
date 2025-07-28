@@ -42,7 +42,7 @@ const FooterSection: React.FC = () => {
         <Link to="/" className="logo">
           <img src={Images.Logo} alt="logo" className="w-32 md:w-40 h-auto" />
         </Link>
-        <p className='text-lg lg:text-xl pb-3 md:text-base lg:w-[50%] px-4 text-green-500'>
+        <p className='text-lg lg:text-xl font-semibold pb-3 md:text-base lg:w-[50%] px-4 text-[#1E2A38]'>
           Explore thousands of job opportunities with all the information you need, and manage all your job applications from start to finish.
         </p>
         <div className='w-full md:w-1/8 px-4 lg:w-auto mb-8'>
