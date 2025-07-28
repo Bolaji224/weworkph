@@ -20,6 +20,7 @@ import FacebookImage from "../../images/facebook.png"
 import TwitterImage from "../../images/twitter.png"
 import AppleImage from "../../images/apple.png"
 import IBMImage from "../../images/ibm.png"
+import FooterBg from "../../images/footerbg.png"
 import SportifyImage from "../../images/spotify.png"
 import MicrosoftImage from "../../images/microsoft.png"
 import NetflixImage from "../../images/netflix.png"
@@ -145,6 +146,7 @@ const assets: Assets = {
   UberImage,
   AddosserImage,
   UBAImage,
+  FooterBg,
   FirstBankImage,
   AccessbankImage,
   DiscoderImage,
