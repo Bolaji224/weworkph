@@ -82,7 +82,7 @@ const HeroSlider: FC = () => {
   }, [currentSlide]);
 
   return (
-    <div className='bg-white w-full py-4 mt-32 lg:mt-24 overflow-hidden'>
+    <div className='bg-[#FFF5F8] w-full py-4 mt-32 lg:mt-24 overflow-hidden'>
       <section className='flex items-center justify-center mt-[2rem] px-4 lg:px-8'>
         <div className='relative lg:max-h-[900px] flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-24 lg:gap-20 xl:gap-16 w-full mx-auto lg:mx-24'>
           
