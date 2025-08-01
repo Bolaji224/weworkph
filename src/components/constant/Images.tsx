@@ -72,6 +72,11 @@ import CareerCardImageTwelve from "../../images/career_twelve.png"
 import CareerCardImageThirteen from "../../images/career_thirteen.png"
 import CareerCardImageFourteen from "../../images/career_fourteen.png"
 import CareerCardImageFifteen from "../../images/Design_three.png"
+import OfficeSetting from "../../images/officeSetting.jpg"
+import WorkSpace from "../../images/workspace.jpg"
+import EditorMd from "../../images/editormd.jpg"
+import SuccessMetric from "../../images/successMetric.jpg"
+import SocialMedia from "../../images/socialmdia.jpg"
 import AboutHeroImage from "../../images/wwph_img_three.jpeg"
 import LoginImage from "../../images/wwph_img_four.jpeg"
 import EmployerRegisterImage from "../../images/wwph_img_four.jpeg"
@@ -190,6 +195,11 @@ const assets: Assets = {
   CareerCardImageThirteen,
   CareerCardImageFourteen,
   CareerCardImageFifteen,
+  WorkSpace,
+  OfficeSetting,
+  EditorMd,
+  SuccessMetric,
+  SocialMedia,
   AboutHeroImage,
   LoginImage,
   EmployerRegisterImage,
