@@ -4,10 +4,14 @@ import { BiChevronRight } from 'react-icons/bi'
 import FooterSection from '../../components/reusable/FooterSection'
 import CareerTipsHeroSection from './components/CareerTiptsHeroSection'
 import PaginationSection from './components/pagination/PaginationSection'
+import SmartGuideHeroSection from './components/SmartGuideHeroSection'
 
 const CareerTips: React.FC = () => {
   return (
    <>
+   <div className='mt-[4rem]'>
+   <SmartGuideHeroSection/>
+   </div>
    <div className='mt-[4rem] bg-[#f5f5f5] py-[4rem]'>
     <div className='flex gap-[1.5rem] xl:ml-[8rem] lg:ml-[8rem] md:ml-[2rem] ml-[2rem]'>
       <h2 className='flex gap-[2px] font-sans lg:text-[18px] md:text-[16px] sm:text-[12px] justify-center items-center text-[#2aa100]'>Home <BiChevronRight size={25} /></h2>
@@ -19,7 +23,7 @@ const CareerTips: React.FC = () => {
     <CareerTipsSearchSection />
     </div>
    </div>
-   <CareerTipsHeroSection />
+   {/* <CareerTipsHeroSection /> */}
    <PaginationSection />
    <FooterSection />
    </>
