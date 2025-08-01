@@ -13,7 +13,7 @@ const SimpleProcessSection: React.FC = () => {
   });
 
   return (
-    <section className='py-[4rem] bg-[#f5f5f5] w-full'>
+    <section className='py-[4rem] bg-[#fafcff] w-full'>
       <div className='text-center' ref={ref}>
         <motion.div
           // initial={{ opacity: 0, y: -50 }}
@@ -21,14 +21,14 @@ const SimpleProcessSection: React.FC = () => {
           // transition={{ duration: 1 }}
         >
           <div className='flex items-center justify-center'>
-            <p className='text-[#2AA100] flex justify-center text-center items-center gap-2 py-[0.5rem] px-[0.5rem] w-[100px] rounded-[5px] bg-[#D1FFBD]'>
+            <p className='text-[#2AA100] flex justify-center text-center items-center gap-2 py-[0.5rem] px-[0.5rem] w-[100px] rounded-[5px] bg-[#dbd7ff]'>
               <IoStatsChartSharp />Started
             </p>
           </div>
           <h1 className='lg:text-[38px] md:text-[28px] text-[20px] mt-[0.5rem] font-sans font-semibold tracking-[1px]'>
             The fast and <span className='text-[#EE009D]'>simple process.</span>
           </h1>
-          <p className='lg:text-[14px] md:text-[16px] text-[10px] text-[#646A73] font-sans font-normal mt-[0.5rem]'>
+          <p className='lg:text-[14px] md:text-[16px] text-[10px] text-[#1E2A38] font-sans font-normal mt-[0.5rem]'>
             Weworkperhour carries the theme of technology in <br /> helping you find a Job with an easy and fast process.
           </p>
         </motion.div>
