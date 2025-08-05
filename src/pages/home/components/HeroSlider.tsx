@@ -50,36 +50,33 @@ const slidesData: SlideData[] = [
 
 const HeroSlider: FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [displayedContent, setDisplayedContent] = useState('');
-  const [isTyping, setIsTyping] = useState(true);
-  const [showButton, setShowButton] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
-    const currentContent = slidesData[currentSlide].content;
-    let currentIndex = 0;
+    // Trigger slide-in animation when slide changes
+    setIsAnimating(true);
     
-    setDisplayedContent('');
-    setIsTyping(true);
-    setShowButton(false);
+    // Auto advance to next slide after 5 seconds
+    const slideInterval = setTimeout(() => {
+      setCurrentSlide((prev) => (prev + 1) % slidesData.length);
+    }, 5000);
 
-    const typingInterval = setInterval(() => {
-      if (currentIndex < currentContent.length) {
-        setDisplayedContent(currentContent.slice(0, currentIndex + 1));
-        currentIndex++;
-      } else {
-        clearInterval(typingInterval);
-        setIsTyping(false);
-        setShowButton(true);
-        
-        // Wait 3 seconds after typing completes, then move to next slide
-        setTimeout(() => {
-          setCurrentSlide((prev) => (prev + 1) % slidesData.length);
-        }, 3000);
-      }
-    }, 50); // Typing speed: 50ms per character
+    // Reset animation state after animation completes
+    const animationTimeout = setTimeout(() => {
+      setIsAnimating(false);
+    }, 500);
 
-    return () => clearInterval(typingInterval);
+    return () => {
+      clearTimeout(slideInterval);
+      clearTimeout(animationTimeout);
+    };
   }, [currentSlide]);
+
+  const goToSlide = (index: number) => {
+    if (index !== currentSlide) {
+      setCurrentSlide(index);
+    }
+  };
 
   return (
     <div className='bg-[#FFF5F8] w-full py-4 mt-32 lg:mt-24 overflow-hidden'>
@@ -88,23 +85,33 @@ const HeroSlider: FC = () => {
           
           {/* Text Content */}
           <div className="text-white slide-item lg:relative w-full lg:w-[50%] order-2 lg:order-1">
-            {/* Static Title */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-[#1E2A38] mb-4 lg:mb-6 leading-tight text-center lg:text-left">
+            
+            {/* Animated Title */}
+            <h1 className={`text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-[#1E2A38] mb-4 lg:mb-6 leading-tight text-center lg:text-left transition-all duration-500 transform ${
+              isAnimating 
+                ? 'translate-x-8 opacity-0' 
+                : 'translate-x-0 opacity-100'
+            }`}>
               {slidesData[currentSlide].title}
             </h1>
             
             {/* Animated Content */}
             <div className="min-h-[120px] sm:min-h-[100px] lg:min-h-[140px]">
-              <p className='text-sm sm:text-base lg:text-lg text-gray-600 mb-6 lg:mb-8 leading-relaxed text-center lg:text-left max-w-lg mx-auto lg:mx-0'>
-                {displayedContent}
-                {isTyping && (
-                  <span className="inline-block w-[3px] h-[1.2em] bg-gray-600 ml-1 animate-pulse"></span>
-                )}
+              <p className={`text-sm sm:text-base lg:text-lg text-gray-600 mb-6 lg:mb-8 leading-relaxed text-center lg:text-left max-w-lg mx-auto lg:mx-0 transition-all duration-500 delay-100 transform ${
+                isAnimating 
+                  ? 'translate-x-8 opacity-0' 
+                  : 'translate-x-0 opacity-100'
+              }`}>
+                {slidesData[currentSlide].content}
               </p>
             </div>
             
-            {/* Button with fade-in animation */}
-            <div className={`py-[1rem] text-center lg:text-left transition-opacity duration-500 ${showButton ? 'opacity-100' : 'opacity-0'}`}>
+            {/* Animated Button */}
+            <div className={`py-[1rem] text-center lg:text-left transition-all duration-500 delay-200 transform ${
+              isAnimating 
+                ? 'translate-x-8 opacity-0' 
+                : 'translate-x-0 opacity-100'
+            }`}>
               <Link to="/register">
                 <button className="font-sans text-center text-[14px] sm:text-[16px] font-medium text-[#FFFFFF] bg-[#EE009D] hover:bg-[#2AA100] transition-colors duration-300 py-[6px] px-[10px] sm:py-[8px] sm:px-[12px] rounded-[5px] transform hover:scale-105">
                   {slidesData[currentSlide].buttonText}
@@ -117,7 +124,7 @@ const HeroSlider: FC = () => {
               {slidesData.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => setCurrentSlide(index)}
+                  onClick={() => goToSlide(index)}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     index === currentSlide 
                       ? 'bg-[#EE009D] scale-110' 
@@ -128,12 +135,16 @@ const HeroSlider: FC = () => {
             </div>
           </div>
           
-          {/* Image */}
-          <div className='w-full sm:w-[80%] lg:w-[50%] order-1 lg:order-2 flex justify-center lg:justify-end'>
+          {/* Animated Image */}
+          <div className={`w-full sm:w-[80%] lg:w-[50%] order-1 lg:order-2 flex justify-center lg:justify-end transition-all duration-500 transform ${
+            isAnimating 
+              ? 'translate-x-8 opacity-0' 
+              : 'translate-x-0 opacity-100'
+          }`}>
             <img 
               src={Images.HeroImg} 
               alt={`slide-${currentSlide}`} 
-              className='w-[70%] h-[100%] sm:h-[300px] lg:h-[100%] rounded-[5px] object-cover transition-opacity duration-500' 
+              className='w-[70%] h-[100%] sm:h-[300px] lg:h-[100%] rounded-[5px] object-cover' 
             />
           </div>
           

@@ -106,7 +106,8 @@ import RedLenceTestimonialLogo from "../../images/rec-Lence-logo.jpeg"
 import TheWomenTestimonialLogo from "../../images/the-women-img.jpeg"
 import CollaborateAfricaTestimonialLogo from "../../images/collaborate-img.jpeg"
 import LeveragePrintTestimonialLogo from "../../images/leverage_print-img.jpeg"
-
+import Checklist from "../../images/checklist.png"
+import CvBuilders from "../../images/cvBuilders.png"
 
 
 
@@ -204,6 +205,8 @@ const assets: Assets = {
   LoginImage,
   EmployerRegisterImage,
 JobSearchImage,
+Checklist,
+CvBuilders,
 ProfileImage,
 ProfileLogoOne,
 ProfileLogoTwo,
