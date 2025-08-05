@@ -1,16 +1,40 @@
 import React from "react";
-import Images from '../../../components/constant/Images';
+import Images from "../../../components/constant/Images";
 
-const SmartGuideHeroSection: React.FC = () => {
+const SmartStartSection: React.FC = () => {
   const heroImages = [
-    { src: Images.WorkSpace, alt: "Freelance workspace", className: "w-48 h-36" },
-    { src: Images.CareerCardImageFour, alt: "virtual Assistance ", className: "w-44 h-32" },
-    { src: Images.EditorMd, alt: "Editor workspace", className: "w-40 h-48" },
-    { src: Images.OfficeSetting, alt: "Client meeting", className: "w-52 h-36" },
-    { src: Images.CareerCardImageSix, alt: "Portfolio showcase", className: "w-48 h-40" },
-    { src: Images.SocialMedia, alt: "Tools and apps", className: "w-44 h-32" },
-    { src: Images.SuccessMetric, alt: "Success metrics", className: "w-48 h-44" },
-    { src: Images.EmployerRegisterImage, alt: "Freelance profile", className: "w-40 h-36" },
+    {
+      src: Images.CvBuilders,
+      alt: "Checklist",
+      className: "w-48 h-36",
+    },
+    {
+      src: Images.CareerCardImageFour,
+      alt: "virtual Assistance ",
+      className: "w-44 h-32",
+    },
+    {
+      src: Images.OfficeSetting,
+      alt: "Client meeting",
+      className: "w-52 h-36",
+    },
+    { src:Images.Checklist,  alt: "Cv Builders", className: "w-48 h-36" },
+    // {
+    //   src: Images.CareerCardImageSix,
+    //   alt: "Portfolio showcase",
+    //   className: "w-48 h-40",
+    // },
+    // { src: Images.SocialMedia, alt: "Tools and apps", className: "w-44 h-32" },
+    // {
+    //   src: Images.SuccessMetric,
+    //   alt: "Success metrics",
+    //   className: "w-48 h-44",
+    // },
+    // {
+    //   src: Images.EmployerRegisterImage,
+    //   alt: "Freelance profile",
+    //   className: "w-40 h-36",
+    // },
   ];
 
   return (
@@ -20,40 +44,34 @@ const SmartGuideHeroSection: React.FC = () => {
           {/* Left Content */}
           <div className="flex-1 max-w-2xl">
             {/* Navigation Breadcrumb */}
-            <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
-              <span>Visual Assistant </span>
-              <span>•</span>
-              <span>Editor </span>
-              <span>•</span>
-              <span>Just Starting Out </span>
-            </div>
 
             {/* Main Heading */}
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                SmartGuide™
-              </span>
-              <span className="text-gray-800 block mt-2">
-                – Your Roadmap to Freelance Success
+                SmartStart™
               </span>
             </h1>
 
             {/*Subtitle*/}
-            <p className="text-xl text-gray-600 mb-8 font-medium">
+            {/* <p className="text-xl text-gray-600 mb-8 font-medium">
               Start Smarter, grow faster.
-            </p>
+            </p> */}
 
             {/* Description */}
+            <span className="text-gray-800 text-2xl block mt-2 font-bold leading-tight">
+                What is SmartStart™?
+              </span>
             <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-              SmartGuide™ is your personalized blueprint to becoming a top-rated
-              freelancer on WeWorkPerHour — with step-by-step guidance based on
-              your specific category.
+            SmartStart™ is a launch toolkit that helps new freelancers get
+              started faster and look professional from day one — even with no
+              prior experience. It provides templates, guidance, and setup tools
+              to help them start earning quickly on WeWorkPerHour.
             </p>
 
             {/* What's Inside Section*/}
             <div className="mb-10">
               <h2 className="text-2xl font-bold to-gray-800 mb-6">
-                What's Inside
+                What's Inside SmartStart™
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-start gap-3">
@@ -71,7 +89,7 @@ const SmartGuideHeroSection: React.FC = () => {
                     </svg>
                   </div>
                   <span className="text-gray-700">
-                    Skills checklist to know what you need
+                    Editable Gig Templates (e.g., 'I will be your VA...')
                   </span>
                 </div>
                 <div className="flex items-start gap-3">
@@ -89,7 +107,7 @@ const SmartGuideHeroSection: React.FC = () => {
                     </svg>
                   </div>
                   <span className="text-gray-700">
-                    Pricing & gig setup tips tailored to your niche
+                    Proposal Examples & Cover Letters
                   </span>
                 </div>
                 <div className="flex items-start gap-3">
@@ -107,7 +125,7 @@ const SmartGuideHeroSection: React.FC = () => {
                     </svg>
                   </div>
                   <span className="text-gray-700">
-                    Client communication templates
+                    Smart CV Builder (with downloadable formats)
                   </span>
                 </div>
                 <div className="flex items-start gap-3">
@@ -125,7 +143,7 @@ const SmartGuideHeroSection: React.FC = () => {
                     </svg>
                   </div>
                   <span className="text-gray-700">
-                    Tools cheat sheets (Zoom, Grammarly, Trello, etc.)
+                    Onboarding Steps Checklist
                   </span>
                 </div>
                 <div className="flex items-start gap-3 md:col-span-2">
@@ -143,13 +161,13 @@ const SmartGuideHeroSection: React.FC = () => {
                     </svg>
                   </div>
                   <span className="text-gray-700">
-                    Portfolio and proposal examples
+                    Optional Video Tutorials
                   </span>
                 </div>
               </div>
             </div>
             {/* SkillStamped Section */}
-            <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl p-6 mb-10">
+            {/* <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl p-6 mb-10">
               <h3 className="text-xl font-bold text-gray-800 mb-3">
                 Want to get SkillStamped™?
               </h3>
@@ -158,17 +176,17 @@ const SmartGuideHeroSection: React.FC = () => {
                 badge. Complete your guide, submit your test project, and unlock
                 new opportunities on the platform!
               </p>
-            </div>
+            </div> */}
 
             {/* CTA Section */}
-            <div className="text-center lg:text-left">
-              <button className="bg-gradient-to-r from-pink-500 to-purple-700 hover:from-pink-500 hover:to-purple-800 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl mb-4">
-                Start Your SmartGuide Now
-              </button>
-              <p className="text-gray-600 font-medium">
+            {/* <div className="text-center lg:text-left"> */}
+              {/* <button className="bg-gradient-to-r from-pink-500 to-purple-700 hover:from-pink-500 hover:to-purple-800 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl mb-4">
+                Start Your SmartStart Now
+              </button> */}
+              {/* <p className="text-gray-600 font-medium">
                 Follow the roadmap. Build your reputation. Get hired faster.
-              </p>
-            </div>
+              </p> */}
+            {/* </div> */}
           </div>
 
           {/* Right Images Grid */}
@@ -226,4 +244,4 @@ const SmartGuideHeroSection: React.FC = () => {
   );
 };
 
-export default SmartGuideHeroSection;
+export default SmartStartSection;
