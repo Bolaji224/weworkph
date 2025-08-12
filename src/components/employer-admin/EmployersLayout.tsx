@@ -28,7 +28,7 @@ const EmployersLayout: React.FC<EmployersLayoutProps>  = ({element}) => {
     }
   }, [])
   return (
-    <div className="min-h-screen w-full flex flex-col bg-[#F5E2EF]">
+    <div className="min-h-screen w-full flex flex-col bg-[#FFF5F8]">
       <Header />
       <div className="flex flex-1">
         <SideNav />
