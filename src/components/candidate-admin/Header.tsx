@@ -18,10 +18,10 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-[#F5E2EF] text-white px-[4rem] absolute py-4 flex sm:left-0 left-40 top-0 justify-between items-center lg:absolute w-full">
+    <header className="bg-[#FFF5F8] text-white px-[4rem] absolute py-4 flex sm:left-0 left-40 top-0 justify-between items-center lg:absolute w-full">
       {/* Search Input */}
       <div className="relative sm:block hidden md:left-[10rem] xl:left-[50rem] lg:left-[24rem]">
-        <UilSearch className="absolute font-light cursor-pointer top-2 left-2 text-[#2AA100]" />
+        <UilSearch className="absolute font-light cursor-pointer top-2 left-2 text-[#4ADE80]" />
         <input
           type="text"
           placeholder="Search here..."
@@ -36,7 +36,7 @@ const Header: React.FC = () => {
         {/* Notification Bell */}
         <div className="relative">
           <FaBell
-            className="cursor-pointer text-[#2AA100]"
+            className="cursor-pointer text-[#4ADE80]"
             size={20}
             onClick={toggleNotificationDropdown}
           />
@@ -59,7 +59,7 @@ const Header: React.FC = () => {
         {/* Post Job Button */}
         <MotionLink
           to="/post-job"
-          className="bg-[#ee009d] hover:bg-[#2aa100] text-white font-bold py-2 px-4 rounded-[50px] flex items-center gap-2"
+          className="bg-[#ee009d] hover:bg-[#2AA100] text-white font-bold py-2 px-4 rounded-[50px] flex items-center gap-2"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >

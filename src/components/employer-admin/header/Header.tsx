@@ -19,7 +19,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-[#F5E2EF] text-white px-[4rem] fixed py-4 flex sm:left-0 left-40 top-0 justify-between items-center lg:absolute w-full">
+    <header className="bg-[#FFF5F8] text-white px-[4rem] fixed py-4 flex sm:left-0 left-40 top-0 justify-between items-center lg:absolute w-full">
       <div className="relative sm:block hidden md:left-[10rem] xl:left-[50rem] lg:left-[24rem]">
         <UilSearch className="absolute font-light cursor-pointer top-2 left-2 text-[#2AA100]" />
         <input
