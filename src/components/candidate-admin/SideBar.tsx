@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaCircle, FaBars, FaFileAlt } from 'react-icons/fa';
 import { UilCreateDashboard, UilSetting, UilSignout, UilTimes, UilTrash, UilWallet } from '@iconscout/react-unicons';
 import Images from '../constant/Images';
-import { FaBarsStaggered, FaEnvelope, FaRegUser } from 'react-icons/fa6';
+import { FaBarsStaggered, FaCertificate, FaEnvelope, FaLightbulb, FaRegUser, FaRocket } from 'react-icons/fa6';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { IoBookmarkOutline, IoNotificationsOutline } from 'react-icons/io5';
 import ProgressBar from '../reusable/ProgressBar';
@@ -90,7 +90,7 @@ const SideNav: React.FC = () => {
           {isSidebarOpen ? <UilTimes color='#2aa100' className='text-[#2aa100]' size={24} /> : <FaBarsStaggered size={25} color='#2aa100' className='font-bold' />}
         </button>
       </div>
-      <div className={`h-full w-60 bg-white z-100 text-white flex flex-col fixed lg:static transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      <div className={`h-full w-72 bg-white z-100 text-white flex flex-col fixed lg:static transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         <div className="p-6 flex items-center flex-col">
           <div onClick={toggleSidebar} className='lg:hidden block'>
             {isSidebarOpen ? <UilTimes size={35} color='#2aa100' className='absolute top-2 left-[12rem]' /> : <FaBars size={24} />}
@@ -132,19 +132,24 @@ const SideNav: React.FC = () => {
                 <UilCreateDashboard size={25} color={isActive('/dashboard') ? '#EE009D' : '#EE009D'} /> Dashboard
               </li>
             </Link>
-            <Link to='/profile-list'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/profile-list') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
-                <FaRegUser size={25} className='hover:text-[#EE009D]' /> My Profile
+            <Link to='/employers-messages'>
+              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-messages') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
+                <FaCertificate size={25} className='hover:text-[#EE009D]' /> SkillStamp
+              </li>
+            </Link>
+            <Link to='/employers-account-settings'>
+              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-account-settings') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38]'}`}>
+                <FaRocket size={25} className='hover:text-[#EE009D]' /> SmartStart
+              </li>
+            </Link>
+            <Link to='/employers-profile'>
+              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-profile') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
+                <FaLightbulb size={25} className='hover:text-[#EE009D]' /> SmartGuide
               </li>
             </Link>
             <Link to='/resume-page'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/resume-page') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
                 <FaFileAlt size={25}  className='hover:text-[#EE009D]' /> Resume
-              </li>
-            </Link>
-            <Link to='/messages'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/messages') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
-                <FaEnvelope size={25} /> Message
               </li>
             </Link>
             <Link to='/applied-jobs'>
@@ -165,11 +170,6 @@ const SideNav: React.FC = () => {
             <Link to='/candidate-wallet-account'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/candidate-wallet-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
                 <UilWallet size={25} /> Wallet
-              </li>
-            </Link>
-            <Link to='/account-setting'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/account-settings') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
-                <UilSetting size={25} /> Account Settings
               </li>
             </Link>
             <Link to='/delete-account'>
