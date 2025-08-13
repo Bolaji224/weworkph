@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaCircle, FaBars, FaFileAlt } from 'react-icons/fa';
 import { UilCreateDashboard, UilSetting, UilSignout, UilTimes, UilTrash, UilWallet } from '@iconscout/react-unicons';
-import { FaBarsStaggered, FaEnvelope, FaRegUser } from 'react-icons/fa6';
+import { FaBarsStaggered, FaCertificate, FaEnvelope, FaLightbulb, FaRegUser, FaRocket } from 'react-icons/fa6';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { IoBookmarkOutline, IoNotificationsOutline } from 'react-icons/io5';
 import Images from '../../constant/Images';
@@ -89,7 +89,7 @@ const SideNav: React.FC = () => {
           {isSidebarOpen ? <UilTimes color='#2aa100' className='text-[#2aa100]' size={24} /> : <FaBarsStaggered size={25} color='#2aa100' className='font-bold' />}
         </button>
       </div>
-      <div className={`h-full w-60 bg-white text-white flex flex-col fixed lg:static transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      <div className={`h-full w-64 bg-white text-white flex flex-col fixed lg:static transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         <div className="p-6 flex items-center flex-col">
           <div onClick={toggleSidebar} className='lg:hidden block'>
             {isSidebarOpen ? <UilTimes size={35} color='#2aa100' className='absolute top-2 left-[12rem]' /> : <FaBars size={24} />}
@@ -133,9 +133,19 @@ const SideNav: React.FC = () => {
                 <UilCreateDashboard size={25} color={isActive('/dashboard') ? '#EE009D' : '#EE009D'} /> Dashboard
               </li>
             </Link>
+            <Link to='/employers-messages'>
+              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-messages') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
+                <FaCertificate size={25} className='hover:text-[#EE009D]' /> SkillStamp
+              </li>
+            </Link>
+            <Link to='/employers-account-settings'>
+              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-account-settings') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38]'}`}>
+                <FaRocket size={25} className='hover:text-[#EE009D]' /> SmartStart
+              </li>
+            </Link>
             <Link to='/employers-profile'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-profile') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
-                <FaRegUser size={25} className='hover:text-[#EE009D]' /> My Profile
+                <FaLightbulb size={25} className='hover:text-[#EE009D]' /> SmartGuide
               </li>
             </Link>
             <Link to='/my-jobs'>
@@ -144,11 +154,6 @@ const SideNav: React.FC = () => {
               </li>
             </Link>
             {/*  */}
-            <Link to='/employers-messages'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-messages') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
-                <FaEnvelope size={25} className='hover:text-[#EE009D]' /> Message
-              </li>
-            </Link>
             <Link to='/submit-jobs'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/submit-jobs') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
                 <IoNotificationsOutline size={25} className='hover:text-[#EE009D]' /> Submit Job
@@ -162,11 +167,6 @@ const SideNav: React.FC = () => {
             <Link to='/employers-wallet-account'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-wallet-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38]'}`}>
                 <UilWallet size={25} className='hover:text-[#EE009D]' /> Wallet Account
-              </li>
-            </Link>
-            <Link to='/employers-account-settings'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-account-settings') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38]'}`}>
-                <UilSetting size={25} className='hover:text-[#EE009D]' /> Account Settings
               </li>
             </Link>
             <Link to='/employers-delete-account'>
