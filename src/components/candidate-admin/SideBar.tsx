@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaCircle, FaBars, FaFileAlt } from 'react-icons/fa';
-import { UilCreateDashboard, UilSetting, UilSignout, UilTimes, UilTrash, UilWallet } from '@iconscout/react-unicons';
+import { UilCreateDashboard, UilCreditCard, UilHeartAlt, UilSetting, UilSignout, UilTimes, UilTrash, UilWallet } from '@iconscout/react-unicons';
 import Images from '../constant/Images';
 import { FaBarsStaggered, FaCertificate, FaEnvelope, FaLightbulb, FaRegUser, FaRocket } from 'react-icons/fa6';
 import { IoMdArrowDropdown } from 'react-icons/io';
@@ -18,15 +18,19 @@ interface iContext {
   user? : iProfile,
   updateUser ? : any
 }
+
 const SideNav: React.FC = () => {
   const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSkillStampDropdownOpen, setIsSkillStampDropdownOpen] = useState(false);
+  const [isSmartStartDropdownOpen, setIsSmartStartDropdownOpen] = useState(false);
   const [progress, setProgress] = useState(0);
   const targetProgress = 87; // Set the target progress value here
   const { user, updateUser } : iContext = useContext(AppContext);
   const navigate = useNavigate();
   const toast = useToast();
+
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress(prevProgress => {
@@ -52,12 +56,20 @@ const SideNav: React.FC = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const toggleSkillStampDropdown = () => {
+    setIsSkillStampDropdownOpen(!isSkillStampDropdownOpen);
+  };
+
+  const toggleSmartStartDropdown = () => {
+    setIsSmartStartDropdownOpen(!isSmartStartDropdownOpen);
+  };
+
   const [isModalOpen, setModalOpen] = useState(false);
  
   const handleOpenModal = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
 
-  const switchAccount =async (role : string) => {
+  const switchAccount = async (role : string) => {
     var resp = await httpPostWithToken("switch-account/"+role);
     if(resp.status == "success") {
       sessionStorage.setItem("wwph_usr", JSON.stringify(resp.data));
@@ -132,21 +144,61 @@ const SideNav: React.FC = () => {
                 <UilCreateDashboard size={25} color={isActive('/dashboard') ? '#EE009D' : '#EE009D'} /> Dashboard
               </li>
             </Link>
-            <Link to='/employers-messages'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-messages') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
-                <FaCertificate size={25} className='hover:text-[#EE009D]' /> SkillStamp
+            
+            {/* SkillStamp with dropdown */}
+            <li className="relative">
+              <div 
+                className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] cursor-pointer ${isActive('/employers-messages') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}
+                onClick={toggleSkillStampDropdown}
+              >
+                <FaCertificate size={25} className='hover:text-[#EE009D]' /> 
+                SkillStamp
+                <IoMdArrowDropdown size="20" color='#EE009D' className={`ml-auto transition-transform ${isSkillStampDropdownOpen ? 'rotate-180' : ''}`} />
+              </div>
+              {isSkillStampDropdownOpen && (
+                <div className="ml-[3rem] mt-2 bg-gray-50 rounded shadow-sm">
+                  <ul>
+                    <Link to="/courses">
+                      <li className="px-4 py-2 text-[14px] text-[#1E2A38] hover:text-[#2AA100] hover:bg-gray-100 cursor-pointer">Courses</li>
+                    </Link>
+                    <Link to="/english-test">
+                      <li className="px-4 py-2 text-[14px] text-[#1E2A38] hover:text-[#2AA100] hover:bg-gray-100 cursor-pointer">English Test</li>
+                    </Link>
+                  </ul>
+                </div>
+              )}
+            </li>
+
+            {/* SmartStart with dropdown */}
+            <li className="relative">
+              <div 
+                className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] cursor-pointer ${isActive('/employers-account-settings') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38]'}`}
+                onClick={toggleSmartStartDropdown}
+              >
+                <FaRocket size={25} className='hover:text-[#EE009D]' /> 
+                SmartStart
+                <IoMdArrowDropdown size="20" color='#EE009D' className={`ml-auto transition-transform ${isSmartStartDropdownOpen ? 'rotate-180' : ''}`} />
+              </div>
+              {isSmartStartDropdownOpen && (
+                <div className="ml-[3rem] mt-2 bg-gray-50 rounded shadow-sm">
+                  <ul>
+                    <Link to="/smartguide">
+                      <li className="px-4 py-2 text-[14px] text-[#1E2A38] hover:text-[#2AA100] hover:bg-gray-100 cursor-pointer">SmartGuide</li>
+                    </Link>
+                    <Link to="/smarttv">
+                      <li className="px-4 py-2 text-[14px] text-[#1E2A38] hover:text-[#2AA100] hover:bg-gray-100 cursor-pointer">SmartTV</li>
+                    </Link>
+                  </ul>
+                </div>
+              )}
+            </li>
+
+            <Link to='/delete-account'>
+              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/delete-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2aa100]'}`}>
+                <UilCreditCard size={25}  />Subscription
               </li>
             </Link>
-            <Link to='/employers-account-settings'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-account-settings') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38]'}`}>
-                <FaRocket size={25} className='hover:text-[#EE009D]' /> SmartStart
-              </li>
-            </Link>
-            <Link to='/employers-profile'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/employers-profile') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
-                <FaLightbulb size={25} className='hover:text-[#EE009D]' /> SmartGuide
-              </li>
-            </Link>
+
             <Link to='/resume-page'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/resume-page') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
                 <FaFileAlt size={25}  className='hover:text-[#EE009D]' /> Resume
@@ -162,6 +214,11 @@ const SideNav: React.FC = () => {
                 <IoNotificationsOutline size={25} /> Job Alert
               </li>
             </Link>
+            <Link to='/delete-account'>
+              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/delete-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2aa100]'}`}>
+                <UilHeartAlt size={25}  /> Social Impact
+              </li>
+            </Link>
             <Link to='/saved-jobs'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/saved-jobs') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
                 <IoBookmarkOutline size={25} /> Saved Job
@@ -170,11 +227,6 @@ const SideNav: React.FC = () => {
             <Link to='/candidate-wallet-account'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/candidate-wallet-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
                 <UilWallet size={25} /> Wallet
-              </li>
-            </Link>
-            <Link to='/delete-account'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/delete-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2aa100]'}`}>
-                <UilTrash size={25}  /> Delete Account
               </li>
             </Link>
           </ul>
