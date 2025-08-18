@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBell, FaPlus } from 'react-icons/fa';
-import { UilSearch } from '@iconscout/react-unicons';
+import { UilBriefcaseAlt, UilSearch } from '@iconscout/react-unicons';
 import { AnimatePresence, motion } from 'framer-motion';
+import { FaEye } from 'react-icons/fa6';
 
 const Header: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,13 +59,13 @@ const Header: React.FC = () => {
 
         {/* Post Job Button */}
         <MotionLink
-          to="/post-job"
+          to="/find-job"
           className="bg-[#ee009d] hover:bg-[#2AA100] text-white font-bold py-2 px-4 rounded-[50px] flex items-center gap-2"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <FaPlus />
-          Post Job
+          <UilBriefcaseAlt />
+         Find Job
         </MotionLink>
       </div>
     </header>
