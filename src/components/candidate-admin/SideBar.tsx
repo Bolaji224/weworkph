@@ -141,7 +141,7 @@ const SideNav: React.FC = () => {
             </button>
           </div>
           {isDropdownOpen && (
-            <div className="absolute bg-gray-700 text-white rounded shadow-lg mt-[3rem] w-48 z-20 border border-gray-600">
+            <div className="absolute bg-gray-700 text-white rounded shadow-lg mt-[6rem] w-48 z-20 border border-gray-600">
               <ul>
                 <Link to="/profile-list" onClick={handleDropdownItemClick}>
                 <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer border-b border-gray-600 last:border-b-0">Profile</li>
@@ -149,9 +149,9 @@ const SideNav: React.FC = () => {
                <Link to="/account-setting" onClick={handleDropdownItemClick}>
                <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer border-b border-gray-600 last:border-b-0">Settings</li>
                </Link>
-               <Link to="#?" onClick={()=> { handleOpenModal(); handleDropdownItemClick(); }}>
+               {/* <Link to="#?" onClick={()=> { handleOpenModal(); handleDropdownItemClick(); }}>
                <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer border-b border-gray-600 last:border-b-0">Switch to Employer</li>
-               </Link>
+               </Link> */}
               <Link to="/logout-account" onClick={handleDropdownItemClick}>
               <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Logout</li>
               </Link>
