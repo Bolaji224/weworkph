@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaCircle, FaBars, FaFileAlt } from 'react-icons/fa';
-import { UilCreateDashboard, UilCreditCard, UilHeartAlt, UilSetting, UilSignout, UilTimes, UilTrash, UilWallet } from '@iconscout/react-unicons';
+import { UilCreateDashboard, UilSetting, UilSignout, UilTimes, UilTrash, UilWallet } from '@iconscout/react-unicons';
 import Images from '../constant/Images';
 import { FaBarsStaggered, FaCertificate, FaEnvelope, FaLightbulb, FaRegUser, FaRocket } from 'react-icons/fa6';
 import { IoMdArrowDropdown } from 'react-icons/io';
@@ -30,6 +30,7 @@ const SideNav: React.FC = () => {
   const { user, updateUser } : iContext = useContext(AppContext);
   const navigate = useNavigate();
   const toast = useToast();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,6 +46,23 @@ const SideNav: React.FC = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -62,6 +80,10 @@ const SideNav: React.FC = () => {
 
   const toggleSmartStartDropdown = () => {
     setIsSmartStartDropdownOpen(!isSmartStartDropdownOpen);
+  };
+
+  const handleDropdownItemClick = () => {
+    setIsDropdownOpen(false);
   };
 
   const [isModalOpen, setModalOpen] = useState(false);
@@ -103,7 +125,7 @@ const SideNav: React.FC = () => {
         </button>
       </div>
       <div className={`h-full w-64 bg-white z-100 text-white flex flex-col fixed lg:static transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-        <div className="p-6 flex items-center flex-col">
+        <div className="p-6 flex items-center flex-col" ref={dropdownRef}>
           <div onClick={toggleSidebar} className='lg:hidden block'>
             {isSidebarOpen ? <UilTimes size={35} color='#2aa100' className='absolute top-2 left-[12rem]' /> : <FaBars size={24} />}
           </div>
@@ -115,22 +137,22 @@ const SideNav: React.FC = () => {
           <div className='flex items-center gap-[0.3rem]'>
             <h1 className="text-md font-bold text-[#2AA100] cursor-pointer" onClick={toggleDropdown}>{user?.name}</h1>
             <button className="mt-2 text-gray-400 hover:text-white" onClick={toggleDropdown}>
-              <IoMdArrowDropdown size="25" color='#EE009D' />
+              <IoMdArrowDropdown size="25" color='#EE009D' className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
           </div>
           {isDropdownOpen && (
-            <div className="absolute bg-gray-700 text-white rounded shadow-md mt-[12rem] w-48 z-10">
+            <div className="absolute bg-gray-700 text-white rounded shadow-lg mt-[3rem] w-48 z-20 border border-gray-600">
               <ul>
-                <Link to="/profile-list">
-                <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Profile</li>
+                <Link to="/profile-list" onClick={handleDropdownItemClick}>
+                <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer border-b border-gray-600 last:border-b-0">Profile</li>
                 </Link>
-               <Link to="/account-setting">
-               <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Settings</li>
+               <Link to="/account-setting" onClick={handleDropdownItemClick}>
+               <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer border-b border-gray-600 last:border-b-0">Settings</li>
                </Link>
-               <Link to="#?" onClick={()=> handleOpenModal()}>
-               <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Switch to Employer</li>
+               <Link to="#?" onClick={()=> { handleOpenModal(); handleDropdownItemClick(); }}>
+               <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer border-b border-gray-600 last:border-b-0">Switch to Employer</li>
                </Link>
-              <Link to="/logout-account">
+              <Link to="/logout-account" onClick={handleDropdownItemClick}>
               <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Logout</li>
               </Link>
               </ul>
@@ -193,12 +215,6 @@ const SideNav: React.FC = () => {
               )}
             </li>
 
-            <Link to='/delete-account'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/delete-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2aa100]'}`}>
-                <UilCreditCard size={25}  />Subscription
-              </li>
-            </Link>
-
             <Link to='/resume-page'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/resume-page') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
                 <FaFileAlt size={25}  className='hover:text-[#EE009D]' /> Resume
@@ -214,11 +230,6 @@ const SideNav: React.FC = () => {
                 <IoNotificationsOutline size={25} /> Job Alert
               </li>
             </Link>
-            <Link to='/delete-account'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/delete-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2aa100]'}`}>
-                <UilHeartAlt size={25}  /> Social Impact
-              </li>
-            </Link>
             <Link to='/saved-jobs'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/saved-jobs') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
                 <IoBookmarkOutline size={25} /> Saved Job
@@ -227,6 +238,11 @@ const SideNav: React.FC = () => {
             <Link to='/candidate-wallet-account'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/candidate-wallet-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
                 <UilWallet size={25} /> Wallet
+              </li>
+            </Link>
+            <Link to='/delete-account'>
+              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/delete-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2aa100]'}`}>
+                <UilTrash size={25}  /> Delete Account
               </li>
             </Link>
           </ul>
