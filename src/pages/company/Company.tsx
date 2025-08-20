@@ -1,6 +1,6 @@
 import React from 'react'
 import HeroSection from './components/HeroSection'
-import ClientSection from './components/ClientSection'
+// import ClientSection from './components/ClientSection'
 import EasyManageSection from './components/EasyManageSection'
 import VideoCallSection from './components/VideoCallSection'
 import EasyStepSection from './components/EasyStepSection'
@@ -12,7 +12,7 @@ const Company: React.FC = () => {
   return (
    <>
     <HeroSection />
-    <ClientSection />
+    {/* <ClientSection /> */}
     <EasyManageSection />
     <VideoCallSection />
     <EasyStepSection />

@@ -45,7 +45,7 @@ const ComeJoinUsSection: React.FC = () => {
         </div>
         <div>
           <p className="lg:text-[14px] md:text-[14px] text-[10px] text-[#646A73] font-sans font-normal mt-[0.5rem]">
-            By joining us, you have made a wise decision in making your job search more transparent, easier, and faster.
+            By subscribing to our newsletter, you’re taking a smart step toward transforming your job search. Stay informed with valuable tips, the latest opportunities, and insights that make finding your next role faster, easier, and more transparent. Join us today and be the first to get updates that empower your career
           </p>
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
           <form onSubmit={handleSubmit} className="relative mt-[1rem]">

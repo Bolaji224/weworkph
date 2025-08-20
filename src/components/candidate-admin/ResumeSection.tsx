@@ -1,849 +1,349 @@
-import React, { useState, ChangeEvent, useRef, useEffect } from "react";
-import {
-  UilPlay,
-  UilPlusCircle,
-  UilTimes,
-  UilTimesCircle,
-} from "@iconscout/react-unicons";
-import Modal from "react-modal";
-import { httpGetWithToken, httpPostWithToken } from "../../utils/http_utils";
-import { Button, useToast } from "@chakra-ui/react";
+import React, { useState } from 'react';
+import { CheckCircle, ArrowRight, RotateCcw, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; // ✅ add this
 
-const ProfileForm: React.FC = () => {
-  const [cvFiles, setCvFiles] = useState<File[]>([]);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [overview, setOverview] = useState<string>("");
-  const [intro, setIntro] = useState<string>("");
-  const [cv, setCv] = useState<string>("");
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [cvFile, setCvFile] = useState("");
-  const [salary, setSalary] = useState<string>("");
-  const [jobTitle, setJobTitle] = useState<string>("");
-  const [experience, setExperience] = useState("");
+// =========================
+// Types
+// =========================
+type Category = 'role' | 'experience' | 'goal' | 'market' | 'workStyle';
 
-  const [loading, setLoading] = useState(false);
-  const [education, setEducation] = useState([
-    {
-      title: "",
-      academy: "",
-      year: "",
-      description: "",
-    },
-  ]);
-  const [skills, setSkills] = useState([
-    "Figma",
-    "HTML5",
-    "Illustrator",
-    "Adobe Photoshop",
-  ]);
+type Option = {
+  value: string;
+  label: string;
+  description?: string;
+};
 
-  const toast = useToast();
-  const handleVideoChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null;
-    setVideoFile(null);
-    setTimeout(() => {
-      setVideoFile(file);
-    }, 1000);
-  };
-  const [portfolioImages, setPortfolioImages] = useState<any[]>([]); // State for portfolio images
+type Question = {
+  id: Category;
+  title: string;
+  subtitle?: string;
+  options: Option[];
+};
 
-  // Ref for file input
-  const fileInputRef = useRef<HTMLInputElement>(null);
+type Selections = Record<Category, string>;
 
-  // Function to handle file upload
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = event.target.files;
-    if (files!.length > 0) {
-      for (let index = 0; index < files!.length; index++) {
-        const file = files![index];
-        const fd = new FormData();
-        fd.append("portfolio", file);
-        await httpPostWithToken("resume/update", fd);
-      }
-      getResume();
-    }
-  };
+// =========================
+// Questions Data
+// =========================
+const questions: Question[] = [
+  {
+    id: 'role',
+    title: "What's your primary role?",
+    subtitle: "Choose the role that best describes what you do",
+    options: [
+      { value: 'va', label: 'Virtual Assistant', description: 'Support clients with administrative tasks' },
+      { value: 'editor', label: 'Editor', description: 'Create and refine written content' }
+    ]
+  },
+  {
+    id: 'experience',
+    title: "What's your experience level?",
+    subtitle: "Help us understand where you're at in your journey",
+    options: [
+      { value: 'beginner', label: 'Beginner', description: 'Just starting out or less than 1 year' },
+      { value: 'advanced', label: 'Advanced', description: 'Experienced with multiple clients' }
+    ]
+  },
+  {
+    id: 'goal',
+    title: "What's your main goal?",
+    subtitle: "What would make the biggest impact for you right now?",
+    options: [
+      { value: 'clients', label: 'Get clients fast', description: 'Find paying clients quickly' },
+      { value: 'skills', label: 'Improve skills', description: 'Develop expertise and capabilities' },
+      { value: 'credibility', label: 'Build credibility', description: 'Establish reputation and trust' }
+    ]
+  },
+  {
+    id: 'market',
+    title: 'Which market do you target?',
+    subtitle: "Where are most of your clients located?",
+    options: [
+      { value: 'uk', label: 'UK', description: 'United Kingdom market' },
+      { value: 'us', label: 'US', description: 'United States market' },
+      { value: 'nigeria', label: 'Nigeria', description: 'Nigerian market' },
+      { value: 'global', label: 'Global', description: 'International clients' }
+    ]
+  },
+  {
+    id: 'workStyle',
+    title: "What's your preferred work style?",
+    subtitle: "How do you like to collaborate and work?",
+    options: [
+      { value: 'solo', label: 'Solo', description: 'Independent work, minimal collaboration' },
+      { value: 'team', label: 'Team', description: 'Collaborative projects with others' },
+      { value: 'flexible', label: 'Flexible', description: 'Adaptable to different situations' }
+    ]
+  }
+];
 
-  const saveSalaryAndJobTitle = async () => {
-    if (loading) return;
+// =========================
+// Component
+// =========================
+const SmartStartAssessment: React.FC = () => {
+  const navigate = useNavigate(); // ✅ init navigator
+
+  // Selections
+  const [selections, setSelections] = useState<Selections>({
+    role: '',
+    experience: '',
+    goal: '',
+    market: '',
+    workStyle: ''
+  });
+
+  // Current question index for step-by-step flow
+  const [currentStep, setCurrentStep] = useState(0);
   
-    if (!salary || !jobTitle || !experience) {
-      toast({
-        status: "warning",
-        title: "Salary, Job Title, and Experience are required.",
-        isClosable: true,
-        duration: 5000,
-      });
-      return;
-    }
+  // Show summary vs form
+  const [showSummary, setShowSummary] = useState(false);
+
+  // Helpers
+  const isSelected = (category: Category, value: string) =>
+    selections[category] === value;
+
+  const allQuestionsAnswered = Object.values(selections).every(v => v !== '');
   
-    setLoading(true);
-    try {
-      const fd = {
-        salary,
-        job_title: jobTitle,
-        year_of_experience: experience
-      };
-  
-      const res = await httpPostWithToken("resume/update", fd);
-  
-      if (res.status === "success") {
-        getResume();
-        toast({
-          status: "success",
-          title: "Salary, Job Title, and Experience updated successfully.",
-          isClosable: true,
-          duration: 5000,
-        });
-      } else {
-        toast({
-          status: "error",
-          title: res.message || "Failed to update the information. Please try again.",
-          isClosable: true,
-          duration: 5000,
-        });
-      }
-    } catch (error) {
-      console.error("Error updating salary and job title:", error);
-      toast({
-        status: "error",
-        title: "An error occurred while updating the information.",
-        isClosable: true,
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-  
+  const answeredCount = Object.values(selections).filter(v => v !== '').length;
 
-  // Function to remove a portfolio image
-  const removePortfolioImage = async (index: number) => {
-    await httpGetWithToken("resume/delete-portolio/" + index);
-    getResume();
+  const getLabel = (cat: Category, val: string): string => {
+    const q = questions.find(q => q.id === cat);
+    return q?.options.find((o: Option) => o.value === val)?.label ?? '';
   };
 
-  const handlePlayPause = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
+  // Actions
+  const handleSelection = (category: Category, value: string) => {
+    setSelections(prev => ({
+      ...prev,
+      [category]: value
+    }));
+  };
+
+  const handleNext = () => {
+    if (currentStep < questions.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else if (allQuestionsAnswered) {
+      setShowSummary(true);
     }
   };
 
-  const removeVideo = () => {
-    setVideoFile(null);
-    setIsPlaying(false);
-  };
-  const removeVideoReal = async () => {
-    const res = await httpPostWithToken("resume/update/intro");
-    toast({
-      status: "success",
-      title: "Intro video removed",
-      isClosable: true,
-      duration: 5000,
-    });
-  };
-
-  const openModal = () => {
-    setModalIsOpen(true);
-    setTimeout(() => {
-      if (videoRef.current) {
-        videoRef.current.play();
-        setIsPlaying(true);
-      }
-    }, 100);
-  };
-
-  const closeModal = () => {
-    setModalIsOpen(false);
-    if (videoRef.current) {
-      videoRef.current.pause();
-      setIsPlaying(false);
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
     }
   };
 
-  const saveOveriview = async () => {
-    if (overview === "") return;
-    if (loading) return;
-    setLoading(true);
-    const res = await httpPostWithToken("resume/update", {
-      overview: overview,
-    });
-    if (res.status === "success") {
-      setOverview(res.data.overview);
-      toast({
-        status: "success",
-        title: "Resume updated",
-        isClosable: true,
-        duration: 5000,
-      });
-    }
-    setLoading(false);
+  const handleGoToDashboard = () => {
+    navigate('/candidate-dashboard'); // ✅ fixed navigation
   };
 
-  const saveEducation = async () => {
-    if (loading) return;
-    setLoading(true);
-    const fd = {
-      education: education,
-    };
-
-    const res = await httpPostWithToken("resume/update", fd);
-
-    if (res.status === "success") {
-      getResume();
-      toast({
-        status: "success",
-        title: "Resume updated",
-        isClosable: true,
-        duration: 5000,
-      });
-
-      setVideoFile(null);
-    }
-    setLoading(false);
-  };
-  const saveSkills = async () => {
-    if (loading) return;
-    setLoading(true);
-    const fd = {
-      skills: skills.length > 0 ? skills.join(",") : "",
-    };
-
-    const res = await httpPostWithToken("resume/update", fd);
-
-    if (res.status === "success") {
-      getResume();
-      toast({
-        status: "success",
-        title: "Resume updated",
-        isClosable: true,
-        duration: 5000,
-      });
-
-      setVideoFile(null);
-    }
-    setLoading(false);
-  };
-
-  const saveIntro = async () => {
-    if (!videoFile) return;
-    if (loading) return;
-    setLoading(true);
-    const fd = new FormData();
-    fd.append("intro", videoFile);
-
-    const res = await httpPostWithToken("resume/update", fd);
-
-    if (res.status === "success") {
-      getResume();
-      toast({
-        status: "success",
-        title: "Resume updated",
-        isClosable: true,
-        duration: 5000,
-      });
-
-      setVideoFile(null);
-    }
-    setLoading(false);
-  };
-
-  const removeFileReal = async () => {
-    if (loading) return;
-    setLoading(true);
-    const res = await httpPostWithToken("resume/remove-resume");
-    if (res.status === "success") {
-      getResume();
-      toast({
-        status: "success",
-        title: "Resume removed successfully",
-        isClosable: true,
-        duration: 5000,
-      });
-
-      setCvFile("");
-      setCv("");
-    }
-    setLoading(false);
-  };
-
-  const saveResume = async () => {
-    if (cvFiles!.length === 0) return;
-    if (loading) return;
-    setLoading(true);
-    const fd = new FormData();
-    fd.append("cv", cvFiles[0]);
-
-    const res = await httpPostWithToken("resume/update", fd);
-
-    if (res.status === "success") {
-      getResume();
-      toast({
-        status: "success",
-        title: "Resume updated",
-        isClosable: true,
-        duration: 5000,
-      });
-
-      setCvFiles([]);
-    }
-    setLoading(false);
-  };
-
-  const getResume = async () => {
-    const res = await httpGetWithToken("resume");
-    if (res.status === "success") {
-      setOverview(res.data.overview);
-      setIntro(res.data.intro);
-      if (res.data.educations) {
-        setEducation(res.data.educations);
-      }
-      setPortfolioImages(res.data.portfolio);
-      setSkills(res.data.skills.split(","));
-      setSalary(res.data.salary);
-      setJobTitle(res.data.job_title);
-      setExperience(res.data.experiences);
-      if (res.data.resume_title) {
-        setCv(res.data.resume_title);
-        setCvFile(res.data.resume);
-      } else {
-        setCv("");
-        setCvFile("");
-      }
-    }
-  };
-
-  const handleFileChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    setFileState: React.Dispatch<React.SetStateAction<File[]>>
-  ) => {
-    const files = e.target.files;
-    if (files) {
-      setFileState(Array.from(files));
-    }
-  };
-
-  const handleSingleFileChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    setFileState: React.Dispatch<React.SetStateAction<File | null>>
-  ) => {
-    const file = e.target.files?.[0] || null;
-    setFileState(file);
-  };
-
-  const removeFile = (
-    index: number,
-    setFileState: React.Dispatch<React.SetStateAction<File[]>>
-  ) => {
-    setFileState((prevFiles) => prevFiles.filter((_, i) => i !== index));
-  };
-  const addEducation = () => {
-    setEducation([
-      ...education,
-      { title: "", academy: "", year: "", description: "" },
-    ]);
-  };
-  const removeEducation = (index: number) => {
-    setEducation(education.filter((_, i) => i !== index));
-  };
-
-  const addSkill = () => {
-    setSkills([...skills, ""]);
-  };
-
-  useEffect(() => {
-    getResume();
-  }, []);
-  return (
-    <section className="px-2 py-[8rem] max-w-[1100px] mx-auto">
-      <h2 className=" text-[#2aa100] text-[38px] font-sans font-bold mb-8">
-        My Resume
-      </h2>
-
-      {/* Profile upload section start here  */}
-
-      <div className="bg-white rounded-2xl py-8 px-8">
-        <h2 className="text-xl font-semibold mb-4 text-[#ee009d] text-[20px] tracking-[0.3px] font-sans">
-          Resume Attachment
-        </h2>
-        <div className="py-[1rem]">
-          <h2 className="text-xl font-semibold mb-4 text-[#2aa100] text-[16px] tracking-[0.3px] font-sans">
-            CV Attachment*
-          </h2>
-          <div className="flex items-center  gap-[1rem]">
-            <label className="cursor-pointer bg-green-100 text-green-600 font-medium py-2 px-4 rounded-[8px]">
-              Upload CV
-              <input
-                type="file"
-                accept=".pdf, .doc, .docx"
-                onChange={(e) => handleFileChange(e, setCvFiles)}
-                className="hidden "
-              />
-            </label>
-            <p>Upload file .pdf, .doc, .docx</p>
+  // =========================
+  // Summary View
+  // =========================
+  if (showSummary) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 mt-20 via-white to-green-50 p-6">
+        <div className="max-w-2xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-[#2AA100] rounded-full mb-4">
+              <Sparkles className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">Your SmartStart Profile</h2>
+            <p className="text-gray-600">Here's what we learned about you</p>
           </div>
 
-          {cvFiles.map((file, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between bg-green-100 p-4 mt-[2rem] rounded-[10px]"
-            >
-              <span>{file.name}</span>
-              <UilTimes
-                onClick={() => removeFile(index, setCvFiles)}
-                className="cursor-pointer text-red-500"
-              />
-            </div>
-          ))}
-
-          {cvFiles.length > 0 && (
-            <Button
-              bg={"#ee009d"}
-              mt={2}
-              color={"white"}
-              isLoading={loading}
-              onClick={saveResume}
-              py={2}
-              px={8}
-              fontSize={"large"}
-              fontWeight={"600"}
-              rounded={"lg"}
-              className="bg-pink-600"
-            >
-              Save
-            </Button>
-          )}
-
-          {cvFiles.length == 0 && (
-            <>
-              {cv !== "" && (
-                <div className="flex items-center justify-between bg-green-100 p-4 mt-[2rem] rounded-[10px]">
-                  <span>{cv}</span>
-                  <UilTimes
-                    onClick={() => removeFileReal()}
-                    className="cursor-pointer text-red-500"
-                  />
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-      {/* Salary and Job Title Section */}
-      <div className="bg-white rounded-2xl py-8 px-8 mt-[2rem]">
-        <h2 className="text-xl font-semibold text-[#ee009d]">
-          Salary & Job Title
-        </h2>
-        <div className="mb-4">
-          <label className="block text-green-600 font-semibold mb-2">
-            Desired Salary*
-          </label>
-          <input
-            type="text"
-            value={salary}
-            onChange={(e) => setSalary(e.target.value)}
-            placeholder="Enter your desired salary"
-            className="w-full border rounded-lg p-4 shadow-sm"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-green-600 font-semibold mb-2">
-            Job Title*
-          </label>
-          <input
-            type="text"
-            value={jobTitle}
-            onChange={(e) => setJobTitle(e.target.value)}
-            placeholder="Enter your job title"
-            className="w-full border rounded-lg p-4 shadow-sm"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-green-600 font-semibold mb-2">
-            Years of Experience*
-          </label>
-          <input
-            type="number"
-            value={experience}
-            onChange={(e) => setExperience(e.target.value)}
-            placeholder="Enter your years of experience"
-            className="w-full border rounded-lg p-4 shadow-sm"
-            min={0}
-          />
-        </div>
-        <Button
-          bg={"#ee009d"}
-          color={"white"}
-          isLoading={loading}
-          onClick={saveSalaryAndJobTitle}
-          py={2}
-          px={8}
-          fontSize={"large"}
-          fontWeight={"600"}
-          rounded={"lg"}
-        >
-          Save
-        </Button>
-      </div>
-
-      {/* profile upload section ends here  */}
-
-      {/* introduction video section start here  */}
-
-      <section className="bg-white rounded-2xl p-8 mt-[2rem]">
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-[20px] text-[#ee009d] tracking-[0.3px] font-sans">
-            Intro & Overview
-          </h2>
-          <div className="mb-4">
-            <label className="block font-semibold text-green-600 text-lg mb-2">
-              Overview*
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              value={overview}
-              onChange={(v) => setOverview(v.target.value)}
-              placeholder="Write something interesting about you..."
-              rows={10}
-              autoComplete="off"
-              className="w-full text-black mb-[2rem] border rounded-lg border-gray-300 bg-white p-4 shadow-sm focus:ring-0 focus:outline-none"
-            ></textarea>
-            <Button
-              bg={"#ee009d"}
-              color={"white"}
-              isLoading={loading}
-              onClick={saveOveriview}
-              py={2}
-              px={8}
-              fontSize={"large"}
-              fontWeight={"600"}
-              rounded={"lg"}
-              className="bg-pink-600"
-            >
-              Save
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <div className="mt-[1rem]"></div>
-      <section className="bg-white rounded-2xl p-8 mt-[2rem]">
-        <h2 className="text-2xl font-semibold text-[20px] text-[#ee009d] tracking-[0.3px] font-sans">
-          Intro video
-        </h2>
-        <div className="flex flex-col md:flex-row items-center gap-8 p-4">
-          <label className="relative text-center flex items-center justify-center p-[4rem] md:p-[8rem] w-full  md:w-[500px] h-[180px] md:h-[350px] rounded-[20px] cursor-pointer border-[1px] border-[#2aa100]">
-            + Add Intro Video
-            <input
-              type="file"
-              className="hidden"
-              accept="video/*"
-              onChange={handleVideoChange}
-            />
-          </label>
-          {videoFile && (
-            <div className="relative w-full md:w-[500px] h-[200px] md:h-[350px] flex flex-col items-start rounded-[20px] cursor-pointer">
-              <div
-                className="relative w-full h-full rounded-[20px] cursor-pointer"
-                onClick={openModal}
-              >
-                <video
-                  ref={videoRef}
-                  className="w-full h-full rounded-[20px] object-cover"
-                >
-                  <source
-                    src={URL.createObjectURL(videoFile)}
-                    type={videoFile.type}
-                  />
-                  Your browser does not support the video tag.
-                </video>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {!isPlaying && (
-                    <UilPlay size="64" className="text-[#2aa100]" />
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 mt-2">
-                <button onClick={removeVideo} className="text-[#ee009d]">
-                  <UilTimes size="24" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {!videoFile ? (
-            <>
-              {intro && (
-                <div className="relative w-full md:w-[500px] h-[200px] md:h-[350px] flex flex-col items-start rounded-[20px] cursor-pointer">
-                  <div className="relative w-full h-full rounded-[20px] cursor-pointer">
-                    <video
-                      controls
-                      className="w-full h-full rounded-[20px] object-cover"
-                    >
-                      <source src={intro} />
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
-                  <div className="flex items-center space-x-2 mt-2">
-                    <button
-                      onClick={removeVideoReal}
-                      className="text-[#ee009d]"
-                    >
-                      <UilTimes size="24" />
-                    </button>
+          {/* Summary Cards */}
+          <div className="space-y-4 mb-8">
+            {Object.entries(selections).map(([cat, val], index) => {
+              const question = questions.find(q => q.id === cat);
+              return (
+                <div key={cat} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-800 mb-1">
+                        {question?.title.replace(/^\d+\.\s*/, '')}
+                      </h3>
+                      <p className="text-[#2AA100] font-medium text-lg">
+                        {getLabel(cat as Category, val)}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-center w-8 h-8 bg-[#2AA100] rounded-full ml-4">
+                      <CheckCircle className="w-5 h-5 text-white" />
+                    </div>
                   </div>
                 </div>
-              )}
-            </>
-          ) : (
-            <></>
-          )}
-        </div>
-        {videoFile && (
-          <div className="w-full text-right mt-2">
-            <Button
-              bg={"#ee009d"}
-              color={"white"}
-              isLoading={loading}
-              onClick={saveIntro}
-              py={2}
-              px={8}
-              fontSize={"large"}
-              fontWeight={"600"}
-              rounded={"lg"}
-              className="bg-pink-600"
+              );
+            })}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={handleGoToDashboard}
+              className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-[#2AA100] text-white font-semibold rounded-xl hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Save
-            </Button>
-          </div>
-        )}
-        <Modal
-          isOpen={modalIsOpen}
-          onRequestClose={closeModal}
-          contentLabel="Video Modal"
-          style={{
-            content: {
-              top: "50%",
-              left: "50%",
-              right: "auto",
-              bottom: "auto",
-              marginRight: "-50%",
-              transform: "translate(-50%, -50%)",
-              width: "80%",
-              height: "80%",
-            },
-          }}
-        >
-          <button onClick={closeModal} className="btn btn-secondary">
-            Close
-          </button>
-          <div className="video-container" style={{ marginTop: "10px" }}>
-            {videoFile && (
-              <video
-                ref={videoRef}
-                controls
-                style={{ width: "100%", height: "100%" }}
-              >
-                <source
-                  src={URL.createObjectURL(videoFile)}
-                  type={videoFile.type}
-                />
-                Your browser does not support the video tag.
-              </video>
-            )}
-          </div>
-        </Modal>
-      </section>
-
-      {/* introduction video section ends here  */}
-
-      {/* Eductional section start here */}
-
-      <section className="bg-white rounded-2xl p-8 mt-[2rem]">
-        <h2 className="text-2xl font-semibold text-[20px] text-[#ee009d] tracking-[0.3px] font-sans mb-4">
-          Education
-        </h2>
-        {education.map((edu, index) => (
-          <div key={index} className="mb-4">
-            <label className="block font-semibold font-fairs text-[#2aa100] text-lg mb-2">
-              Degree*
-            </label>
-            <input
-              type="text"
-              value={edu.title}
-              onChange={(e) => {
-                const newEducation = [...education];
-                newEducation[index].title = e.target.value;
-                setEducation(newEducation);
+              Go to Dashboard
+              <ArrowRight className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => {
+                setShowSummary(false);
+                setCurrentStep(0);
               }}
-              placeholder="Product Designer (Google)"
-              className="w-full border rounded-lg border-gray-300 bg-white p-2 shadow-sm focus:ring-0 focus:outline-none mb-2"
-            />
-            <label className="block font-semibold font-fairs text-[#2aa100] text-lg mb-2">
-              School*
-            </label>
-            <input
-              type="text"
-              value={edu.academy}
-              onChange={(e) => {
-                const newEducation = [...education];
-                newEducation[index].academy = e.target.value;
-                setEducation(newEducation);
-              }}
-              placeholder="Google Arts College & University"
-              className="w-full border rounded-lg border-gray-300 bg-white p-2 shadow-sm focus:ring-0 focus:outline-none mb-2"
-            />
-            <label className="block font-semibold font-fairs text-[#2aa100] text-lg mb-2">
-              Graduation Year*
-            </label>
-            <input
-              type="text"
-              value={edu.year}
-              onChange={(e) => {
-                const newEducation = [...education];
-                newEducation[index].year = e.target.value;
-                setEducation(newEducation);
-              }}
-              placeholder="Year"
-              className="w-full border rounded-lg border-gray-300 bg-white p-2 shadow-sm focus:ring-0 focus:outline-none mb-2"
-            />
-            <UilTimes
-              onClick={() => removeEducation(index)}
-              className="cursor-pointer text-red-500 mt-2"
-            />
-          </div>
-        ))}
-
-        <div className="w-full flex justify-between">
-          <button className="text-pink-600 text-lg mb-4" onClick={addEducation}>
-            Add more
-          </button>
-          <Button
-            bg={"#ee009d"}
-            color={"white"}
-            isLoading={loading}
-            onClick={saveEducation}
-            py={2}
-            px={8}
-            fontSize={"large"}
-            fontWeight={"600"}
-            rounded={"lg"}
-            className="bg-pink-600"
-          >
-            Save
-          </Button>
-        </div>
-      </section>
-      {/* Eductional section ends here  */}
-
-      {/* Skill section start here  */}
-      <section className="bg-white rounded-2xl p-8 mt-[2rem]">
-        <h2 className="text-2xl font-semibold text-[20px] text-[#ee009d] tracking-[0.3px] font-sans mb-4">
-          Skills & Experience
-        </h2>
-        <div className="mb-4">
-          <label className="block font-semibold text-lg mb-2">Skills*</label>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 bg-[#f5f5f5] p-8 rounded-[10px]">
-            {skills.map((skill, index) => (
-              <div key={index} className="relative flex items-center">
-                <input
-                  type="text"
-                  value={skill}
-                  onChange={(e) => {
-                    const newSkills = [...skills];
-                    newSkills[index] = e.target.value;
-                    setSkills(newSkills);
-                  }}
-                  placeholder="Skill"
-                  className="w-full border-none rounded-[20px] text-[#2aa100] font-light font-merri text-[12px] bg-white p-2 shadow-sm focus:ring-0 focus:outline-none pr-10"
-                />
-                <button
-                  className="absolute right-3 text-red-600"
-                  onClick={() => {
-                    const newSkills = skills.filter((_, i) => i !== index);
-                    setSkills(newSkills);
-                  }}
-                >
-                  <UilTimes size={20} color="#2aa100" />
-                </button>
-              </div>
-            ))}
-            <button className="text-pink-600  text-lg" onClick={addSkill}>
-              <UilPlusCircle size={25} color="#2aa100" />
+              className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:bg-gray-50 transition-all duration-200"
+            >
+              <RotateCcw className="w-5 h-5" />
+              Retake Assessment
             </button>
           </div>
-          <div className="w-full flex justify-between">
-            <Button
-              bg={"#ee009d"}
-              color={"white"}
-              isLoading={loading}
-              onClick={saveSkills}
-              py={2}
-              px={8}
-              fontSize={"large"}
-              fontWeight={"600"}
-              rounded={"lg"}
-              className="bg-pink-600"
-            >
-              Save
-            </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================
+  // Assessment View
+  // =========================
+  const currentQuestion = questions[currentStep];
+  const isCurrentAnswered = selections[currentQuestion.id] !== '';
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br mt-20 from-green-50 via-white to-green-50 p-6">
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">SmartStart Assessment</h1>
+          <p className="text-gray-600">Let's personalize your experience in just a few steps</p>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-600">
+              Question {currentStep + 1} of {questions.length}
+            </span>
+            <span className="text-sm font-medium text-[#2AA100]">
+              {Math.round(((currentStep + (isCurrentAnswered ? 1 : 0)) / questions.length) * 100)}% Complete
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className="bg-[#2AA100] h-2 rounded-full transition-all duration-300 ease-out"
+              style={{
+                width: `${((currentStep + (isCurrentAnswered ? 1 : 0)) / questions.length) * 100}%`
+              }}
+            />
           </div>
         </div>
-      </section>
-      {/* Skill section ends here  */}
 
-      {/* Porfolio section start here  */}
-      <section className="bg-white rounded-2xl p-8 mt-[2rem]">
-        <h2 className="text-2xl font-semibold text-[20px] text-[#2aa100] tracking-[0.3px] font-sans mb-4">
-          Portfolio
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          {portfolioImages.map((img, index) => (
-            <div key={img.id} className="relative">
-              <div className="bg-gray-200 h-full rounded-[10px] flex items-center justify-center">
-                <img
-                  src={img.file_url}
-                  alt={`Portfolio ${index + 1}`}
-                  className="w-full rounded-[10px] h-full object-cover"
-                />
-              </div>
+        {/* Question Card */}
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 mb-8">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              {currentQuestion.title}
+            </h2>
+            {currentQuestion.subtitle && (
+              <p className="text-gray-600 text-lg">
+                {currentQuestion.subtitle}
+              </p>
+            )}
+          </div>
+
+          {/* Options */}
+          <div className="space-y-4">
+            {currentQuestion.options.map((option) => (
               <button
-                className="absolute top-2 right-2 text-red-600"
-                onClick={() => removePortfolioImage(img.id)}
+                key={option.value}
+                onClick={() => handleSelection(currentQuestion.id, option.value)}
+                className={`w-full text-left p-6 rounded-xl border-2 transition-all duration-200 hover:shadow-md ${
+                  isSelected(currentQuestion.id, option.value)
+                    ? 'bg-[#2AA100] text-white border-[#2AA100] shadow-lg transform scale-[1.02]'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-[#2AA100] hover:bg-green-50 active:bg-[#2AA100] active:text-white active:border-[#2AA100]'
+                }`}
               >
-                <UilTimesCircle size={35} color="#2aa100" />
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg mb-1">
+                      {option.label}
+                    </h3>
+                    {option.description && (
+                      <p className={`text-sm ${
+                        isSelected(currentQuestion.id, option.value)
+                          ? 'text-green-100'
+                          : 'text-gray-500'
+                      }`}>
+                        {option.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                    isSelected(currentQuestion.id, option.value)
+                      ? 'border-white bg-white'
+                      : 'border-gray-300'
+                  }`}>
+                    {isSelected(currentQuestion.id, option.value) && (
+                      <div className="w-3 h-3 bg-[#2AA100] rounded-full"></div>
+                    )}
+                  </div>
+                </div>
               </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-        {/* Hidden file input for uploading images */}
-        <input
-          type="file"
-          accept="image/*"
-          className="hidden"
-          ref={fileInputRef}
-          onChange={handleFileUpload}
-        />
-        {/* Button to trigger file input */}
-        <button
-          className="text-pink-600 text-lg mb-4"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          Upload Image
-        </button>
-      </section>
-    </section>
+
+        {/* Navigation */}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={handleBack}
+            className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+              currentStep > 0
+                ? 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                : 'text-gray-400 cursor-not-allowed'
+            }`}
+            disabled={currentStep === 0}
+          >
+            Back
+          </button>
+
+          <div className="flex items-center gap-2">
+            {questions.map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                  index === currentStep
+                    ? 'bg-[#2AA100] w-8'
+                    : index < currentStep || selections[questions[index].id] !== ''
+                    ? 'bg-[#2AA100]'
+                    : 'bg-gray-300'
+                }`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={handleNext}
+            className={`px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center gap-2 ${
+              isCurrentAnswered
+                ? 'bg-[#2AA100] text-white hover:bg-green-700 shadow-lg hover:shadow-xl'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+            disabled={!isCurrentAnswered}
+          >
+            {currentStep === questions.length - 1 ? 'View Results' : 'Next'}
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Quick Overview */}
+        <div className="mt-8 text-center">
+          <p className="text-gray-500 text-sm">
+            {answeredCount} of {questions.length} questions completed
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default ProfileForm;
+export default SmartStartAssessment;

@@ -32,11 +32,6 @@ const Header: React.FC = () => {
       </div>
       <div className="flex items-center gap-4">
       <div className="relative">
-      <FaBell
-        className="cursor-pointer text-[#2AA100]"
-        size={20}
-        onClick={toggleNotificationDropdown}
-      />
       <AnimatePresence>
         {isNotificationOpen && (
           <motion.div
@@ -50,15 +45,6 @@ const Header: React.FC = () => {
         )}
       </AnimatePresence>
     </div>
-        <MotionLink
-      to="/submit-jobs"
-      className="bg-[#ee009d] hover:bg-[#2aa100] text-white font-bold py-2 px-4 rounded-[50px] flex items-center gap-2"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-    >
-      <FaPlus />
-      Post Job
-    </MotionLink>
       </div>
     </header>
   );

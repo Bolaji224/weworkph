@@ -208,7 +208,7 @@ const SideNav: React.FC = () => {
                       <li className="px-4 py-2 text-[14px] text-[#1E2A38] hover:text-[#2AA100] hover:bg-gray-100 cursor-pointer">SmartGuide</li>
                     </Link>
                     <Link to="/smarttv">
-                      <li className="px-4 py-2 text-[14px] text-[#1E2A38] hover:text-[#2AA100] hover:bg-gray-100 cursor-pointer">SmartTV</li>
+                      <li className="px-4 py-2 text-[14px] text-[#1E2A38] hover:text-[#2AA100] hover:bg-gray-100 cursor-pointer">SmartCV</li>
                     </Link>
                   </ul>
                 </div>
@@ -217,7 +217,7 @@ const SideNav: React.FC = () => {
 
             <Link to='/resume-page'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/resume-page') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
-                <FaFileAlt size={25}  className='hover:text-[#EE009D]' /> Resume
+                <FaFileAlt size={25}  className='hover:text-[#EE009D]' /> Role Setup
               </li>
             </Link>
             <Link to='/applied-jobs'>
@@ -232,7 +232,7 @@ const SideNav: React.FC = () => {
             </Link>
             <Link to='/saved-jobs'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/saved-jobs') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
-                <IoBookmarkOutline size={25} /> Saved Job
+                <IoBookmarkOutline size={25} /> Subscription 
               </li>
             </Link>
             <Link to='/candidate-wallet-account'>
@@ -242,7 +242,7 @@ const SideNav: React.FC = () => {
             </Link>
             <Link to='/delete-account'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/delete-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2aa100]'}`}>
-                <UilTrash size={25}  /> Delete Account
+                <UilTrash size={25}  /> Social Impact
               </li>
             </Link>
           </ul>
