@@ -230,8 +230,8 @@ const SideNav: React.FC = () => {
                 <IoNotificationsOutline size={25} /> Job Alert
               </li>
             </Link>
-            <Link to='/saved-jobs'>
-              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/saved-jobs') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
+            <Link to='/subscriptions'>
+              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/subscriptions') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2AA100]'}`}>
                 <IoBookmarkOutline size={25} /> Subscription 
               </li>
             </Link>
