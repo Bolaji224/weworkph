@@ -57,6 +57,7 @@ import AdminJobDetails from "./components/master-admin/components/JobDetails";
 import AppliedJobs from "./components/candidate-admin/applied-job/AppliedJobs";
 import AllApplicates from "./components/employer-admin/all-applicates/AllApplicates";
 import JobDetailsPage from "./components/employer-admin/my-jobs/ApplicateJob/ApplicateJobsPage";
+import SubscriptionPlan from "./components/candidate-admin/subscription-plan/SubscriptionPlan";
 
 
 function App() {
@@ -108,7 +109,8 @@ function Main({
     "/verify-account",
     "/verification-code",
     "/forget-password",
-    "/all-applicant/:slug"
+    "/all-applicant/:slug",
+    "/subscriptions"
   ];
   return (
     <div>
@@ -188,6 +190,10 @@ function Main({
         <Route
           path="saved-jobs"
           element={<AdminLayout element={<SavedJobs />} />}
+        />
+        <Route
+          path="subscriptions"
+          element={<AdminLayout element={<SubscriptionPlan />} />}
         />
          <Route
           path="applied-jobs"
