@@ -58,6 +58,7 @@ import AdminJobDetails from "./components/master-admin/components/JobDetails";
 import AppliedJobs from "./components/candidate-admin/applied-job/AppliedJobs";
 import AllApplicates from "./components/employer-admin/all-applicates/AllApplicates";
 import JobDetailsPage from "./components/employer-admin/my-jobs/ApplicateJob/ApplicateJobsPage";
+import SubscriptionPlan from "./components/candidate-admin/subscription-plan/SubscriptionPlan";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -109,7 +110,11 @@ function Main({
     "/verification-code",
     "/forget-password",
     "/all-applicant/:slug",
+<<<<<<< HEAD
     "/smartguide", // ✅ hide navbar here too
+=======
+    "/subscriptions"
+>>>>>>> 5ca5caa32e1bf0e5dd937bd558f06447366b0a11
   ];
   return (
     <div>
@@ -176,6 +181,25 @@ function Main({
         <Route path="job-alerts" element={<AdminLayout element={<JobAlert />} />} />
         <Route path="saved-jobs" element={<AdminLayout element={<SavedJobs />} />} />
         <Route
+<<<<<<< HEAD
+=======
+          path="messages"
+          element={<AdminLayout element={<Message />} />}
+        />
+        <Route
+          path="job-alerts"
+          element={<AdminLayout element={<JobAlert />} />}
+        />
+        <Route
+          path="saved-jobs"
+          element={<AdminLayout element={<SavedJobs />} />}
+        />
+        <Route
+          path="subscriptions"
+          element={<AdminLayout element={<SubscriptionPlan />} />}
+        />
+         <Route
+>>>>>>> 5ca5caa32e1bf0e5dd937bd558f06447366b0a11
           path="applied-jobs"
           element={<AdminLayout element={<AppliedJobs />} />}
         />
