@@ -67,10 +67,10 @@ const SubscriptionPlan = () => {
     const stepConfig = [
         {id:1, title: 'Personal Details', icon: User, color: 'from-blue-600 to-blue-600 '},
         {id:2, title: 'Role & Skills', icon: Briefcase, color: 'from-blue-600 to-blue-600'},
-        {id:3, title: 'Portfolio', icon: FileText, color: 'from-pink-500 to-rose-600'},
-        {id:4, title: 'Package & Payment', icon: Package, color: 'from-rose-500 to-orange-600'},
-        {id:5, title: 'Availability', icon: Clock, color: 'from-orange-500 to-yellow-600'},
-        {id:6, title: 'Consent & Agreement', icon: Shield, color: 'from-green-500 to-teal-600'},
+        {id:3, title: 'Portfolio', icon: FileText, color: 'from-blue-600 to-blue-600'},
+        {id:4, title: 'Package & Payment', icon: Package, color: 'from-blue-600 to-blue-600'},
+        {id:5, title: 'Availability', icon: Clock, color: 'from-blue-600 to-blue-600'},
+        {id:6, title: 'Consent & Agreement', icon: Shield, color: 'from-blue-600 to-blue-600'},
     ];
 
     const locations = [
@@ -129,13 +129,13 @@ const SubscriptionPlan = () => {
         {
           name: 'Standard',
           price: '£15',
-          gradient: 'from-blue-500 to-purple-600',
+          gradient: 'from-blue-600 to-blue-600',
           features: ['SmartStart Launch Kits', 'SkillStamp Test/Badge', 'SmartGuide']
         },
         {
           name: 'Premium',
           price: '£25',
-          gradient: 'from-purple-500 to-pink-600',
+          gradient: 'from-blue-600 to-blue-600',
           features: ['Everything in Standard', 'SmartCV', 'AI Matching']
         }
       ];
@@ -221,7 +221,7 @@ const SubscriptionPlan = () => {
                 return (
                   <div className="space-y-6">
                     <div className="text-center mb-8">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl mb-4">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
                         <User className="w-8 h-8 text-white" />
                       </div>
                       <h2 className="text-2xl font-bold text-gray-900 mb-2">Personal Details</h2>
@@ -231,20 +231,20 @@ const SubscriptionPlan = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <label className="block text-sm font-semibold text-gray-700">
-                          Full Name <span className="text-pink-500">*</span>
+                          Full Name <span className="text-[#ee009d]">*</span>
                         </label>
                         <input
                           type="text"
                           value={formData.fullName}
                           onChange={(e) => handleInputChange('fullName', e.target.value)}
-                          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200"
+                          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-600 focus:ring-4 focus:ring-purple-100 transition-all duration-200"
                           placeholder="Enter your full name"
                         />
                       </div>
         
                       <div className="space-y-2">
                         <label className="block text-sm font-semibold text-gray-700">
-                          Email Address <span className="text-pink-500">*</span>
+                          Email Address <span className="text-[#ee009d]">*</span>
                         </label>
                         <input
                           type="email"
@@ -257,7 +257,7 @@ const SubscriptionPlan = () => {
         
                       <div className="space-y-2">
                         <label className="block text-sm font-semibold text-gray-700">
-                          Phone Number (WhatsApp preferred) <span className="text-pink-500">*</span>
+                          Phone Number (WhatsApp preferred) <span className="text-[#ee009d]">*</span>
                         </label>
                         <input
                           type="tel"
@@ -270,7 +270,7 @@ const SubscriptionPlan = () => {
         
                       <div className="space-y-2">
                         <label className="block text-sm font-semibold text-gray-700">
-                          Location (City, Country) <span className="text-pink-500">*</span>
+                          Location (City, Country) <span className="text-[#ee009d]">*</span>
                         </label>
                         <select
                           value={formData.location}
@@ -301,7 +301,7 @@ const SubscriptionPlan = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                       <div className="space-y-2">
                         <label className="block text-sm font-semibold text-gray-700">
-                          Select Your Role <span className="text-pink-500">*</span>
+                          Select Your Role <span className="text-[#ee009d]">*</span>
                         </label>
                         <select
                           value={formData.role}
@@ -372,7 +372,7 @@ const SubscriptionPlan = () => {
                 return (
                   <div className="space-y-6">
                     <div className="text-center mb-8">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-pink-500 to-rose-600 rounded-2xl mb-4">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
                         <FileText className="w-8 h-8 text-white" />
                       </div>
                       <h2 className="text-2xl font-bold text-gray-900 mb-2">Portfolio</h2>
@@ -386,7 +386,7 @@ const SubscriptionPlan = () => {
                           value={formData.experienceDetails}
                           onChange={(e) => handleInputChange('experienceDetails', e.target.value)}
                           rows={4}
-                          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition-all duration-200"
+                          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200"
                           placeholder="Describe your relevant work experience..."
                         />
                       </div>
@@ -397,7 +397,7 @@ const SubscriptionPlan = () => {
                           value={formData.education}
                           onChange={(e) => handleInputChange('education', e.target.value)}
                           rows={3}
-                          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition-all duration-200"
+                          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200"
                           placeholder="Your educational background..."
                         />
                       </div>
@@ -408,7 +408,7 @@ const SubscriptionPlan = () => {
                           value={formData.toolsSkills}
                           onChange={(e) => handleInputChange('toolsSkills', e.target.value)}
                           rows={3}
-                          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition-all duration-200"
+                          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200"
                           placeholder="List the tools and software you're proficient with..."
                         />
                       </div>
@@ -417,7 +417,7 @@ const SubscriptionPlan = () => {
                         <label className="block text-sm font-semibold text-gray-700">
                           Upload 1–3 Work Samples (optional)
                         </label>
-                        <div className="border-3 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-pink-400 hover:bg-pink-50 transition-all duration-300 cursor-pointer">
+                        <div className="border-3 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#ee009d] hover:bg-pink-50 transition-all duration-300 cursor-pointer">
                           <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                           <p className="text-sm text-gray-600 mb-2 font-medium">Click to upload or drag and drop</p>
                           <p className="text-xs text-gray-500">PDF, DOC, PNG, JPG up to 10MB each</p>
@@ -432,7 +432,7 @@ const SubscriptionPlan = () => {
                           type="url"
                           value={formData.portfolioLink}
                           onChange={(e) => handleInputChange('portfolioLink', e.target.value)}
-                          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition-all duration-200"
+                          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200"
                           placeholder="https://your-portfolio.com"
                         />
                       </div>
@@ -444,7 +444,7 @@ const SubscriptionPlan = () => {
                 return (
                   <div className="space-y-6">
                     <div className="text-center mb-8">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-rose-500 to-orange-600 rounded-2xl mb-4">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
                         <Package className="w-8 h-8 text-white" />
                       </div>
                       <h2 className="text-2xl font-bold text-gray-900 mb-2">Package & Payment</h2>
@@ -453,7 +453,7 @@ const SubscriptionPlan = () => {
         
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-6">
-                        Choose SmartStart™ Package <span className="text-pink-500">*</span>
+                        Choose SmartStart™ Package <span className="text-[#ee009d]">*</span>
                       </label>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {packages.map(pkg => (
@@ -467,7 +467,7 @@ const SubscriptionPlan = () => {
                             onClick={() => handleInputChange('package', pkg.name)}
                           >
                             {formData.package === pkg.name && (
-                              <div className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                              <div className="absolute -top-3 -right-3 w-8 h-8 bg-[#2AA100]  rounded-full flex items-center justify-center">
                                 <Check className="w-5 h-5 text-white" />
                               </div>
                             )}
@@ -502,7 +502,7 @@ const SubscriptionPlan = () => {
                 return (
                   <div className="space-y-6">
                     <div className="text-center mb-8">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-yellow-600 rounded-2xl mb-4">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
                         <Clock className="w-8 h-8 text-white" />
                       </div>
                       <h2 className="text-2xl font-bold text-gray-900 mb-2">Availability & Preferences</h2>
@@ -513,12 +513,12 @@ const SubscriptionPlan = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <label className="block text-sm font-semibold text-gray-700">
-                            Weekly Availability <span className="text-pink-500">*</span>
+                            Weekly Availability <span className="text-[#ee009d]">*</span>
                           </label>
                           <select
                             value={formData.weeklyAvailability}
                             onChange={(e) => handleInputChange('weeklyAvailability', e.target.value)}
-                            className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all duration-200"
+                            className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200"
                           >
                             <option value="">Select availability</option>
                             {availabilityOptions.map(option => (
@@ -529,20 +529,20 @@ const SubscriptionPlan = () => {
         
                         <div className="space-y-2">
                           <label className="block text-sm font-semibold text-gray-700">
-                            Earliest Start Date <span className="text-pink-500">*</span>
+                            Earliest Start Date <span className="text-[#ee009d]">*</span>
                           </label>
                           <input
                             type="date"
                             value={formData.startDate}
                             onChange={(e) => handleInputChange('startDate', e.target.value)}
-                            className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all duration-200"
+                            className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200"
                           />
                         </div>
                       </div>
         
                       <div className="space-y-3">
                         <label className="block text-sm font-semibold text-gray-700">
-                          Preferred Client Type <span className="text-pink-500">*</span>
+                          Preferred Client Type <span className="text-[#ee009d]">*</span>
                         </label>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {clientTypes.map(type => (
@@ -556,15 +556,15 @@ const SubscriptionPlan = () => {
                                 />
                                 <div className={`w-5 h-5 rounded-lg border-2 transition-all duration-200 ${
                                   formData.clientTypes.includes(type)
-                                    ? 'bg-gradient-to-r from-orange-500 to-yellow-500 border-orange-500'
-                                    : 'border-gray-300 group-hover:border-orange-400'
+                                    ? 'bg-purple-700 border-purple-400'
+                                    : 'border-gray-300 group-hover:border-purple-400'
                                 }`}>
                                   {formData.clientTypes.includes(type) && (
                                     <Check className="w-3 h-3 text-white m-0.5" />
                                   )}
                                 </div>
                               </div>
-                              <span className="text-sm text-gray-700 group-hover:text-orange-700 transition-colors">
+                              <span className="text-sm text-gray-700 group-hover:text-purple-700 transition-colors">
                                 {type}
                               </span>
                             </label>
@@ -597,7 +597,7 @@ const SubscriptionPlan = () => {
                           />
                           <div className={`w-6 h-6 rounded-lg border-2 transition-all duration-200 ${
                             formData.agreeTerms
-                              ? 'bg-[#2AA100] hover:bg-teal-600 border-pink-100'
+                              ? 'bg-[#2AA100] hover:bg-teal-600 border-white'
                               : 'border-gray-300 group-hover:border-green-400'
                           }`}>
                             {formData.agreeTerms && (
@@ -620,7 +620,7 @@ const SubscriptionPlan = () => {
                           />
                           <div className={`w-6 h-6 rounded-lg border-2 transition-all duration-200 ${
                             formData.consentProfile
-                              ? 'bg-[#2AA100] hover:bg-teal-600 border-pink-100'
+                              ? 'bg-[#2AA100] hover:bg-teal-600 border-white'
                               : 'border-gray-300 group-hover:border-green-400'
                           }`}>
                             {formData.consentProfile && (
@@ -664,8 +664,8 @@ const SubscriptionPlan = () => {
                 Step {currentStep} of {totalSteps}
               </span>
               <div className="flex items-center space-x-2">
-                <Sparkles className="w-5 h-5 text-purple-700" />
-                <span className="text-lg font-bold text-purple-700">
+                <Sparkles className="w-5 h-5 text-[#2AA100]" />
+                <span className="text-lg font-bold text-[#2AA100]">
                   {Math.round((currentStep / totalSteps) * 100)}% Complete
                 </span>
               </div>
