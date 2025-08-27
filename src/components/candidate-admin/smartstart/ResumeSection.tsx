@@ -134,7 +134,11 @@ const SmartStartAssessment: React.FC = () => {
   };
 
   const handleGoToDashboard = () => {
-    navigate('/candidate-dashboard'); // ✅ fixed navigation
+    // ✅ Step 2: Save to localStorage
+    localStorage.setItem("userSelections", JSON.stringify(selections));
+
+    // then navigate
+    navigate('/candidate-dashboard');
   };
 
   // =========================
