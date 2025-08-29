@@ -65,7 +65,7 @@ const SideNav: React.FC = () => {
 
       {/* Sidebar */}
       <div
-        className={`h-full w-64 bg-white flex flex-col fixed lg:static transition-transform transform ${
+        className={`h-full w-64 bg-white p-4 flex flex-col fixed lg:static transition-transform transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
       >
