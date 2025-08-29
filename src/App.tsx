@@ -177,7 +177,6 @@ function Main({
         <Route path="delete-account" element={<AdminLayout element={<DeletePage />} />} />
         <Route path="candidate-wallet-account" element={<AdminLayout element={<CandidateWallet />} />} />
         <Route path="logout-account" element={<AdminLayout element={<LogoutPage />} />} />
-
         {/* SmartGuide Route */}
         <Route path="smart-guide" element={<AdminLayout element={<SmartGuidePage />} />} />
 
