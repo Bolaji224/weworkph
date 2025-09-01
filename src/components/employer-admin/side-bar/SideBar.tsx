@@ -66,16 +66,10 @@ const SideNav: React.FC = () => {
 
       {/* Sidebar */}
       <div
-        className={`h-full w-64 bg-white flex flex-col fixed lg:static transition-transform transform 
-          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 ml-2 z-50`}
+        className={`h-full w-64 bg-white flex flex-col fixed lg:static transition-transform transform ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0`}
       >
-        {/* Close button inside sidebar (mobile only) */}
-        <div className="flex justify-end p-4 lg:hidden">
-          <button onClick={closeSidebar} className="text-[#2aa100] text-2xl">
-            ✕
-          </button>
-        </div>
-
         {/* Profile section */}
         <div className="p-6 flex items-center flex-col">
           <Link to="/">

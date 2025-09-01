@@ -1,236 +1,164 @@
-import { UilImage, UilMessage, UilPaperclip } from '@iconscout/react-unicons';
-import React, { useState, useEffect, useRef, useContext } from 'react';
-import Images from '../../../constant/Images';
-import { httpGetWithToken, httpPostWithToken } from '../../../../utils/http_utils';
-import { AppContext } from '../../../../global/state';
-import ls from "localstorage-slim";
-import moment from 'moment/moment';
+import React, { useState } from 'react';
+import { ArrowRight, RotateCcw, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-interface ChatUser {
-  id: number;
-  name: string;
-  profileImage: string;
-}
+// =========================
+// Component
+// =========================
+const SmartStartJobPosting: React.FC = () => {
+  const navigate = useNavigate();
 
-const ChatBox: React.FC = () => {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [newMessage, setNewMessage] = useState<string>('');
-  const user:any = ls.get("wwph_usr", {decrypt : true})
+  const [formData, setFormData] = useState({
+    company: '',
+    location: '',
+    jobTitle: '',
+    experience: '',
+    availability: ''
+  });
 
-  const [chatUsers, setChatUsers] = useState<any[]>([
-  ]);
-  const [selectedChat, setselectedChat] = useState<any | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [loading, setLoading] = useState(false)
-  const handleSendMessage = async () => {
-    if (newMessage.trim() === '') return;
-    if(loading) return;
-    setLoading(true)
-    const message = {
-      "user_id" : user.id === selectedChat.user1.id ?  selectedChat.user2.id :  selectedChat.user1.id,
-      "message" : newMessage,
-      "chat_id" : selectedChat.id
-    }
-    await httpPostWithToken("chat/send-chat", message)
-    setLoading(false)
-    setNewMessage('');
-    getChatSingle(selectedChat.id)
-    getChat()
+  const [showSummary, setShowSummary] = useState(false);
+
+  const handleInput = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const message: any = {
-        id: messages.length + 1,
-        text: `File uploaded: ${files[0].name}`,
-        sender: 'user',
-        dateTime: new Date().toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: true,
-        }),
-      };
-
-      setMessages([...messages, message]);
-    }
+  const handlePublishJob = () => {
+    localStorage.setItem("jobPost", JSON.stringify(formData));
+    navigate('/employers-dashboard');
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const imageUrl = URL.createObjectURL(files[0]);
-      const message: any = {
-        id: messages.length + 1,
-        text: '',
-        sender: 'user',
-        dateTime: new Date().toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: true,
-        }),
-        image: imageUrl,
-      };
-
-      setMessages([...messages, message]);
-    }
-  };
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    getChat();
-  }, [messages]);
-  const getChat = async () => {
-    const resp = await httpGetWithToken("chat")
-    if (resp.status == "success") {
-      setChatUsers(resp.data)
-    }
-  }
-
-  const getChatSingle = async (id:string) => {
-    const resp = await httpGetWithToken("chat/"+id)
-    if (resp.status == "success") {
-      setMessages(resp.data.messages)
-    }
-  }
-  useEffect(() => {
-    if(selectedChat) getChatSingle(selectedChat?.id);
-  }, [selectedChat]);
-
-  return (
-    <section className='px-2 py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12 max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] mx-auto'>
-      <h2 className='text-[#2aa100] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-sans font-bold mb-4 sm:mb-6 md:mb-8'>Message</h2>
-      <div className="flex flex-col min-h-[350px] md:flex-row w-full bg-white rounded-lg shadow-lg">
-        {/* Chat List Section */}
-        <div className="w-full md:w-1/4 border-r-0 md:border-r-2 p-2 sm:p-4">
-          <h2 className="text-lg font-bold mb-2 sm:mb-4">Chats</h2>
-          <ul>
-            {chatUsers.map((chat:any) => {
-              const lastMessage:any = chat.last_message;
-              return (
-                <li
-                  key={user.id}
-                  className={`p-2 cursor-pointer ${selectedChat?.id === chat.id ? 'bg-[#F5E2EF] text-white rounded-[10px] mb-2 sm:mb-4' : 'hover:bg-[#F5E2EF] rounded-[10px] mb-2 sm:mb-4'}`}
-                  onClick={() => setselectedChat(chat)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <img
-                        src={ user.id == chat.user1.id ? chat.user2.avatar : chat.user1.avatar}
-                        alt={`${user.id == chat.user1.id ? chat.user2.name : chat.user1.name}'s profile`}
-                        className="w-8 h-8 rounded-full mr-2"
-                      />
-                      <div>
-                        <div className='text-[#000000] font-sans font-semibold text-sm sm:text-base'>{user.id == chat.user1.id ? chat.user2.name : chat.user1.name}</div>
-                      </div>
-                    </div>
-                    {lastMessage && (
-                      <div className="text-xs text-[#646A73]">
-                        {moment(lastMessage.created_at).format("Do, MMM").toString()}
-                      </div>
-                    )}
-                  </div>
-                  {lastMessage && (
-                    <div className="text-xs ml-10 text-[#646A73]">
-                      {lastMessage.message.length > 20 ? `${lastMessage.message.substring(0, 20)}...` : lastMessage.message}
-                    </div>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-
-        {/* Chat Box Section */}
-        <div className="flex-1 flex flex-col">
-          <div className="flex-1 overflow-auto mb-2 sm:mb-4 p-2 sm:p-4">
-            {selectedChat ? (
-              <>
-                {messages.map((message:any) =>{
-                  let user2 = user.id == selectedChat.user1.id ? selectedChat.user2 : selectedChat.user1
-                  return (
-                  <div
-                    key={message.id}
-                    className={`flex items-end my-2 ${message.user_id === user.id ? 'justify-end' : 'justify-start'}`}
-                  >
-                    {message.user_id === user.id ? (
-                      <img
-                        src={user.avatar}
-                        alt={`${user.name}'s profile`}
-                        className="w-8 h-8 rounded-full ml-2"
-                      />
-                    ):
-                    <img
-                    src={user2.avatar}
-                    alt={`${user2.name}'s profile`}
-                    className="w-8 h-8 rounded-full ml-2"
-                  />
-                    }
-                    <div className="flex flex-col">
-                      <div className="text-xs text-gray-500 text-right">
-                        {moment(message.created_at).format("Do, MMM | h:mm a").toString()}
-                      </div>
-
-                      {message.image ? (
-                        <img src={message.image} alt="Uploaded content" className="w-32 sm:w-48 md:w-64 h-auto rounded-lg" />
-                      ) : (
-                        <div className={`p-2 rounded-lg ${message.user_id === user.id ? 'bg-[#ee009d] text-white' : 'bg-gray-300 text-black'}`}>
-                          {message.message}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )})}
-                <div ref={messagesEndRef}></div>
-              </>
-            ) : (
-              <div className="text-center text-gray-500">Select a chat to start messaging</div>
-            )}
+  if (showSummary) {
+    return (
+      <div className="p-6 mt-20">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">Your Job Post</h2>
+            <p className="text-gray-600">Here’s the job listing you’ve created</p>
           </div>
-          {selectedChat && (
-            <div className="flex items-center p-2 sm:p-4 border-t-2">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                className="flex-1 p-2 sm:p-4 border border-gray-300 focus:ring-0 focus:outline-none rounded-[20px]"
-                placeholder="Type your message..."
-              />
-              <label className="ml-2 p-2 cursor-pointer">
-                <UilPaperclip size={25} className="text-[#646A73]" />
-                <input
-                  type="file"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-              </label>
-              <label className="p-2 cursor-pointer">
-                <UilImage size={25} className="text-[#646a73]" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-              </label>
-              <button
-                onClick={handleSendMessage}
-                className="ml-2 p-2 bg-[#ee009d] text-white text-xs sm:text-sm font-poppins rounded-lg flex items-center gap-1"
-              >
-                {loading ? "...." : "Send"}<UilMessage size={18} className="ml-1" />
-              </button>
-            </div>
-          )}
+
+          <div className="space-y-4 mb-8">
+            {Object.entries(formData).map(([key, value]) => (
+              <div key={key} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-800 mb-1 capitalize">{key}</h3>
+                    <p className="text-[#2AA100] font-medium text-lg">{value}</p>
+                  </div>
+                  <div className="flex items-center justify-center w-8 h-8 bg-[#2AA100] rounded-full ml-4">
+                    <CheckCircle className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={handlePublishJob}
+              className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-[#2AA100] text-white font-semibold rounded-xl hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              Publish Job
+              <ArrowRight className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setShowSummary(false)}
+              className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:bg-gray-50"
+            >
+              <RotateCcw className="w-5 h-5" />
+              Edit Job Post
+            </button>
+          </div>
         </div>
       </div>
-    </section>
+    );
+  }
+
+  return (
+    <div className="p-6 mt-16">
+      <div>
+      <div className="max-w-3xl mx-auto mb-6">
+            <div>
+              <h1 className="text-3xl text-center font-bold text-purple-700 mb-2">
+                SmartStart™ Application
+              </h1>
+              <p className="text-gray-600 text-center">A quick way to find top-rated editors and creatives worldwide. Fill in the details below to create your job post.</p>
+            </div>
+          </div>
+      </div>
+      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+        <h1 className="text-2xl font-bold text-[#1E2A38] text-start pb-4">Post a Job Opening</h1>
+
+        <div className="space-y-6">
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Company Name</label>
+            <input
+              type="text"
+              value={formData.company}
+              onChange={e => handleInput('company', e.target.value)}
+              placeholder="e.g. Acme Inc."
+              className="w-full p-4 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2AA100]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Location</label>
+            <input
+              type="text"
+              value={formData.location}
+              onChange={e => handleInput('location', e.target.value)}
+              placeholder="e.g. New York, USA"
+              className="w-full p-4 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2AA100]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Job Title</label>
+            <select
+              value={formData.availability}
+              onChange={e => handleInput('availability', e.target.value)}
+              className="w-full p-4 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2AA100]"
+            >
+              <option value="remote">Virtual Assistant</option>
+              <option value="hybrid">Graphic Designer</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Years of Experience</label>
+            <input
+              type="number"
+              value={formData.experience}
+              onChange={e => handleInput('experience', e.target.value)}
+              placeholder="e.g. 2"
+              className="w-full p-4 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2AA100]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Availability</label>
+            <select
+              value={formData.availability}
+              onChange={e => handleInput('availability', e.target.value)}
+              className="w-full p-4 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2AA100]"
+            >
+              <option value="">Select availability</option>
+              <option value="remote">Remote</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="on-site">On-site</option>
+            </select>
+          </div>
+
+          <button
+            onClick={() => setShowSummary(true)}
+            className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-[#2AA100] text-white font-semibold rounded-xl hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            Review Job Post
+            <ArrowRight className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default ChatBox;
+export default SmartStartJobPosting;

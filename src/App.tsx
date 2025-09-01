@@ -72,6 +72,7 @@ import AdminJobDetails from "./components/master-admin/components/JobDetails";
 // SmartGuide
 import SmartGuidePage from "./components/candidate-admin/smartstart/SmartGuidePage";
 import { seedGuidesIfEmpty } from "./utils/localStorage";
+import FreelanceCareerTips from "./components/candidate-admin/freelance-career-tips/FreelanceCareerTips";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -129,6 +130,7 @@ function Main({
     "/verification-code",
     "/forget-password",
     "/subscriptions",
+    "/smart-guide", // NEW: Add SmartGuide route to hide navbar if needed
   ];
 
   const shouldHideNavbar =
@@ -185,44 +187,17 @@ function Main({
           element={<AdminLayout element={<ResumeSection />} />}
         />
         <Route path="messages" element={<AdminLayout element={<Message />} />} />
-        <Route
-          path="job-alerts"
-          element={<AdminLayout element={<JobAlert />} />}
-        />
-        <Route
-          path="saved-jobs"
-          element={<AdminLayout element={<SavedJobs />} />}
-        />
-        <Route
-          path="subscriptions"
-          element={<AdminLayout element={<SubscriptionPlan />} />}
-        />
-        <Route
-          path="applied-jobs"
-          element={<AdminLayout element={<AppliedJobs />} />}
-        />
-        <Route
-          path="account-setting"
-          element={<AdminLayout element={<AccountSettings />} />}
-        />
-        <Route
-          path="delete-account"
-          element={<AdminLayout element={<DeletePage />} />}
-        />
-        <Route
-          path="candidate-wallet-account"
-          element={<AdminLayout element={<CandidateWallet />} />}
-        />
-        <Route
-          path="logout-account"
-          element={<AdminLayout element={<LogoutPage />} />}
-        />
+        <Route path="job-alerts" element={<AdminLayout element={<JobAlert />} />} />
+        <Route path="saved-jobs" element={<AdminLayout element={<SavedJobs />} />} />
+        <Route path="subscriptions" element={<AdminLayout element={<SubscriptionPlan />} />} />
+        <Route path="applied-jobs" element={<AdminLayout element={<AppliedJobs />} />} />
+        <Route path="account-setting" element={<AdminLayout element={<AccountSettings />} />} />
+        <Route path="delete-account" element={<AdminLayout element={<DeletePage />} />} />
+        <Route path="candidate-wallet-account" element={<AdminLayout element={<CandidateWallet />} />} />
+        <Route path="logout-account" element={<AdminLayout element={<LogoutPage />} />} />
 
-        {/* ✅ SmartGuide wrapped with AdminLayout */}
-        <Route
-          path="/smartguide/:guideId"
-          element={<AdminLayout element={<SmartGuidePage />} />}
-        />
+        {/* SmartGuide Route */}
+        <Route path="smart-guide" element={<AdminLayout element={<SmartGuidePage />} />} />
 
         {/* Employers/Admin Routes */}
         <Route

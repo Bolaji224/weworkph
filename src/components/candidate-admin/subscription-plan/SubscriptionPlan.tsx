@@ -652,9 +652,6 @@ const SubscriptionPlan = () => {
               </h1>
               <p className="text-gray-600">Transform your freelance career with our comprehensive program</p>
             </div>
-            {/* <button className="px-6 py-3 text-purple-600 border-2 border-purple-600 rounded-xl hover:bg-purple-50 transition-all duration-200 font-medium">
-              Save as draft
-            </button> */}
           </div>
 
           {/* Enhanced Progress Bar */}

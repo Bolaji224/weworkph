@@ -103,7 +103,7 @@ export default function JobApplicationForm() {
                 <label htmlFor="jobType" className="block text-sm font-semibold text-gray-700 mb-2">
                   Job Applicant
                 </label>
-                <select
+                <select 
                   id="jobType"
                   name="jobType"
                   value={formData.jobType}
