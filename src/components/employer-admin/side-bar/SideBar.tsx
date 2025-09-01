@@ -38,6 +38,7 @@ const SideNav: React.FC = () => {
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
   const closeDropdown = () => setIsDropdownOpen(false);
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -53,7 +54,7 @@ const SideNav: React.FC = () => {
   return (
     <div>
       {/* Mobile menu toggle */}
-      <div className="lg:hidden p-4 text-white absolute left-0 top-2 flex justify-between items-center">
+      <div className="lg:hidden p-4 text-white absolute left-0 top-2 flex justify-between items-center w-full">
         <button onClick={toggleSidebar}>
           {isSidebarOpen ? (
             <span className="text-[#2aa100] text-2xl">✕</span>
@@ -65,10 +66,16 @@ const SideNav: React.FC = () => {
 
       {/* Sidebar */}
       <div
-        className={`h-full w-64 bg-white flex flex-col fixed lg:static transition-transform transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}
+        className={`h-full w-64 bg-white flex flex-col fixed lg:static transition-transform transform 
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 ml-2 z-50`}
       >
+        {/* Close button inside sidebar (mobile only) */}
+        <div className="flex justify-end p-4 lg:hidden">
+          <button onClick={closeSidebar} className="text-[#2aa100] text-2xl">
+            ✕
+          </button>
+        </div>
+
         {/* Profile section */}
         <div className="p-6 flex items-center flex-col">
           <Link to="/">

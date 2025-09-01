@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CheckCircle, ArrowRight, RotateCcw, Sparkles } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // ✅ add this
+import { useNavigate } from 'react-router-dom';
 
 // =========================
 // Types
@@ -81,9 +81,8 @@ const questions: Question[] = [
 // Component
 // =========================
 const SmartStartAssessment: React.FC = () => {
-  const navigate = useNavigate(); // ✅ init navigator
+  const navigate = useNavigate();
 
-  // Selections
   const [selections, setSelections] = useState<Selections>({
     role: '',
     experience: '',
@@ -92,18 +91,13 @@ const SmartStartAssessment: React.FC = () => {
     workStyle: ''
   });
 
-  // Current question index for step-by-step flow
   const [currentStep, setCurrentStep] = useState(0);
-  
-  // Show summary vs form
   const [showSummary, setShowSummary] = useState(false);
 
-  // Helpers
   const isSelected = (category: Category, value: string) =>
     selections[category] === value;
 
   const allQuestionsAnswered = Object.values(selections).every(v => v !== '');
-  
   const answeredCount = Object.values(selections).filter(v => v !== '').length;
 
   const getLabel = (cat: Category, val: string): string => {
@@ -111,7 +105,6 @@ const SmartStartAssessment: React.FC = () => {
     return q?.options.find((o: Option) => o.value === val)?.label ?? '';
   };
 
-  // Actions
   const handleSelection = (category: Category, value: string) => {
     setSelections(prev => ({
       ...prev,
@@ -133,12 +126,18 @@ const SmartStartAssessment: React.FC = () => {
     }
   };
 
-  const handleGoToDashboard = () => {
-    // ✅ Step 2: Save to localStorage
-    localStorage.setItem("userSelections", JSON.stringify(selections));
+  const handleGoToSmartGuide = () => {
+    // ✅ Build correct guideId (matching seedGuides)
+    const role = selections.role.toLowerCase(); // "va" or "editor"
+    const exp = selections.experience.toLowerCase(); // "beginner" or "advanced"
+    const selectedGuideId = `${role}-${exp}`;
 
-    // then navigate
-    navigate('/candidate-dashboard');
+    // Save selections and guideId
+    localStorage.setItem("userSelections", JSON.stringify(selections));
+    localStorage.setItem("selectedGuideId", selectedGuideId);
+
+    // Navigate to SmartGuide
+    navigate(`/smartguide/${selectedGuideId}`);
   };
 
   // =========================
@@ -148,7 +147,6 @@ const SmartStartAssessment: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 mt-20 via-white to-green-50 p-6">
         <div className="max-w-2xl mx-auto">
-          {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-[#2AA100] rounded-full mb-4">
               <Sparkles className="w-8 h-8 text-white" />
@@ -157,16 +155,15 @@ const SmartStartAssessment: React.FC = () => {
             <p className="text-gray-600">Here's what we learned about you</p>
           </div>
 
-          {/* Summary Cards */}
           <div className="space-y-4 mb-8">
-            {Object.entries(selections).map(([cat, val], index) => {
+            {Object.entries(selections).map(([cat, val]) => {
               const question = questions.find(q => q.id === cat);
               return (
                 <div key={cat} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-800 mb-1">
-                        {question?.title.replace(/^\d+\.\s*/, '')}
+                        {question?.title}
                       </h3>
                       <p className="text-[#2AA100] font-medium text-lg">
                         {getLabel(cat as Category, val)}
@@ -181,13 +178,12 @@ const SmartStartAssessment: React.FC = () => {
             })}
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
             <button
-              onClick={handleGoToDashboard}
+              onClick={handleGoToSmartGuide}
               className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-[#2AA100] text-white font-semibold rounded-xl hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Go to Dashboard
+              Go to SmartGuide
               <ArrowRight className="w-5 h-5" />
             </button>
             <button
@@ -215,7 +211,6 @@ const SmartStartAssessment: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br mt-20 from-green-50 via-white to-green-50 p-6">
       <div className="max-w-3xl mx-auto">
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">SmartStart Assessment</h1>
           <p className="text-gray-600">Let's personalize your experience in just a few steps</p>
@@ -248,13 +243,10 @@ const SmartStartAssessment: React.FC = () => {
               {currentQuestion.title}
             </h2>
             {currentQuestion.subtitle && (
-              <p className="text-gray-600 text-lg">
-                {currentQuestion.subtitle}
-              </p>
+              <p className="text-gray-600 text-lg">{currentQuestion.subtitle}</p>
             )}
           </div>
 
-          {/* Options */}
           <div className="space-y-4">
             {currentQuestion.options.map((option) => (
               <button
@@ -268,24 +260,26 @@ const SmartStartAssessment: React.FC = () => {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg mb-1">
-                      {option.label}
-                    </h3>
+                    <h3 className="font-semibold text-lg mb-1">{option.label}</h3>
                     {option.description && (
-                      <p className={`text-sm ${
-                        isSelected(currentQuestion.id, option.value)
-                          ? 'text-green-100'
-                          : 'text-gray-500'
-                      }`}>
+                      <p
+                        className={`text-sm ${
+                          isSelected(currentQuestion.id, option.value)
+                            ? 'text-green-100'
+                            : 'text-gray-500'
+                        }`}
+                      >
                         {option.description}
                       </p>
                     )}
                   </div>
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                    isSelected(currentQuestion.id, option.value)
-                      ? 'border-white bg-white'
-                      : 'border-gray-300'
-                  }`}>
+                  <div
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                      isSelected(currentQuestion.id, option.value)
+                        ? 'border-white bg-white'
+                        : 'border-gray-300'
+                    }`}
+                  >
                     {isSelected(currentQuestion.id, option.value) && (
                       <div className="w-3 h-3 bg-[#2AA100] rounded-full"></div>
                     )}
@@ -339,7 +333,6 @@ const SmartStartAssessment: React.FC = () => {
           </button>
         </div>
 
-        {/* Quick Overview */}
         <div className="mt-8 text-center">
           <p className="text-gray-500 text-sm">
             {answeredCount} of {questions.length} questions completed

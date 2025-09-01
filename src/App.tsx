@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
-  Navigate,
 } from "react-router-dom";
 
 // Import Components
@@ -79,8 +78,10 @@ function App() {
 
   const handleLoginSuccess = () => setIsLoggedIn(true);
 
-  // Seed guides on App load
-  seedGuidesIfEmpty();
+  // ✅ Seed guides in localStorage once
+  useEffect(() => {
+    seedGuidesIfEmpty();
+  }, []);
 
   return (
     <Router>
@@ -100,6 +101,7 @@ function Main({
 }) {
   const location = useLocation();
 
+  // ✅ Hide Navbar on dashboard-like routes
   const hideNavbarPaths = [
     "/login",
     "/register",
@@ -126,14 +128,16 @@ function Main({
     "/verify-account",
     "/verification-code",
     "/forget-password",
-    "/all-applicant/:slug",
     "/subscriptions",
-    "/smart-guide", // NEW: Add SmartGuide route to hide navbar if needed
   ];
+
+  const shouldHideNavbar =
+    hideNavbarPaths.includes(location.pathname) ||
+    location.pathname.startsWith("/smartguide");
 
   return (
     <div>
-      {!hideNavbarPaths.includes(location.pathname) && <Navbar />}
+      {!shouldHideNavbar && <Navbar />}
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
@@ -145,7 +149,10 @@ function Main({
         <Route path="login" element={<LoginForm />} />
         <Route path="register" element={<RegisterForm />} />
         <Route path="hire-talent" element={<CandidatesHireTalent />} />
-        <Route path="candidate-profile/:candidateId" element={<CandidateProfile />} />
+        <Route
+          path="candidate-profile/:candidateId"
+          element={<CandidateProfile />}
+        />
         <Route path="job-details/:slug" element={<JobDataPage />} />
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
         <Route path="for-company-footer" element={<ForCompany />} />
@@ -165,38 +172,104 @@ function Main({
         />
 
         {/* Candidate/Admin Routes */}
-        <Route path="candidate-dashboard" element={<AdminLayout element={<CandidateDashboard />} />} />
-        <Route path="profile-list" element={<AdminLayout element={<ProfileDetails />} />} />
-        <Route path="resume-page" element={<AdminLayout element={<ResumeSection />} />} />
+        <Route
+          path="candidate-dashboard"
+          element={<AdminLayout element={<CandidateDashboard />} />}
+        />
+        <Route
+          path="profile-list"
+          element={<AdminLayout element={<ProfileDetails />} />}
+        />
+        <Route
+          path="resume-page"
+          element={<AdminLayout element={<ResumeSection />} />}
+        />
         <Route path="messages" element={<AdminLayout element={<Message />} />} />
-        <Route path="job-alerts" element={<AdminLayout element={<JobAlert />} />} />
-        <Route path="saved-jobs" element={<AdminLayout element={<SavedJobs />} />} />
-        <Route path="subscriptions" element={<AdminLayout element={<SubscriptionPlan />} />} />
-        <Route path="applied-jobs" element={<AdminLayout element={<AppliedJobs />} />} />
-        <Route path="account-setting" element={<AdminLayout element={<AccountSettings />} />} />
-        <Route path="delete-account" element={<AdminLayout element={<DeletePage />} />} />
-        <Route path="candidate-wallet-account" element={<AdminLayout element={<CandidateWallet />} />} />
-        <Route path="logout-account" element={<AdminLayout element={<LogoutPage />} />} />
+        <Route
+          path="job-alerts"
+          element={<AdminLayout element={<JobAlert />} />}
+        />
+        <Route
+          path="saved-jobs"
+          element={<AdminLayout element={<SavedJobs />} />}
+        />
+        <Route
+          path="subscriptions"
+          element={<AdminLayout element={<SubscriptionPlan />} />}
+        />
+        <Route
+          path="applied-jobs"
+          element={<AdminLayout element={<AppliedJobs />} />}
+        />
+        <Route
+          path="account-setting"
+          element={<AdminLayout element={<AccountSettings />} />}
+        />
+        <Route
+          path="delete-account"
+          element={<AdminLayout element={<DeletePage />} />}
+        />
+        <Route
+          path="candidate-wallet-account"
+          element={<AdminLayout element={<CandidateWallet />} />}
+        />
+        <Route
+          path="logout-account"
+          element={<AdminLayout element={<LogoutPage />} />}
+        />
 
-        {/* SmartGuide Route */}
-        <Route path="smart-guide" element={<AdminLayout element={<SmartGuidePage />} />} />
+        {/* ✅ SmartGuide wrapped with AdminLayout */}
+        <Route
+          path="/smartguide/:guideId"
+          element={<AdminLayout element={<SmartGuidePage />} />}
+        />
 
         {/* Employers/Admin Routes */}
-        <Route path="employers-dashboard" element={<EmployersLayout element={<EmployersDashboard />} />} />
-        <Route path="employers-profile" element={<EmployersLayout element={<EmployerProfile />} />} />
+        <Route
+          path="employers-dashboard"
+          element={<EmployersLayout element={<EmployersDashboard />} />}
+        />
+        <Route
+          path="employers-profile"
+          element={<EmployersLayout element={<EmployerProfile />} />}
+        />
         <Route path="my-jobs" element={<EmployersLayout element={<MyJobs />} />} />
-        <Route path="all-applicant/:slug" element={<EmployersLayout element={<AllApplicates />} />} />
+        <Route
+          path="all-applicant/:slug"
+          element={<EmployersLayout element={<AllApplicates />} />}
+        />
         <Route path="jobs/:jobId/details" element={<JobDetailsPage />} />
-        <Route path="employers-messages" element={<EmployersLayout element={<EmployersMessage />} />} />
-        <Route path="submit-jobs" element={<EmployersLayout element={<SubmitJobs />} />} />
-        <Route path="saved-candidate" element={<EmployersLayout element={<SavedCandidate />} />} />
-        <Route path="employers-account-settings" element={<EmployersLayout element={<EmployersAccountSettings />} />} />
-        <Route path="employers-delete-account" element={<EmployersLayout element={<EmployersDeleteAccount />} />} />
-        <Route path="employers-wallet-account" element={<EmployersLayout element={<EmployersWallet />} />} />
-        <Route path="employers-logout-account" element={<EmployersLayout element={<EmployersLogoutPage />} />} />
+        <Route
+          path="employers-messages"
+          element={<EmployersLayout element={<EmployersMessage />} />}
+        />
+        <Route
+          path="submit-jobs"
+          element={<EmployersLayout element={<SubmitJobs />} />}
+        />
+        <Route
+          path="saved-candidate"
+          element={<EmployersLayout element={<SavedCandidate />} />}
+        />
+        <Route
+          path="employers-account-settings"
+          element={<EmployersLayout element={<EmployersAccountSettings />} />}
+        />
+        <Route
+          path="employers-delete-account"
+          element={<EmployersLayout element={<EmployersDeleteAccount />} />}
+        />
+        <Route
+          path="employers-wallet-account"
+          element={<EmployersLayout element={<EmployersWallet />} />}
+        />
+        <Route
+          path="employers-logout-account"
+          element={<EmployersLayout element={<EmployersLogoutPage />} />}
+        />
 
         {/* Master Admin Routes */}
-        <Route path="/admin" >
+        <Route path="/admin">
           <Route path="" element={<AdminLogin />} />
           <Route path="admin-jobs" element={<AdminJobList />} />
           <Route path="job-details/:id" element={<AdminJobDetails />} />
