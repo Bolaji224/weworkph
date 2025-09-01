@@ -130,6 +130,7 @@ function Main({
     "/verification-code",
     "/forget-password",
     "/subscriptions",
+    "/freelance-career-tips",
     "/smart-guide", // NEW: Add SmartGuide route to hide navbar if needed
   ];
 
@@ -194,8 +195,8 @@ function Main({
         <Route path="account-setting" element={<AdminLayout element={<AccountSettings />} />} />
         <Route path="delete-account" element={<AdminLayout element={<DeletePage />} />} />
         <Route path="candidate-wallet-account" element={<AdminLayout element={<CandidateWallet />} />} />
+        <Route path="freelance-career-tips" element={<AdminLayout element={<FreelanceCareerTips />} />} />
         <Route path="logout-account" element={<AdminLayout element={<LogoutPage />} />} />
-
         {/* SmartGuide Route */}
         <Route path="smart-guide" element={<AdminLayout element={<SmartGuidePage />} />} />
 
