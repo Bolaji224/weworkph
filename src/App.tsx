@@ -73,6 +73,7 @@ import AdminJobDetails from "./components/master-admin/components/JobDetails";
 // SmartGuide
 import SmartGuidePage from "./components/candidate-admin/smartstart/SmartGuidePage";
 import { seedGuidesIfEmpty } from "./utils/localStorage";
+import FreelanceCareerTips from "./components/candidate-admin/freelance-career-tips/FreelanceCareerTips";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -128,6 +129,7 @@ function Main({
     "/forget-password",
     "/all-applicant/:slug",
     "/subscriptions",
+    "/freelance-career-tips",
     "/smart-guide", // NEW: Add SmartGuide route to hide navbar if needed
   ];
 
@@ -176,6 +178,7 @@ function Main({
         <Route path="account-setting" element={<AdminLayout element={<AccountSettings />} />} />
         <Route path="delete-account" element={<AdminLayout element={<DeletePage />} />} />
         <Route path="candidate-wallet-account" element={<AdminLayout element={<CandidateWallet />} />} />
+        <Route path="freelance-career-tips" element={<AdminLayout element={<FreelanceCareerTips />} />} />
         <Route path="logout-account" element={<AdminLayout element={<LogoutPage />} />} />
         {/* SmartGuide Route */}
         <Route path="smart-guide" element={<AdminLayout element={<SmartGuidePage />} />} />

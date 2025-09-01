@@ -13,6 +13,7 @@ import { httpGetWithToken, httpPostWithToken } from '../../utils/http_utils';
 import ls from "localstorage-slim";
 import { useToast } from '@chakra-ui/react';
 import SwitchAccountModal from './delete-account/switch_account';
+import { Zap } from 'lucide-react';
 
 interface iContext {
   user? : iProfile,
@@ -243,6 +244,11 @@ const SideNav: React.FC = () => {
             <Link to='/delete-account'>
               <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/delete-account') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2aa100]'}`}>
                 <UilTrash size={25}  /> Social Impact
+              </li>
+            </Link>
+            <Link to='/freelance-career-tips'>
+              <li className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${isActive('/freelance-career-tips') ? 'outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]' : 'text-[#1E2A38] hover:text-[#2aa100]'}`}>
+                <Zap size={25}  /> Career Tips
               </li>
             </Link>
           </ul>

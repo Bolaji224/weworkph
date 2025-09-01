@@ -35,7 +35,7 @@ const ComeJoinUsSection: React.FC = () => {
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
       transition={{ duration: 2 }}
-      className="xl:max-w-[1200px] lg:max-w-[1200px] md:max-w-[900px] lg:w-full md:w-[750px] lg:mx-auto mx-[2rem] bg-[#f5f5f5] rounded-[5px]"
+      className="xl:max-w-[1200px] lg:max-w-[1200px] md:max-w-[900px] lg:w-full md:w-[750px] lg:mx-auto mx-[2rem] bg-white rounded-[5px]"
     >
       <section className="lg:flex md:flex gap-[4rem] justify-center items-center p-[2.5rem]">
         <div>
@@ -55,7 +55,7 @@ const ComeJoinUsSection: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="lg:w-[82%] md:w-[100%] lg:text-[16px] md:text-[12px] w-[100%] px-[1rem] py-[0.6rem] rounded-[5px] focus:outline-none bg-[#fff] shadow-m"
+                className="lg:w-[82%] md:w-[100%] lg:text-[16px] md:text-[12px] w-[100%] px-[1rem] py-[0.6rem] rounded-[5px] focus:outline-none bg-[#f5f1f1] shadow-m"
                 required
               />
               <button
