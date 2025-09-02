@@ -22,8 +22,9 @@ const AboutHeroSection: React.FC = () => {
             We are here to assist <br /> you <span className="text-[#ee009d]">in recruiting.</span>
           </h1>
           <p className="lg:text-[14px] md:text-[14px] text-[10px] text-[#646A73] font-sans font-normal mt-[1rem] lg:w-[65%] md:w-[75%]">
-          WeWorkPerHour will make recruiting full-time staff, remote or freelance workers a walk in the park for
-          your business. Our recruitment process is fast and transparent
+          WeWorkPerHour is a UK-based talent marketplace designed to connect businesses with
+skilled freelancers across the UK, Africa, and beyond. Our vision is to become the trusted
+hub for outsourcing by combining innovation, verified quality, and inclusive opportunities.
           </p>
         </div>
       </section>

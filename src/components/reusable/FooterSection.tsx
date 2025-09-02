@@ -78,8 +78,8 @@ const FooterSection: React.FC = () => {
       <div className='w-full md:w-1/2 lg:w-auto lg:px-0 px-[2rem]'>
         <h2 className='text-white text-base md:text-lg font-semibold mb-4'>Product</h2>
         <ul className='text-sm'>
-          <li><Link to="/career-tips"  className='text-white'>Career Tips</Link></li>
-          <li className='py-[1rem]'><Link to="/find-job" className='text-white'>Trending Job</Link></li>
+          <li><Link to="/career-tips"  className='text-white'>SmartGuide </Link></li>
+          <li className='py-[1rem]'><Link to="/find-job" className='text-white'>Smartstart</Link></li>
           <li><Link to="/" className='text-white'>Bonafide Company</Link></li>
         </ul>
       </div>

@@ -1,11 +1,11 @@
 import React from 'react'
-import FaqDetails from './components/FaqDetails'
 import FooterSection from '../FooterSection'
+import WeWorkPerHourFAQ from './components/FaqDetails'
 
 const Faq = () => {
   return (
   <div>
-     <FaqDetails />
+     <WeWorkPerHourFAQ/>
      <FooterSection />
   </div>
   )

@@ -10,7 +10,6 @@ import FeaturesJobSection from './components/FeaturesJobSection';
 import TabSection from './components/jobs_tabs/TabSection';
 import ComeJoinUsSection from './components/ComeJoinUsSection';
 import FooterSection from '../../components/reusable/FooterSection';
-import PopupModal from '../../components/PopupModal'; // Adjust path if needed
 import ReviewSection from './components/ReviewSection';
 
 export const Home = () => {
@@ -44,8 +43,6 @@ export const Home = () => {
 
   return (
     <>
-      <PopupModal isOpen={showPopup} onClose={() => setShowPopup(false)} />
-
       <div className="">
         <HeroSlider />
       </div>

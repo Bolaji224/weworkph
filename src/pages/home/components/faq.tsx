@@ -191,7 +191,7 @@ const WeWorkPerHourFAQ: React.FC = () => {
   }, {});
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-white mt-12">
+    <div className="max-w-7xl mx-auto p-6 bg-white">
       <div className="mb-8">
         <h2 className="text-xl text-gray-600">
           Frequently Asked Questions (FAQ)

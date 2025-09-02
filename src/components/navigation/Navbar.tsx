@@ -44,14 +44,6 @@ const Navbar: React.FC = () => {
     { label: "SkillStamp", path: "company" },
     { label: "SmartStart", path: "find-job" },
     { label: "SmartGuide", path: "career-tips" },
-    {
-      label: "Courses",
-      path: "#", // No direct path for the main dropdown label
-      subMenu: [
-        { label: "Free Courses", path: "free-courses" },
-        { label: "Paid Courses", path: "paid-courses" },
-      ],
-    },
     { label: "Log in", path: "login" },
   ],
   []
