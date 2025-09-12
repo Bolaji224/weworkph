@@ -184,7 +184,7 @@ const SideNav: React.FC = () => {
                     <Link to="/courses">
                       <li className="px-4 py-2 text-[14px] text-[#1E2A38] hover:text-[#2AA100] hover:bg-gray-100 cursor-pointer">Free Courses</li>
                     </Link>
-                    <Link to="/courses">
+                    <Link to="/paid-course">
                       <li className="px-4 py-2 text-[14px] text-[#1E2A38] hover:text-[#2AA100] hover:bg-gray-100 cursor-pointer">Paid Courses</li>
                     </Link>
                     <Link to="/english-test">

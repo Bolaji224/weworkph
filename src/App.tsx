@@ -40,6 +40,7 @@ import SubscriptionPlan from "./components/candidate-admin/subscription-plan/Sub
 import CandidateWallet from "./components/candidate-admin/candidate-payment-account/CandidteWallet";
 import LogoutPage from "./components/candidate-admin/logout/LogoutPage";
 
+
 // Employers/Admin Components
 import EmployersLayout from "./components/employer-admin/EmployersLayout";
 import EmployersDashboard from "./components/employer-admin/dashboard/EmployersDashboard";
@@ -73,6 +74,7 @@ import AdminJobDetails from "./components/master-admin/components/JobDetails";
 import SmartGuidePage from "./components/candidate-admin/smartstart/SmartGuidePage";
 import { seedGuidesIfEmpty } from "./utils/localStorage";
 import FreelanceCareerTips from "./components/candidate-admin/freelance-career-tips/FreelanceCareerTips";
+import CourseOverview from "./components/candidate-admin/course-overview/CourseOverview";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -131,7 +133,8 @@ function Main({
     "/forget-password",
     "/subscriptions",
     "/freelance-career-tips",
-    "/smart-guide", // NEW: Add SmartGuide route to hide navbar if needed
+    "/smart-guide",
+    "/paid-course",
   ];
 
   const shouldHideNavbar =
@@ -190,6 +193,7 @@ function Main({
         <Route path="messages" element={<AdminLayout element={<Message />} />} />
         <Route path="job-alerts" element={<AdminLayout element={<JobAlert />} />} />
         <Route path="saved-jobs" element={<AdminLayout element={<SavedJobs />} />} />
+        <Route path="paid-course" element={<AdminLayout element={<CourseOverview />} />} />
         <Route path="subscriptions" element={<AdminLayout element={<SubscriptionPlan />} />} />
         <Route path="applied-jobs" element={<AdminLayout element={<AppliedJobs />} />} />
         <Route path="account-setting" element={<AdminLayout element={<AccountSettings />} />} />

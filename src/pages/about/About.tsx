@@ -6,7 +6,6 @@ import FooterSection from '../../components/reusable/FooterSection'
 import InnovationSuite from './components/Innovations'
 import OurUsersSection from './components/OurUserSection'
 
-
 const About: React.FC = () => {
   return (
     <>
