@@ -5,13 +5,21 @@ const LogoutPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Perform logout logic here
-    // Example: Clearing user session or token
-    localStorage.clear();
-    sessionStorage.clear();
-    // Redirect to login page or home page
+    // Preserve SmartGuide ID
+    const savedGuideId = localStorage.getItem("selectedGuideId");
+  
+    // Clear only auth/session info
+    localStorage.removeItem("wwph_usr"); // if you store user info in localStorage
+    sessionStorage.clear(); // clear session storage
+  
+    // Restore the saved guide ID
+    if (savedGuideId) {
+      localStorage.setItem("selectedGuideId", savedGuideId);
+    }
+  
+    // Redirect to login page
     navigate('/login');
-  };
+  };  
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
