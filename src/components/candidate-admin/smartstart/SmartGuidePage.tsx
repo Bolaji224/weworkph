@@ -8,52 +8,91 @@ import {
   DollarSign,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
-import {
-  loadGuides,
-  seedGuidesIfEmpty,
-  GuideBlock,
-} from "../../../utils/localStorage";
+import axios from "axios";
+import { APP_API_URL } from "../../../utils/http_utils";
+import  ls  from 'localstorage-slim';
+
+type GuideBlock = {
+  id: string;
+  title: string;
+  category: string;
+  level: string;
+  roleOverview?: string;
+  clientAcquisition?: string[];
+  pricingPackages?: string[];
+  toolsTemplates?: string[];
+  serviceStandards?: string[];
+  quickWins?: string[];
+  aiAutomationTips?: string[];
+};
+
+type GuideResponse = {
+  guide: GuideBlock;
+  completedModules: string[];
+};
 
 const SmartGuidePage: React.FC = () => {
-  const { guideId } = useParams<{ guideId: string }>(); // 👈 get guideId from URL
+  const { guideId } = useParams<{ guideId?: string }>();
   const [guide, setGuide] = useState<GuideBlock | null>(null);
   const [completedModules, setCompletedModules] = useState<string[]>([]);
 
-  const LS_PROGRESS_KEY = `completedModules_${guideId}`; // ✅ store progress per guide
-
   useEffect(() => {
-    seedGuidesIfEmpty();
-    const guides = loadGuides();
+    if (!guideId) return;
 
-    const selectedGuide = guides.find((g: GuideBlock) => g.id === guideId);
-    setGuide(selectedGuide || null);
+    const fetchGuide = async () => {
+      try {
+        const { data } = await axios.get<GuideResponse>(
+          `${APP_API_URL}/smartguide/${guideId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}`,
+            },
+          }
+        );
+        setGuide(data.guide || null);
+        setCompletedModules(data.completedModules || []);
+      } catch (err) {
+        console.error("Error fetching guide:", err);
+      }
+    };
 
-    const savedProgress = localStorage.getItem(LS_PROGRESS_KEY);
-    if (savedProgress) {
-      setCompletedModules(JSON.parse(savedProgress));
-    } else {
-      setCompletedModules([]);
-    }
+    fetchGuide();
   }, [guideId]);
 
-  const toggleModuleCompletion = (moduleId: string) => {
+  const toggleModuleCompletion = async (moduleId: string) => {
+    if (!guideId) return;
+
     const newCompleted = completedModules.includes(moduleId)
       ? completedModules.filter((id) => id !== moduleId)
       : [...completedModules, moduleId];
 
     setCompletedModules(newCompleted);
-    localStorage.setItem(LS_PROGRESS_KEY, JSON.stringify(newCompleted));
+
+    try {
+      await axios.post(
+        `${APP_API_URL}/smartguide/${guideId}/progress`,
+        { completedModules: newCompleted },
+        {
+          headers: {
+            Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}`,
+          },
+        }
+      );
+    } catch (err) {
+      console.error("Error saving progress:", err);
+    }
   };
 
   if (!guide) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Guide not found. Please select a role.</p>
+        <p className="text-gray-500">
+          Guide not found. Please complete the assessment.
+        </p>
       </div>
     );
   }
 
-  // Modules dynamically generated
   const modules = [
     {
       id: "role-overview",
@@ -106,15 +145,11 @@ const SmartGuidePage: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            {guide.title}
-          </h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">{guide.title}</h1>
           <p className="text-xl text-gray-600 mb-2">
             {guide.category} - {guide.level}
           </p>
-          <p className="text-gray-500 max-w-2xl mx-auto">
-            {guide.roleOverview}
-          </p>
+          <p className="text-gray-500 max-w-2xl mx-auto">{guide.roleOverview}</p>
 
           <div className="mt-8 bg-white rounded-xl p-6 shadow-sm max-w-md mx-auto">
             <div className="flex items-center justify-between mb-4">
@@ -135,7 +170,7 @@ const SmartGuidePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Modules Section */}
+        {/* Modules */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
@@ -165,11 +200,9 @@ const SmartGuidePage: React.FC = () => {
                           {module.icon}
                         </div>
                         <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-semibold text-lg text-gray-800">
-                              {module.title}
-                            </h3>
-                          </div>
+                          <h3 className="font-semibold text-lg text-gray-800">
+                            {module.title}
+                          </h3>
                           <p className="text-gray-600 mb-3">
                             {module.description}
                           </p>
@@ -200,26 +233,26 @@ const SmartGuidePage: React.FC = () => {
 
           {/* Sidebar */}
           <div className="space-y-8">
-            {guide.quickWins?.length > 0 && (
+            {guide.quickWins && guide.quickWins.length > 0 && (
               <div className="bg-white rounded-xl p-6 shadow-sm">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">
                   Quick Wins
                 </h3>
                 <ul className="list-disc list-inside space-y-2 text-gray-600">
-                  {guide.quickWins.map((win: string, i: number) => (
+                  {guide.quickWins.map((win, i) => (
                     <li key={i}>{win}</li>
                   ))}
                 </ul>
               </div>
             )}
 
-            {guide.aiAutomationTips?.length > 0 && (
+            {guide.aiAutomationTips && guide.aiAutomationTips.length > 0 && (
               <div className="bg-white rounded-xl p-6 shadow-sm">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">
                   AI Automation Tips
                 </h3>
                 <ul className="list-disc list-inside space-y-2 text-gray-600">
-                  {guide.aiAutomationTips.map((tip: string, i: number) => (
+                  {guide.aiAutomationTips.map((tip, i) => (
                     <li key={i}>{tip}</li>
                   ))}
                 </ul>

@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CheckCircle, ArrowRight, RotateCcw, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { APP_API_URL } from '../../../utils/http_utils';
+import  ls  from 'localstorage-slim';
 
 // =========================
 // Types
@@ -81,6 +84,25 @@ const questions: Question[] = [
 // Component
 // =========================
 const SmartStartAssessment: React.FC = () => {
+  useEffect(() => {
+    const fetchSavedSelections = async () => {
+      try {
+        const { data } = await axios.get(
+          `${APP_API_URL}/smartguide`,
+          { headers: { Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}` } }
+        );
+  
+        if (data?.selections) {
+          setSelections(data.selections);
+        }
+      } catch (err) {
+        console.log("No saved SmartGuide yet");
+      }
+    };
+  
+    fetchSavedSelections();
+  }, []);
+
   const navigate = useNavigate();
 
   const [selections, setSelections] = useState<Selections>({
@@ -126,18 +148,29 @@ const SmartStartAssessment: React.FC = () => {
     }
   };
 
-  const handleGoToSmartGuide = () => {
-    // ✅ Build correct guideId (matching seedGuides)
-    const role = selections.role.toLowerCase(); // "va" or "editor"
-    const exp = selections.experience.toLowerCase(); // "beginner" or "advanced"
-    const selectedGuideId = `${role}-${exp}`;
-
-    // Save selections and guideId
-    localStorage.setItem("userSelections", JSON.stringify(selections));
-    localStorage.setItem("selectedGuideId", selectedGuideId);
-
-    // Navigate to SmartGuide
-    navigate(`/smartguide/${selectedGuideId}`);
+  const handleGoToSmartGuide = async () => {
+    try {
+      const role = selections.role.toLowerCase();
+      const exp = selections.experience.toLowerCase();
+      const selectedGuideId = `${role}-${exp}`;
+  
+      // ✅ Save to backend
+      await axios.post(
+        `${APP_API_URL}/smartguide`,
+        { selections, guideId: selectedGuideId },
+        { headers: { Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}` } }
+      );
+  
+      // (optional) still keep localStorage for quick access
+      localStorage.setItem("userSelections", JSON.stringify(selections));
+      localStorage.setItem("selectedGuideId", selectedGuideId);
+  
+      // Navigate
+      navigate(`/smart-guide/${selectedGuideId}`);
+    } catch (err) {
+      console.error("Error saving SmartGuide:", err);
+      alert("Could not save your SmartGuide. Try again.");
+    }
   };
 
   // =========================
