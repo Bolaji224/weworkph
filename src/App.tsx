@@ -202,7 +202,7 @@ function Main({
         <Route path="freelance-career-tips" element={<AdminLayout element={<FreelanceCareerTips />} />} />
         <Route path="logout-account" element={<AdminLayout element={<LogoutPage />} />} />
         {/* SmartGuide Route */}
-        <Route path="smart-guide" element={<AdminLayout element={<SmartGuidePage />} />} />
+        <Route path="smart-guide/:guideId" element={<AdminLayout element={<SmartGuidePage />} />} />
 
         {/* Employers/Admin Routes */}
         <Route
