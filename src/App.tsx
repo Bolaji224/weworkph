@@ -75,6 +75,7 @@ import SmartGuidePage from "./components/candidate-admin/smartstart/SmartGuidePa
 import { seedGuidesIfEmpty } from "./utils/localStorage";
 import FreelanceCareerTips from "./components/candidate-admin/freelance-career-tips/FreelanceCareerTips";
 import CourseOverview from "./components/candidate-admin/course-overview/CourseOverview";
+import SmartCvForm from "./components/candidate-admin/smart-cv/SmartCv";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -135,6 +136,8 @@ function Main({
     "/freelance-career-tips",
     "/smart-guide",
     "/paid-course",
+    "/smart-cv",
+    "/smart-guide/va-advanced"
   ];
 
   const shouldHideNavbar =
@@ -194,6 +197,7 @@ function Main({
         <Route path="job-alerts" element={<AdminLayout element={<JobAlert />} />} />
         <Route path="saved-jobs" element={<AdminLayout element={<SavedJobs />} />} />
         <Route path="paid-course" element={<AdminLayout element={<CourseOverview />} />} />
+        <Route path="smart-cv" element={<AdminLayout element={<SmartCvForm />} />} />
         <Route path="subscriptions" element={<AdminLayout element={<SubscriptionPlan />} />} />
         <Route path="applied-jobs" element={<AdminLayout element={<AppliedJobs />} />} />
         <Route path="account-setting" element={<AdminLayout element={<AccountSettings />} />} />
