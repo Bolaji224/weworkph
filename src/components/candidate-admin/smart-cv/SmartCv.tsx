@@ -240,16 +240,6 @@ achievements for maximum impact.</p>
                 />
                 <label className="block text-xs text-gray-500 mt-1">Street Address</label>
               </div>
-              <div>
-                <input
-                  type="text"
-                  name="streetAddress2"
-                  value={formData.streetAddress2}
-                  onChange={HandleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <label className="block text-xs text-gray-500 mt-1">Street Address Line 2</label>
-              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <input
@@ -274,27 +264,18 @@ achievements for maximum impact.</p>
                   <label className="block text-xs text-gray-500 mt-1">State / Province</label>
                 </div>
               </div>
-              <div>
-                <input
-                  type="text"
-                  name="postalCode"
-                  value={formData.postalCode}
-                  onChange={HandleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-                <label className="block text-xs text-gray-500 mt-1">Postal / Zip Code</label>
-              </div>
             </div>
           </div>
 
           {/* How were you referred to us? */}
+          <div className='flex flex-col md:flex-row gap-64'>
+             
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              How were you referred to us? <span className="text-red-500">*</span>
+              Virtual Assistant <span className="text-red-500">*</span>
             </label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {['Walk-In', 'Newspaper Ad', 'Twitter', 'Other (please specify)', 'Referral', 'Facebook', 'LinkedIn'].map((option) => (
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
+              {['Calender Management', 'Email Handling', 'Customer Support', 'Data Entry ', 'Transcription', 'Travel Planning & Bookings', 'Document Preparation (Word, PDF)'].map((option) => (
                 <label key={option} className="flex items-center">
                   <input
                     type="checkbox"
@@ -308,12 +289,32 @@ achievements for maximum impact.</p>
             </div>
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Video Editor <span className="text-red-500">*</span>
+            </label>
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
+              {['Video Editing', 'Color Work', 'Audio Post-Production', 'Visual Effects ', 'Motion Graphics & Titles', 'Subtitles & Captioning', 'Document Preparation'].map((option) => (
+                <label key={option} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    value={option}
+                    onChange={handleCheckboxChange}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">{option}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          </div>
+
           {/* Resume and Files Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">Resume and Files</label>
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
               <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <p className="text-lg font-medium text-gray-700 mb-2">Upload a File</p>
+              <p className="text-lg font-medium text-gray-700 mb-2">Upload a Photo</p>
               <p className="text-sm text-gray-500 mb-4">Drag and drop files here</p>
               <input
                 type="file"
@@ -347,7 +348,7 @@ achievements for maximum impact.</p>
           {/* Motivation Letter */}
           <div>
             <label htmlFor="motivationLetter" className="block text-sm font-medium text-gray-700 mb-2">
-              Motivation letter <span className="text-red-500">*</span>
+              Summary <span className="text-red-500">*</span>
             </label>
             <textarea
               id="motivationLetter"
