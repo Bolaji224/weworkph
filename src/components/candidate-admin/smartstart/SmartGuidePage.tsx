@@ -7,10 +7,10 @@ import {
   Clock,
   DollarSign,
 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // ✅ added useNavigate
 import axios from "axios";
 import { APP_API_URL } from "../../../utils/http_utils";
-import  ls  from 'localstorage-slim';
+import ls from "localstorage-slim";
 
 type GuideBlock = {
   id: string;
@@ -33,6 +33,7 @@ type GuideResponse = {
 
 const SmartGuidePage: React.FC = () => {
   const { guideId } = useParams<{ guideId?: string }>();
+  const navigate = useNavigate(); // ✅ initialized navigate
   const [guide, setGuide] = useState<GuideBlock | null>(null);
   const [completedModules, setCompletedModules] = useState<string[]>([]);
 
@@ -141,11 +142,13 @@ const SmartGuidePage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 p-6 mt-20">
+    <div className="min-h-screen bg-gradient-to-br mt-20 from-green-50 via-white to-green-50 p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">{guide.title}</h1>
+        <div className="text-center mb-12 mt-36">
+          <h1 className="text-4xl font-bold text-gray-800 mt-16 mb-4">
+            {guide.title}
+          </h1>
           <p className="text-xl text-gray-600 mb-2">
             {guide.category} - {guide.level}
           </p>
@@ -259,6 +262,16 @@ const SmartGuidePage: React.FC = () => {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Upgrade Button */}
+        <div className="flex justify-center mt-12 mb-8">
+          <button
+            onClick={() => navigate("/resume-page")}
+            className="px-6 py-3 rounded-xl bg-[#2AA100] text-white font-semibold hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            Upgrade Role 
+          </button>
         </div>
       </div>
     </div>
