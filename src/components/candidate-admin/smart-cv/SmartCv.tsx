@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Upload } from 'lucide-react';
+import { APP_API_URL } from '../../../utils/http_utils';
+import axios from 'axios';
+import ls from "localstorage-slim";
 
 interface FormData {
   firstName: string;
@@ -97,15 +100,16 @@ const SmartCvForm: React.FC = () => {
     }
   
     try {
-      const response = await fetch("http://localhost:8000/api/v1/cv", {
-        method: "POST",
-        body: form,
+      const response = await axios.post(`${APP_API_URL}/cv`, form, {
+        headers: { 
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}`
+        },
+        responseType: "blob", // very important for downloading file
       });
   
-      if (!response.ok) throw new Error("Failed to generate CV");
-  
       // Get blob and download
-      const blob = await response.blob();
+      const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -114,7 +118,7 @@ const SmartCvForm: React.FC = () => {
       a.click();
       a.remove();
     } catch (err) {
-      console.error(err);
+      console.error("CV generation failed:", err);
       alert("Something went wrong");
     }
   };
