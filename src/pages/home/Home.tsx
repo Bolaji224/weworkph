@@ -11,6 +11,9 @@ import TabSection from './components/jobs_tabs/TabSection';
 import ComeJoinUsSection from './components/ComeJoinUsSection';
 import FooterSection from '../../components/reusable/FooterSection';
 import ReviewSection from './components/ReviewSection';
+import WorkasonLanding from './components/WorkasonLanding';
+
+
 
 export const Home = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -63,6 +66,7 @@ export const Home = () => {
       <ProductivitySection />
       <OneStepSection />
       <SimpleProcessSection />
+      <WorkasonLanding/>
       <OurPlatformSection />
       <FeaturesJobSection />
       <TabSection />

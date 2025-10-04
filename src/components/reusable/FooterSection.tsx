@@ -92,6 +92,18 @@ const FooterSection: React.FC = () => {
           <li><Link to="/" className='text-white'>Call Center</Link></li>
         </ul>
       </div>
+      <div className='w-full md:w-1/8 px-4 lg:w-auto mt-8'>
+  {/* Add addresses here */}
+  <div className='mt-4 text-sm text-[#FFFFFF]'>
+    <p className='font-semibold'>LAGOS ADDRESS:</p>
+    <p>3 Uncle Oluyeba Ikosi</p>
+    
+    <p className='font-semibold mt-3'>UK ADDRESS:</p>
+    <p>Office 123, Unit 5</p>
+    <p>399-405 Oxford Street, Mayfair</p>
+    <p>London W1C 2BU</p>
+  </div>
+</div>
     </div>
     <div className='xl:max-w-[1200px] lg:max-w-[900px] mx-auto border-[1px] border-[#f2fcef] mt-[-4rem]'/>
     <section className='flex lg:flex-row xl:flex-row flex-col-reverse md:flex justify-center xl:gap-[20rem] lg:gap-[4rem] py-[4rem] lg:px-0 px-[2rem]'>
@@ -105,6 +117,8 @@ const FooterSection: React.FC = () => {
         <h2 className='text-white text-base md:text-lg font-semibold'>Cookies Policy</h2>
       </div>
     </section>
+
+    
   </div>
 </section>
     </motion.section>
