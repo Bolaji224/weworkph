@@ -7,19 +7,15 @@ import { motion } from 'framer-motion';
 
 const FindJobSearchSection: React.FC = () => {
   const [jobQuery, setJobQuery] = useState('');
-  const [jobTypes, setJobTypes] = useState([]);
+  const [jobTypes, setJobTypes] = useState<any[]>([]);
   const [location, setLocation] = useState<any[]>([]);
   const [locationQuery, setLocationQuery] = useState('');
   const [selectedOption, setSelectedOption] = useState('Full-time');
-// location
+
   const navigate = useNavigate();
 
   const handleJobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setJobQuery(e.target.value);
-  };
-
-  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocationQuery(e.target.value);
   };
 
   const handleOptionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -28,23 +24,43 @@ const FindJobSearchSection: React.FC = () => {
 
   useEffect(() => {
     fetchJobTypes();
-    getResoures();
+    getResources();
   }, []);
-  const getResoures = async () => {
-    let resp = await httpGetWithToken("resources");
-    if(resp.status == "success") {
-      setLocation(resp.data.location)
+
+  const getResources = async () => {
+    try {
+      let resp = await httpGetWithToken('resources');
+      if (resp.status === 'success') {
+        setLocation(Array.isArray(resp.data?.location) ? resp.data.location : []);
+      } else {
+        setLocation([]);
+      }
+    } catch (err) {
+      console.error('Error fetching resources:', err);
+      setLocation([]);
     }
-  }
+  };
+
   const fetchJobTypes = async () => {
-    let resp = await httpGetWithoutToken("fetch-job-types");
-    if (resp.status === "success") {
-      setJobTypes(resp.data);
+    try {
+      let resp = await httpGetWithoutToken('fetch-job-types');
+      if (resp.status === 'success' && Array.isArray(resp.data)) {
+        setJobTypes(resp.data);
+      } else {
+        setJobTypes([]);
+      }
+    } catch (err) {
+      console.error('Error fetching job types:', err);
+      setJobTypes([]);
     }
   };
 
   const handleSearch = () => {
-    navigate(`/find-job?title=${jobQuery}&location=${locationQuery}&jobType=${selectedOption}&rand=${Math.random() * 10000}`);
+    navigate(
+      `/find-job?title=${jobQuery}&location=${locationQuery}&jobType=${selectedOption}&rand=${
+        Math.random() * 10000
+      }`
+    );
   };
 
   const { ref: sectionRef, inView: sectionInView } = useInView({
@@ -61,49 +77,60 @@ const FindJobSearchSection: React.FC = () => {
     <motion.div
       ref={sectionRef}
       initial="hidden"
-      animate={sectionInView ? "visible" : "hidden"}
+      animate={sectionInView ? 'visible' : 'hidden'}
       variants={fadeInVariants}
       transition={{ duration: 1.5, ease: 'easeInOut' }}
       className="flex justify-center items-center"
     >
-      <div className="lg:flex md:flex  justify-center items-center w-full lg:mx-[2rem] mx-[2rem] py-[2rem] lg:space-y-0 md:space-y-0 space-y-[1rem] ">
+      <div className="lg:flex md:flex justify-center items-center w-full lg:mx-[2rem] mx-[2rem] py-[2rem] lg:space-y-0 md:space-y-0 space-y-[1rem]">
+        {/* Job title input */}
         <div className="w-[100%]">
           <input
             type="text"
             placeholder="Enter job title"
             value={jobQuery}
             onChange={handleJobChange}
-            className="w-[100%] p-4 rounded-[px] focus:outline-none bg-[#fff] shadow-m"
+            className="w-[100%] p-4 rounded focus:outline-none bg-[#fff] shadow-m"
           />
         </div>
+
+        {/* Location select */}
         <div className="w-[100%]">
-          <select 
-            className="w-[100%] p-4 rounded-[px] focus:outline-none bg-[#fff] shadow-md focus:border-none"
-            onChange={(v)=>setLocationQuery(v.target.value)} value={locationQuery} name="location" id="location">
+          <select
+            className="w-[100%] p-4 rounded focus:outline-none bg-[#fff] shadow-md focus:border-none"
+            onChange={(e) => setLocationQuery(e.target.value)}
+            value={locationQuery}
+            name="location"
+            id="location"
+          >
             <option value="">Select</option>
-            {
-              location.map((l:any, i)=> (
-                <option key={`${l.state}${i}`} value={l.state}>{l.state}, {l.country}</option>
-              ))
-            }
+            {(location ?? []).map((l: any, i) => (
+              <option key={`${l.state}${i}`} value={l.state}>
+                {l.state}, {l.country}
+              </option>
+            ))}
           </select>
         </div>
+
+        {/* Job type select */}
         <div className="w-[100%]">
           <select
             value={selectedOption}
             onChange={handleOptionChange}
-            className="w-[100%] p-4 rounded-[px] focus:outline-none bg-[#fff] shadow-md text-[#646A73] text-[16px]"
+            className="w-[100%] p-4 rounded focus:outline-none bg-[#fff] shadow-md text-[#646A73] text-[16px]"
           >
             <option className="text-[#646A73] text-[14px]" value="">
               Select job type
             </option>
-            {jobTypes.map((jt: any, i) => (
+            {(jobTypes ?? []).map((jt: any, i) => (
               <option key={i} className="text-[#646A73] text-[14px]" value={jt.title}>
                 {jt.title}
               </option>
             ))}
           </select>
         </div>
+
+        {/* Search button + Dropdown */}
         <div className="flex gap-2">
           <button
             onClick={handleSearch}

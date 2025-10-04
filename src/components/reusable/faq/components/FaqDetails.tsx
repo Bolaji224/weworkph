@@ -33,7 +33,7 @@ const WeWorkPerHourFAQ: React.FC = () => {
       question: "How many categories of users do we have?",
       answer: (
         <div>
-          <p className="mb-3">WeWorkPerHour actually has three user categories:</p>
+          <p className="mb-3">Workason actually has three user categories:</p>
           <div className="space-y-2">
             <div>
               <strong>1. Ordinary Users</strong> → Clients post jobs, freelancers
@@ -56,16 +56,16 @@ const WeWorkPerHourFAQ: React.FC = () => {
     {
       id: "what-is",
       category: "General",
-      question: "What is WeWorkPerHour?",
+      question: "What is Workason?",
       answer:
-        "WeWorkPerHour is a UK-based freelance and outsourcing platform connecting clients with verified freelancers, pre-vetted talent, or our in-house managed team.",
+        "Workason is a UK/Nigerian-based freelance and outsourcing platform connecting clients with verified freelancers, pre-vetted talent, or our in-house managed team.",
     },
     {
       id: "who-can-use",
       category: "General",
-      question: "Who can use WeWorkPerHour?",
+      question: "Who can use Workason?",
       answer:
-        "Clients (businesses, startups, individuals) and Freelancers (creatives, VAs, and editors).",
+        "Clients (businesses, startups, individuals) and Freelancers (Creatives, VA’s, and Editors).",
     },
     {
       id: "ordinary-how",
@@ -107,14 +107,14 @@ const WeWorkPerHourFAQ: React.FC = () => {
       category: "SmartStart Users (Verified Freelancer Matching)",
       question: "Who manages the work?",
       answer:
-        "The client works directly with the freelancer but benefits from WeWorkPerHour's vetting, SmartStart pack, and ProofToPay protection.",
+        "The client works directly with the freelancer but benefits from Workason's vetting, SmartStart pack, and ProofToPay protection.",
     },
     {
       id: "managed-service",
       category: "Pro Talent Pool Users",
-      question: "What is the Managed Service?",
+      question: "Who manages the project?",
       answer:
-        "Instead of freelancers, WeWorkPerHour's in-house team of editors, assistants, and creatives delivers the work directly. This is ideal for clients who want a hands-off, guaranteed quality solution.",
+        "Workason fully manages communication, deadlines, and quality control.",
     },
     {
       id: "managed-services-covered",
@@ -142,7 +142,7 @@ const WeWorkPerHourFAQ: React.FC = () => {
       category: "Payments & Security",
       question: "How are payments handled?",
       answer:
-        "All payments go through ProofToPay™, our secure escrow system. Funds are only released once work is approved.",
+        "For our escrow users, all payments go through ProofToPay, our secure escrow system.Funds are only released once work is approved.",
     },
     {
       id: "client-fees",
@@ -170,12 +170,20 @@ const WeWorkPerHourFAQ: React.FC = () => {
       category: "Other Common Questions",
       question: "How do I get SkillStamp verification?",
       answer:
-        "Freelancers take the SkillStamp test to get the badge. Students who purchase a WeWorkPerHour course get all the benefits of the SmartStart.",
+        "Freelancers take the SkillStamp test to get the badge. Students who purchase a Workason course get all the benefits of the SmartStart.",
     },
     {
       id: "international",
       category: "Other Common Questions",
       question: "Can international clients use WeWorkPerHour?",
+      answer:
+        "Yes, we support clients and freelancers in Nigeria, the UK, and globally.",
+    },
+
+    {
+      id: "skillstamp",
+      category: "Other Common Questions",
+      question: "How do I get SkillStamp verification?",
       answer:
         "Yes, we support clients and freelancers in Nigeria, the UK, and globally.",
     },

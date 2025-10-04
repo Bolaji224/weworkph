@@ -12,14 +12,17 @@ const SimpleProcessSection: React.FC = () => {
     threshold: 0.4,
   });
 
+  const steps = [
+    { id: 1, img: Images.RegisterImage, title: 'Registration', desc: 'Build your reputation by creating a professional resume' },
+    { id: 2, img: Images.ApplyImage, title: 'Apply for Job', desc: 'Find your dream job and send a resume according to your field.' },
+    { id: 3, img: Images.InterviewImage, title: 'Interview', desc: 'Point out your skills and strengths at the interview.' },
+    { id: 4, img: Images.CongratulationImage, title: 'Congratulations', desc: 'You have completed step by step; it is time for an employment contract.' }
+  ];
+
   return (
     <section className='py-[4rem] bg-[#fafcff] w-full'>
       <div className='text-center' ref={ref}>
-        <motion.div
-          // initial={{ opacity: 0, y: -50 }}
-          // animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
-          // transition={{ duration: 1 }}
-        >
+        <motion.div>
           <div className='flex items-center justify-center'>
             <p className='text-[#2AA100] flex justify-center text-center items-center gap-2 py-[0.5rem] px-[0.5rem] w-[100px] rounded-[5px] bg-[#dbd7ff]'>
               <IoStatsChartSharp />Started
@@ -33,20 +36,13 @@ const SimpleProcessSection: React.FC = () => {
           </p>
         </motion.div>
       </div>
+
       <section className='py-8 sm:py-[8rem] px-[4rem]'>
         <div className='grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 sm:gap-[4rem] gap-[4rem] md:gap-[4rem]'>
-          {[
-            { img: Images.RegisterImage, title: 'Registration', desc: 'Build your reputation by creating a professional resume' },
-            { img: Images.ApplyImage, title: 'Apply for Job', desc: 'Find your dream job and send a resume according to your field.' },
-            { img: Images.InterviewImage, title: 'Interview', desc: 'Point out your skills and strengths at the interview.' },
-            { img: Images.CongratulationImage, title: 'Congratulations', desc: 'You have completed step by step; it is time for an employment contract.' }
-          ].map((item, index) => (
+          {steps.map((item) => (
             <motion.div
-              // key={index}
+              key={item.id}   // ✅ FIXED: unique key
               className='text-center'
-              // initial={{ opacity: 0, y: -50 }}
-              // animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
-              // transition={{ duration: 1.5, delay: index * 0.1 }}
             >
               <div className='mx-auto max-w-[150px]'>
                 <img src={item.img} alt={item.title.toLowerCase()} className='w-full h-auto object-cover' />
@@ -58,17 +54,15 @@ const SimpleProcessSection: React.FC = () => {
             </motion.div>
           ))}
         </div>
+
         <div className='pt-[4rem] text-center flex items-center justify-center'>
           <Link to="/register">
             <motion.button
               className="text-sm sm:text-base font-medium text-white bg-[#ee009d] flex items-center gap-4 justify-center hover:bg-green-600 py-2 px-4 sm:py-3 sm:px-6 rounded-lg"
-              // initial={{ opacity: 0, y: -50 }}
-              // animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
-              // transition={{ duration: 1 }}
             >
               Get Started <FaArrowRightLong />
             </motion.button>
-            </Link>
+          </Link>
         </div>
       </section>
     </section>

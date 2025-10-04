@@ -11,13 +11,13 @@ const ReviewSection: React.FC = () => {
       rating: 5,
       date: "2d ago",
       avatar: "CO",
-      review: "Hiring a VA through WeWorkPerHour was the best decision. I finally got my admin tasks under control, emails responded to on time, and my calendar properly managed.",
+      review: "Hiring a VA through Workason was the best decision. I finally got my admin tasks under control, emails responded to on time, and my calendar properly managed.",
       category: "Virtual Assistant",
       verified: true
     },
     {
       id: 2,
-      name: "James L.",
+      name: "Kenny L.",
       role: "Tech Founder",
       location: "UK",
       rating: 5,
@@ -47,7 +47,7 @@ const ReviewSection: React.FC = () => {
       rating: 5,
       date: "3w ago",
       avatar: "OT",
-      review: "The SmartStart pack saved me. I didn't have to interview endlessly—WeWorkPerHour sent me pre-vetted talent who matched my exact needs.",
+      review: "The SmartStart pack saved me. I didn't have to interview endlessly—Workason sent me pre-vetted talent who matched my exact needs.",
       category: "SmartStart",
       verified: true
     },
@@ -59,7 +59,7 @@ const ReviewSection: React.FC = () => {
       rating: 5,
       date: "1m ago",
       avatar: "BL",
-      review: "Getting SkillStamped on WeWorkPerHour gave me credibility. I landed my first UK client within a week.",
+      review: "Getting SkillStamped on Workason gave me credibility. I landed my first UK client within a week.",
       category: "SkillStamp",
       verified: true
     },
@@ -71,7 +71,7 @@ const ReviewSection: React.FC = () => {
       rating: 5,
       date: "1m ago",
       avatar: "KE",
-      review: "As a VA, I've joined platforms before, but none felt this personal. WeWorkPerHour not only got me clients, but also trained me with SmartGuide.",
+      review: "As a VA, I've joined platforms before, but none felt this personal. Workason not only got me clients, but also trained me with SmartGuide.",
       category: "SmartGuide",
       verified: true
     }

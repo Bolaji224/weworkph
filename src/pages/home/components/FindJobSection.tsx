@@ -68,7 +68,7 @@ export default function FindJobSection() {
           variants={fadeUp}
         >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Why Choose WeWorkPerHour
+            Why Choose Workason
           </h2>
         </motion.div>
 
@@ -107,7 +107,7 @@ export default function FindJobSection() {
           <div className="bg-[#1E2A3B] rounded-2xl p-8 text-white">
             <h3 className="text-2xl font-bold mb-4">Ready to Get Started?</h3>
             <p className="text-xl mb-6 opacity-90">
-              Join thousands of professionals who trust WeWorkPerHour for their freelancing needs.
+              Join thousands of professionals who trust Workason for their freelancing needs.
             </p>
             <motion.button
               whileHover={{ scale: 1.07 }}
