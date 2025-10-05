@@ -1,12 +1,12 @@
-import React, { useContext, useReducer, useState } from 'react';
-import Images from '../constant/Images';
-import { FaGoogle, FaApple, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
-import { httpPostWithoutToken } from '../../utils/http_utils';
-import { useToast } from '@chakra-ui/react';
+import React, { useContext, useReducer, useState } from "react";
+import Images from "../constant/Images";
+import { FaGoogle, FaApple, FaEye, FaEyeSlash } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { httpPostWithoutToken } from "../../utils/http_utils";
+import { useToast } from "@chakra-ui/react";
 import ls from "localstorage-slim";
-import { AppContext } from '../../global/state';
-import { Lock, User } from 'lucide-react';
+import { AppContext } from "../../global/state";
+import { Lock, User } from "lucide-react";
 
 // Define the State interface
 interface State {
@@ -18,15 +18,15 @@ interface State {
 
 // Define the Action types
 type Action =
-  | { type: 'SET_EMAIL'; payload: string }
-  | { type: 'SET_PASSWORD'; payload: string }
-  | { type: 'TOGGLE_SHOW_PASSWORD' }
-  | { type: 'SET_ERROR'; payload: string | null };
+  | { type: "SET_EMAIL"; payload: string }
+  | { type: "SET_PASSWORD"; payload: string }
+  | { type: "TOGGLE_SHOW_PASSWORD" }
+  | { type: "SET_ERROR"; payload: string | null };
 
 // Initial state
 const initialState: State = {
-  email: '',
-  password: '',
+  email: "",
+  password: "",
   showPassword: false,
   error: null,
 };
@@ -34,13 +34,13 @@ const initialState: State = {
 // Reducer function
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'SET_EMAIL':
+    case "SET_EMAIL":
       return { ...state, email: action.payload };
-    case 'SET_PASSWORD':
+    case "SET_PASSWORD":
       return { ...state, password: action.payload };
-    case 'TOGGLE_SHOW_PASSWORD':
+    case "TOGGLE_SHOW_PASSWORD":
       return { ...state, showPassword: !state.showPassword };
-    case 'SET_ERROR':
+    case "SET_ERROR":
       return { ...state, error: action.payload };
     default:
       return state;
@@ -52,43 +52,52 @@ const LoginForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
-  const {updateUser}:any = useContext(AppContext)
-  
+  const { updateUser }: any = useContext(AppContext);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     let d = {
       email: state.email,
       password: state.password,
-    }
-    setIsSubmitting(true)
-    const response = await httpPostWithoutToken("login", d)
-    setIsSubmitting(false)
+    };
+    setIsSubmitting(true);
+    const response = await httpPostWithoutToken("login", d);
+    setIsSubmitting(false);
 
-    if(response.status === "success") {
-      toast({ 
-        status : "success",
-        title : "Login successful!",
-        isClosable : true,
-      })
+    if (response.status === "success") {
+      console.log("Login success response:", response);
+      console.log("Logged in user:", response.user);
+
+      toast({
+        status: "success",
+        title: "Login successful!",
+        isClosable: true,
+      });
+
       sessionStorage.setItem("wwph_token", response.access_token);
       sessionStorage.setItem("wwph_usr", JSON.stringify(response.user));
-      ls.set("wwph_token", response.access_token, {encrypt : true});
-      ls.set("wwph_usr", response.user, {encrypt : true});
-      updateUser(response.user)
+      ls.set("wwph_token", response.access_token, { encrypt: true });
+      ls.set("wwph_usr", response.user, { encrypt: true });
+      updateUser(response.user);
+
+      const role = Number(response.user.role);
+
       setTimeout(() => {
-      if(response.user.role === "Company") {
-        if(response.user.about_company === "" || !response.user.about_company) {
-          navigate("/employers-profile")
-        }else {
-          navigate("/employers-dashboard")
+        if (role === 2) {
+          // Employer / Company
+          if (!response.user.about_company) {
+            navigate("/submit-jobs");
+          } else {
+            navigate("/employers-dashboard");
+          }
+        } else if (role === 1) {
+          // Candidate
+          navigate("/candidate-dashboard"); // or "/resume-page" if you prefer
+        } else {
+          // fallback
+          navigate("/");
         }
-      }else {
-          navigate("/resume-page")
-      }
       }, 1000);
-    }else{
-      dispatch({ type: 'SET_ERROR', payload: response.message });
-      console.log('Account created:', response.data);
     }
   };
 
@@ -104,21 +113,24 @@ const LoginForm: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden">
         <div className="flex flex-col lg:flex-row min-h-[600px]">
-
           {/* Left Side - Login Form */}
           <div className="flex-1 p-8 lg:p-16 flex flex-col justify-center">
-            <div className='max-w-md mx-auto w-full'>
-
+            <div className="max-w-md mx-auto w-full">
               {/* Header */}
               <div className="text-center mb-8">
                 <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
-                  Welcome to  <Link to='/'><span className="text-[#ee009d]">WeWorkPerHour</span></Link>
+                  Welcome to{" "}
+                  <Link to="/">
+                    <span className="text-[#ee009d]">WeWorkPerHour</span>
+                  </Link>
                 </h2>
                 <p className="text-lg text-gray-600">Sign in to your Account</p>
               </div>
 
               {/* Login Form */}
-              {state.error && <p className="text-red-500 text-center mb-4">{state.error}</p>}
+              {state.error && (
+                <p className="text-red-500 text-center mb-4">{state.error}</p>
+              )}
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Email Field */}
                 <div className="relative">
@@ -132,7 +144,9 @@ const LoginForm: React.FC = () => {
                     placeholder="Email Address"
                     className="w-full pl-12 pr-4 py-4 bg-gray-50 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none transition-all duration-200"
                     value={state.email}
-                    onChange={(e) => dispatch({ type: 'SET_EMAIL', payload: e.target.value })}
+                    onChange={(e) =>
+                      dispatch({ type: "SET_EMAIL", payload: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -143,31 +157,40 @@ const LoginForm: React.FC = () => {
                     <Lock className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    type={state.showPassword ? 'text' : 'password'}
+                    type={state.showPassword ? "text" : "password"}
                     name="password"
                     id="password"
                     placeholder="Password"
                     className="w-full pl-12 pr-12 py-4 bg-gray-50 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none transition-all duration-200"
                     value={state.password}
-                    onChange={(e) => dispatch({ type: 'SET_PASSWORD', payload: e.target.value })}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "SET_PASSWORD",
+                        payload: e.target.value,
+                      })
+                    }
                     required
                   />
                   <button
                     type="button"
-                    onClick={() => dispatch({ type: 'TOGGLE_SHOW_PASSWORD' })}
+                    onClick={() => dispatch({ type: "TOGGLE_SHOW_PASSWORD" })}
                     className="absolute inset-y-0 right-0 pr-4 flex items-center"
                   >
-                    {state.showPassword ? 
-                      <FaEyeSlash className="h-5 w-5 text-gray-400 hover:text-gray-600" /> : 
+                    {state.showPassword ? (
+                      <FaEyeSlash className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    ) : (
                       <FaEye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    }
+                    )}
                   </button>
                 </div>
 
                 {/* Forgot Password */}
                 <div className="flex justify-between items-center">
                   <Link to="/forget-password">
-                    <button type="button" className="text-sm text-blue-600 hover:underline">
+                    <button
+                      type="button"
+                      className="text-sm text-blue-600 hover:underline"
+                    >
                       Forgot Password?
                     </button>
                   </Link>
@@ -192,7 +215,9 @@ const LoginForm: React.FC = () => {
                     <div className="w-full border-t border-gray-300"></div>
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-white text-gray-600 font-medium">Login with Others</span>
+                    <span className="px-4 bg-white text-gray-600 font-medium">
+                      Login with Others
+                    </span>
                   </div>
                 </div>
               </div>
@@ -204,38 +229,59 @@ const LoginForm: React.FC = () => {
                   className="w-full flex items-center justify-center px-6 py-3 border border-gray-300 rounded-2xl bg-white hover:bg-gray-50 transition-colors duration-200 group"
                 >
                   <svg className="w-5 h-5 mr-3" viewBox="0 0 48 48">
-                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    <path
+                      fill="#EA4335"
+                      d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+                    />
+                    <path
+                      fill="#4285F4"
+                      d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                    />
                   </svg>
-                  <span className="text-gray-700 font-medium">Login with <strong>Google</strong></span>
+                  <span className="text-gray-700 font-medium">
+                    Login with <strong>Google</strong>
+                  </span>
                 </button>
 
                 <button className="w-full flex items-center justify-center px-6 py-3 border border-gray-300 rounded-2xl bg-white hover:bg-gray-50 transition-colors duration-200 group">
-                  <svg className="w-5 h-5 mr-3 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  <svg
+                    className="w-5 h-5 mr-3 text-blue-600"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>
-                  <span className="text-gray-700 font-medium">Login with <strong>Facebook</strong></span>
+                  <span className="text-gray-700 font-medium">
+                    Login with <strong>Facebook</strong>
+                  </span>
                 </button>
               </div>
 
               {/* Sign Up Link */}
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">
-                  Don't have an account? 
-                  <Link to="/register" className="text-blue-600 hover:underline ml-1">
+                  Don't have an account?
+                  <Link
+                    to="/register"
+                    className="text-blue-600 hover:underline ml-1"
+                  >
                     Create an account
                   </Link>
                 </p>
               </div>
-
             </div>
           </div>
 
           {/* Right Side - Illustration */}
           <div className="flex-1 bg-gradient-to-br from-purple-500 to-purple-700 relative overflow-hidden lg:flex items-center justify-center hidden">
-            
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-10 left-10 w-20 h-20 bg-white rounded-full"></div>
@@ -246,7 +292,6 @@ const LoginForm: React.FC = () => {
 
             {/* Main Content */}
             <div className="relative z-10 text-center px-12">
-              
               {/* Speech Bubble */}
               <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-3xl p-8 mb-8 relative">
                 <div className="absolute -bottom-4 left-12 w-8 h-8 bg-white bg-opacity-20 transform rotate-45"></div>
@@ -258,19 +303,26 @@ const LoginForm: React.FC = () => {
               {/* Character Illustration */}
               <div className="relative">
                 <div className="w-80 h-80 mx-auto bg-white bg-opacity-10 rounded-full flex items-center justify-center mb-6">
-                  <img src={Images.LoginImage} alt="login" className="w-full h-full object-cover rounded-full" />
+                  <img
+                    src={Images.LoginImage}
+                    alt="login"
+                    className="w-full h-full object-cover rounded-full"
+                  />
                 </div>
-                
+
                 {/* Floating Star */}
                 <div className="absolute top-8 right-8 w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce">
-                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
