@@ -216,9 +216,15 @@ const PostNewJob: React.FC = () => {
     }
   };
   const getCountries = async () => {
-    let resp = await httpGetWithoutToken("countries");
-    setCountries(resp.data);
+    try {
+      let resp = await httpGetWithoutToken("countries");
+      setCountries(resp.data || []); // fallback to empty array
+    } catch (err) {
+      console.error("Failed to fetch countries:", err);
+      setCountries([]); // ensure countries is always an array
+    }
   };
+  
   const getStates = async (code: string) => {
     let resp = await httpGetWithoutToken("countries/" + code);
     setStates(resp.data);
