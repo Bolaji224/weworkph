@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import Dropdown from '../../../components/reusable/DropDownButton';
-import { useNavigate } from 'react-router-dom';
-import { httpGetWithoutToken, httpGetWithToken } from '../../../utils/http_utils';
-import { useInView } from 'react-intersection-observer';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import Dropdown from "../../../components/reusable/DropDownButton";
+import { useNavigate } from "react-router-dom";
+import { httpGetWithoutToken, httpGetWithToken } from "../../../utils/http_utils";
+import { useInView } from "react-intersection-observer";
+import { motion } from "framer-motion";
 
 const FindJobSearchSection: React.FC = () => {
-  const [jobQuery, setJobQuery] = useState('');
+  const [jobQuery, setJobQuery] = useState("");
   const [jobTypes, setJobTypes] = useState<any[]>([]);
-  const [location, setLocation] = useState<any[]>([]);
-  const [locationQuery, setLocationQuery] = useState('');
-  const [selectedOption, setSelectedOption] = useState('Full-time');
+  const [location, setLocation] = useState<any[]>([]); // ✅ Always initialized
+  const [locationQuery, setLocationQuery] = useState("");
+  const [selectedOption, setSelectedOption] = useState("Full-time");
 
   const navigate = useNavigate();
 
@@ -22,38 +22,43 @@ const FindJobSearchSection: React.FC = () => {
     setSelectedOption(e.target.value);
   };
 
-  useEffect(() => {
-    fetchJobTypes();
-    getResources();
-  }, []);
-
+  // ✅ Fetch resources safely
   const getResources = async () => {
     try {
-      let resp = await httpGetWithToken('resources');
-      if (resp.status === 'success') {
-        setLocation(Array.isArray(resp.data?.location) ? resp.data.location : []);
+      const resp = await httpGetWithToken("resources");
+      console.log("resources response", resp);
+
+      if (resp?.status === "success") {
+        const locations = resp?.data?.location ?? []; // your API doesn’t return this
+        setLocation(Array.isArray(locations) ? locations : []); // ✅ defensive
       } else {
         setLocation([]);
       }
-    } catch (err) {
-      console.error('Error fetching resources:', err);
+    } catch (error) {
+      console.error("Failed to fetch resources:", error);
       setLocation([]);
     }
   };
 
+  // ✅ Fetch job types
   const fetchJobTypes = async () => {
     try {
-      let resp = await httpGetWithoutToken('fetch-job-types');
-      if (resp.status === 'success' && Array.isArray(resp.data)) {
+      const resp = await httpGetWithoutToken("fetch-job-types");
+      if (resp.status === "success" && Array.isArray(resp.data)) {
         setJobTypes(resp.data);
       } else {
         setJobTypes([]);
       }
     } catch (err) {
-      console.error('Error fetching job types:', err);
+      console.error("Error fetching job types:", err);
       setJobTypes([]);
     }
   };
+
+  useEffect(() => {
+    fetchJobTypes();
+    getResources();
+  }, []);
 
   const handleSearch = () => {
     navigate(
@@ -77,9 +82,9 @@ const FindJobSearchSection: React.FC = () => {
     <motion.div
       ref={sectionRef}
       initial="hidden"
-      animate={sectionInView ? 'visible' : 'hidden'}
+      animate={sectionInView ? "visible" : "hidden"}
       variants={fadeInVariants}
-      transition={{ duration: 1.5, ease: 'easeInOut' }}
+      transition={{ duration: 1.5, ease: "easeInOut" }}
       className="flex justify-center items-center"
     >
       <div className="lg:flex md:flex justify-center items-center w-full lg:mx-[2rem] mx-[2rem] py-[2rem] lg:space-y-0 md:space-y-0 space-y-[1rem]">
@@ -104,11 +109,15 @@ const FindJobSearchSection: React.FC = () => {
             id="location"
           >
             <option value="">Select</option>
-            {(location ?? []).map((l: any, i) => (
-              <option key={`${l.state}${i}`} value={l.state}>
-                {l.state}, {l.country}
-              </option>
-            ))}
+            {Array.isArray(location) && location.length > 0 ? (
+              location.map((l: any, i) => (
+                <option key={i} value={l.state || ""}>
+                  {l.state || "Unknown"}, {l.country || ""}
+                </option>
+              ))
+            ) : (
+              <option disabled>No locations available</option>
+            )}
           </select>
         </div>
 
@@ -122,11 +131,15 @@ const FindJobSearchSection: React.FC = () => {
             <option className="text-[#646A73] text-[14px]" value="">
               Select job type
             </option>
-            {(jobTypes ?? []).map((jt: any, i) => (
-              <option key={i} className="text-[#646A73] text-[14px]" value={jt.title}>
-                {jt.title}
-              </option>
-            ))}
+            {Array.isArray(jobTypes) && jobTypes.length > 0 ? (
+              jobTypes.map((jt: any, i) => (
+                <option key={i} value={jt.title}>
+                  {jt.title}
+                </option>
+              ))
+            ) : (
+              <option disabled>No job types available</option>
+            )}
           </select>
         </div>
 
