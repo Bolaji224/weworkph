@@ -7,7 +7,7 @@ import {
   Clock,
   DollarSign,
 } from "lucide-react";
-import { useParams, useNavigate } from "react-router-dom"; // ✅ added useNavigate
+import { useParams, useNavigate } from "react-router-dom"; // added useNavigate
 import axios from "axios";
 import { APP_API_URL } from "../../../utils/http_utils";
 import ls from "localstorage-slim";
@@ -33,7 +33,7 @@ type GuideResponse = {
 
 const SmartGuidePage: React.FC = () => {
   const { guideId } = useParams<{ guideId?: string }>();
-  const navigate = useNavigate(); // ✅ initialized navigate
+  const navigate = useNavigate(); //  initialized navigate
   const [guide, setGuide] = useState<GuideBlock | null>(null);
   const [completedModules, setCompletedModules] = useState<string[]>([]);
 

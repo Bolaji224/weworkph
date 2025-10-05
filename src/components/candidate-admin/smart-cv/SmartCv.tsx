@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Upload } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Upload, ZoomIn, ZoomOut, RotateCw, X } from 'lucide-react';
 import { APP_API_URL } from '../../../utils/http_utils';
 import axios from 'axios';
 import ls from "localstorage-slim";
@@ -27,6 +27,13 @@ interface FormData {
   educationEndYear: string;
 }
 
+interface ImageTransform {
+  scale: number;
+  rotation: number;
+  x: number;
+  y: number;
+}
+
 const SmartCvForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
@@ -51,7 +58,20 @@ const SmartCvForm: React.FC = () => {
     educationEndYear: ''
   });
 
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [finalImage, setFinalImage] = useState<File | null>(null);
+  const [showEditor, setShowEditor] = useState(false);
+  const [transform, setTransform]= useState<ImageTransform>({
+    scale: 1,
+    rotation: 0,
+    x: 0,
+    y: 0
+  });
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const editorImgRef = useRef<HTMLImageElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -75,14 +95,98 @@ const SmartCvForm: React.FC = () => {
     });
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setUploadedFiles(Array.from(e.target.files));
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPreviewImage(event.target?.result as string);
+        setShowEditor(true);
+        setTransform({ scale: 1, rotation: 0, x: 0, y: 0 });
+      };
+      reader.readAsDataURL(file);
     }
+  };
+
+  const handleZoom = (delta: number) => {
+    setTransform(prev => ({
+      ...prev,
+      scale: Math.max(0.5, Math.min(3, prev.scale + delta))
+    }));
+  };
+
+  const handleRotate = () => {
+    setTransform(prev => ({
+      ...prev,
+      rotation: (prev.rotation + 90) % 360
+    }));
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - transform.x, y: e.clientY - transform.y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging) {
+      setTransform(prev => ({
+        ...prev,
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      }));
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const cropAndSaveImage = () => {
+    if (!canvasRef.current || !editorImgRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const size = 400;
+    canvas.width = size;
+    canvas.height = size;
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size, size);
+
+    ctx.save();
+    ctx.translate(size / 2, size / 2);
+    ctx.rotate((transform.rotation * Math.PI) / 180);
+    ctx.scale(transform.scale, transform.scale);
+    ctx.translate(-size / 2 + transform.x / transform.scale, -size / 2 + transform.y / transform.scale);
+
+    ctx.drawImage(editorImgRef.current, 0, 0, size, size);
+    ctx.restore();
+
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], 'profile-photo.jpg', { type: 'image/jpeg' });
+        setFinalImage(file);
+        setShowEditor(false);
+      }
+    }, 'image/jpeg', 0.95);
   };
 
   const handleSubmit = async () => {
     const form = new FormData();
+
+     // DEBUG: Check what we're sending
+  console.log('Form data before sending:', formData);
+  console.log('experienceTitle specifically:', formData.experienceTitle);
+
+  // Append photo 
+  if (finalImage) {
+    form.append("photo", finalImage, finalImage.name);
+    console.log('Photo attached:', finalImage.name, finalImage.type);
+  } else {
+    console.warn('No photo uploaded!');
+  }
   
     // Append all text fields
     Object.keys(formData).forEach((key) => {
@@ -94,11 +198,6 @@ const SmartCvForm: React.FC = () => {
       }
     });
   
-    // Append photo if uploaded
-    if (uploadedFiles.length > 0) {
-      form.append("photo", uploadedFiles[0]);
-    }
-  
     try {
       const response = await axios.post(`${APP_API_URL}/cv`, form, {
         headers: { 
@@ -107,6 +206,7 @@ const SmartCvForm: React.FC = () => {
         },
         responseType: "blob", // very important for downloading file
       });
+
   
       // Get blob and download
       const blob = new Blob([response.data], { type: "application/pdf" });
@@ -150,9 +250,9 @@ const SmartCvForm: React.FC = () => {
     <div className="min-h-screen py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
-        <div className="bg-white mt-18 rounded-lg shadow-sm mb-8 overflow-hidden">
-          <div className="bg-yellow-400 text-white p-8 text-center relative">
-            <div className="inline-block bg-yellow-500 px-8 py-4 rounded-lg transform -rotate-3 shadow-lg">
+        <div className="bg-white mt-16 rounded-lg shadow-sm mb-8 overflow-hidden">
+          <div className="bg-[#2AA100] text-[#2AA100] p-8 text-center relative">
+            <div className="inline-block bg-white px-8 py-4 rounded-lg transform -rotate-3 shadow-lg">
               <span className="text-xl font-bold">
                 SmartCV<br />
                 <span className="text-2xl">Fill the Form</span>
@@ -173,38 +273,64 @@ const SmartCvForm: React.FC = () => {
             <label className="block text-sm font-medium text-gray-700 mb-3">
               Profile Photo <span className="text-red-500">*</span>
             </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
-              <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <p className="text-lg font-medium text-gray-700 mb-2">Upload a Photo</p>
-              <p className="text-sm text-gray-500 mb-4">Drag and drop files here</p>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileUpload}
-                className="hidden"
-                id="file-upload"
-              />
-              <label
-                htmlFor="file-upload"
-                className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-              >
-                Choose File
-              </label>
-            </div>
-            {uploadedFiles.length > 0 && (
-              <div className="mt-3 p-3 bg-gray-50 rounded-md">
-                <p className="text-sm font-medium text-gray-700 mb-2">Uploaded photo:</p>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  {uploadedFiles.map((file, index) => (
-                    <li key={index} className="flex items-center">
-                      <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                      {file.name}
-                    </li>
-                  ))}
-                </ul>
+            
+            {!finalImage && !showEditor && (
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
+                <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                <p className="text-lg font-medium text-gray-700 mb-2">Upload a Photo</p>
+                <p className="text-sm text-gray-500 mb-4">Choose a professional photo for your CV</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  id="file-upload"
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                >
+                  Choose File
+                </label>
+              </div>
+            )}
+
+            {finalImage && !showEditor && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-center">
+                  <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-gray-200 shadow-lg">
+                    <img 
+                      src={URL.createObjectURL(finalImage)} 
+                      alt="Profile" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-center gap-2">
+                  <label
+                    htmlFor="file-upload"
+                    className="cursor-pointer px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                  >
+                    Change Photo
+                  </label>
+                  <button
+                    onClick={() => setFinalImage(null)}
+                    className="px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-300 rounded-md hover:bg-red-50"
+                  >
+                    Remove
+                  </button>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  id="file-upload"
+                />
               </div>
             )}
           </div>
+
 
           {/* Name Section */}
           <div>
@@ -573,8 +699,100 @@ const SmartCvForm: React.FC = () => {
           </div>
         </div>
       </div>
+
+    
+  {/* Image Editor Modal */}
+  {showEditor && previewImage && (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg max-w-2xl w-full p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Adjust Your Photo</h3>
+          <button
+            onClick={() => {
+              setShowEditor(false);
+              setPreviewImage(null);
+            }}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <div 
+          className="relative w-full h-96 bg-gray-100 rounded-lg overflow-hidden mb-4 cursor-move"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          <img
+            ref={editorImgRef}
+            src={previewImage}
+            alt="Preview"
+            className="absolute inset-0 w-full h-full object-contain"
+            style={{
+              transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale}) rotate(${transform.rotation}deg)`,
+              transformOrigin: 'center'
+            }}
+          />
+          <div className="absolute inset-0 border-2 border-dashed border-white opacity-50 pointer-events-none"></div>
+        </div>
+
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <button
+            onClick={() => handleZoom(-0.1)}
+            className="p-2 bg-gray-200 rounded-md hover:bg-gray-300"
+            title="Zoom Out"
+          >
+            <ZoomOut size={20} />
+          </button>
+          <span className="text-sm text-gray-600 w-16 text-center">
+            {Math.round(transform.scale * 100)}%
+          </span>
+          <button
+            onClick={() => handleZoom(0.1)}
+            className="p-2 bg-gray-200 rounded-md hover:bg-gray-300"
+            title="Zoom In"
+          >
+            <ZoomIn size={20} />
+          </button>
+          <button
+            onClick={handleRotate}
+            className="p-2 bg-gray-200 rounded-md hover:bg-gray-300 ml-4"
+            title="Rotate"
+          >
+            <RotateCw size={20} />
+          </button>
+        </div>
+
+        <p className="text-sm text-gray-600 text-center mb-4">
+          Drag to reposition • Zoom to adjust size • Rotate to adjust angle
+        </p>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              setShowEditor(false);
+              setPreviewImage(null);
+            }}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={cropAndSaveImage}
+            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Apply
+          </button>
+        </div>
+
+        <canvas ref={canvasRef} style={{ display: 'none' }} />
+      </div>
     </div>
-  );
+  )}
+</div>
+);
 };
 
 export default SmartCvForm;

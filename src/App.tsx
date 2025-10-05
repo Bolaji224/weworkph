@@ -14,7 +14,7 @@ import Loader from "./components/reusable/loader/loader";
 // Pages
 import { Home } from "./pages/home/Home";
 import Company from "./pages/company/Company";
-import FindJob from "./pages/findJob/FindJob";
+import FindJob from "./pages/findJob/SmartStartPage";
 import CareerTips from "./pages/careerTips/CareerTips";
 import LearnMoreSection from "./pages/careerTips/components/LearnMoreSection";
 import About from "./pages/about/About";
@@ -76,6 +76,7 @@ import { seedGuidesIfEmpty } from "./utils/localStorage";
 import FreelanceCareerTips from "./components/candidate-admin/freelance-career-tips/FreelanceCareerTips";
 import CourseOverview from "./components/candidate-admin/course-overview/CourseOverview";
 import SmartCvForm from "./components/candidate-admin/smart-cv/SmartCv";
+import SmartStartPage from "./pages/findJob/SmartStartPage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -151,7 +152,7 @@ function Main({
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="company" element={<Company />} />
-        <Route path="find-job" element={<FindJob />} />
+        <Route path="smart-start" element={<SmartStartPage />} />
         <Route path="career-tips" element={<CareerTips />} />
         <Route path="learn-more" element={<LearnMoreSection />} />
         <Route path="about" element={<About />} />
@@ -162,7 +163,7 @@ function Main({
           path="candidate-profile/:candidateId"
           element={<CandidateProfile />}
         />
-        <Route path="job-details/:slug" element={<JobDataPage />} />
+        {/* <Route path="job-details/:slug" element={<JobDataPage />} /> */}
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
         <Route path="for-company-footer" element={<ForCompany />} />
         <Route path="faq" element={<Faq />} />

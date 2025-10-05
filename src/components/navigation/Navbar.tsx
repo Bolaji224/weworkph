@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
     { label: "Home", path: "/" },
     { label: "About Us", path: "about" },
     { label: "SkillStamp", path: "company" },
-    { label: "SmartStart", path: "find-job" },
+    { label: "SmartStart", path: "smart-start" },
     { label: "SmartGuide", path: "career-tips" },
     { label: "Log in", path: "login" },
   ],
