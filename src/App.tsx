@@ -77,6 +77,7 @@ import FreelanceCareerTips from "./components/candidate-admin/freelance-career-t
 import CourseOverview from "./components/candidate-admin/course-overview/CourseOverview";
 import SmartCvForm from "./components/candidate-admin/smart-cv/SmartCv";
 import SmartStartPage from "./pages/findJob/SmartStartPage";
+import ClientCareerTips from "./components/employer-admin/client-career-tips/ClientCareerTips";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -135,6 +136,7 @@ function Main({
     "/forget-password",
     "/subscriptions",
     "/freelance-career-tips",
+    "/client-career-tips",
     "/smart-guide",
     "/paid-course",
     "/smart-cv",
@@ -231,6 +233,10 @@ function Main({
         <Route
           path="submit-jobs"
           element={<EmployersLayout element={<SubmitJobs />} />}
+        />
+        <Route
+          path="client-career-tips"
+          element={<EmployersLayout element={<ClientCareerTips />} />}
         />
         <Route
           path="saved-candidate"

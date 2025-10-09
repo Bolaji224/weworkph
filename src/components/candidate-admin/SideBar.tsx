@@ -261,7 +261,7 @@ const SideNav: React.FC = () => {
           <ul>
             <Link to="/candidate-dashboard">
               <li
-                className={`py-2 hover:outline hover:outline-1 hover:outline-[#EE009D] hover:rounded-lg hover:px-[1rem] text-[16px] mx-[2rem] font-sans font-semibold flex items-center gap-[1rem] ${
+                className={`py-2  text-[16px] mx-[2rem] font-sans font-semibold flex items-center gap-[1rem] ${
                   isActive("/dashboard")
                     ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] mx-[1rem] text-[#2aa100]"
                     : "text-[#2AA100] hover:text-[#2aa100]"
