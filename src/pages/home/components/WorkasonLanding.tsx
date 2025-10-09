@@ -18,10 +18,10 @@ export default function WorkasonLanding() {
     <div className="bg-white">
       {/* Hero Section */}
       <section className="max-w-6xl mx-auto px-6 py-12 md:py-16 text-center">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 leading-snug mb-4">
+        <h2 className="text-3xl md:text-5xl font-bold text-gray-900 leading-snug mb-4">
           The <span className="text-pink-600">diaspora-first</span> platform for
           Virtual Assistants & Editors
-        </h1>
+        </h2>
         <p className="text-lg md:text-xl text-[#646A73] mb-8 max-w-3xl mx-auto">
           <span className="font-semibold text-[#2AA100]">SmartStart™</span> AI
           matching, <span className="font-semibold text-pink-600">SkillStamp™</span> verification, and{" "}
@@ -38,11 +38,11 @@ export default function WorkasonLanding() {
       </section>
 
       {/* How It Works */}
-      <section className="bg-gradient-to-r from-pink-50 to-green-50 py-12">
+      <section className="bg-white py-12">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-10">
+          <h3 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-10">
             How It Works
-          </h2>
+          </h3>
           <div className="grid md:grid-cols-3 gap-6">
             {steps.map((step, index) => (
               <div
