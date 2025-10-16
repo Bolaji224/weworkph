@@ -5,6 +5,7 @@ import { httpGetWithToken, httpPostWithToken } from '../../../../utils/http_util
 import { AppContext } from '../../../../global/state';
 import ls from "localstorage-slim";
 import moment from 'moment/moment';
+import { echo } from '../../../../utils/echo';
 
 interface ChatUser {
   id: number;
@@ -98,10 +99,27 @@ const ChatBox: React.FC = () => {
     if (resp.status == "success") {
       setMessages(resp.data.messages)
     }
+    console.log("Fetched chat:", resp);
   }
   useEffect(() => {
-    if(selectedChat) getChatSingle(selectedChat?.id);
+    if (!selectedChat) return;
+  
+    const channelName = `chat.${selectedChat.id}`;
+    console.log('Joining channel:', channelName);
+  
+    const channel = echo.private(channelName);
+  
+    channel.listen('MessageSent', (event: any) => {
+      console.log('📩 New message received:', event.message);
+      setMessages((prev) => [...prev, event.message]);
+    });
+  
+    return () => {
+      echo.leave(channelName);
+      console.log('Left channel:', channelName);
+    };
   }, [selectedChat]);
+  
 
   return (
     <section className='px-2 py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12 max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] mx-auto'>
