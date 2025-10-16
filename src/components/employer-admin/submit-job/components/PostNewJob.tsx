@@ -593,7 +593,7 @@ const PostNewJob: React.FC = () => {
 
         <div className="bg-white rounded-2xl p-[4rem] mt-8">
           <label className="block font-semibold text-[#ee009d] text-xl tracking-wide mb-2">
-            Address & Location
+            Location
           </label>
           <div className="flex flex-wrap -mx-2">
             <div className="w-full px-2 mb-4">
