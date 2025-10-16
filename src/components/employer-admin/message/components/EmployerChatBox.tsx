@@ -1,6 +1,8 @@
 import { UilImage, UilMessage, UilPaperclip } from '@iconscout/react-unicons';
 import React, { useState, useEffect, useRef } from 'react';
 import Images from '../../../constant/Images';
+import { httpPostWithToken } from '../../../../utils/http_utils';
+import { echo } from '../../../../utils/echo';
 
 interface Message {
   id: number;
@@ -16,58 +18,81 @@ interface ChatUser {
   profileImage: string;
 }
 
-const EmployerChatBox
-: React.FC = () => {
+const EmployerChatBox: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
   const [chatUsers, setChatUsers] = useState<ChatUser[]>([
-    { id: 1, name: 'Alice', profileImage: Images.ProfileImage },
-    { id: 2, name: 'Bob', profileImage: Images.ProfileImage },
-    { id: 3, name: 'Joseph', profileImage: Images.ProfileImage },
-    { id: 4, name: 'Hannah', profileImage: Images.ProfileImage },
-    { id: 5, name: 'Faith', profileImage: Images.ProfileImage },
+    // 💡 For testing, you can hardcode one candidate user
+    { id: 2, name: 'Test Candidate', profileImage: Images.ProfileImage },
   ]);
   const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
+  const [chatId, setChatId] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim() === '') return;
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
-    const message: Message = {
-      id: messages.length + 1,
+  /** ✅ Handle sending message through backend */
+  const handleSendMessage = async () => {
+    if (newMessage.trim() === '' || !selectedUser) return;
+
+    // Show immediately on UI
+    const localMsg: Message = {
+      id: Date.now(),
       text: newMessage,
       sender: 'user',
-      dateTime: new Date().toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true,
-      }),
+      dateTime: new Date().toLocaleString(),
     };
-
-    setMessages([...messages, message]);
+    setMessages((prev) => [...prev, localMsg]);
     setNewMessage('');
+
+    try {
+      const response = await httpPostWithToken('chat/send-chat', {
+        message: newMessage,
+        user_id: selectedUser.id, // 👈 backend needs this to know who you're chatting with
+      });
+
+      if (response?.data?.data?.id) {
+        setChatId(response.data.data.id);
+      }
+    } catch (err) {
+      console.error('Error sending message:', err);
+    }
   };
+
+  /** ✅ Listen for new messages from Laravel Echo */
+  useEffect(() => {
+    if (!chatId) return;
+
+    const channel = echo.private(`chat.${chatId}`);
+
+    channel.listen('MessageSent', (event: any) => {
+      console.log('Received broadcast:', event);
+
+      const incomingMsg: Message = {
+        id: event.message.id,
+        text: event.message.message,
+        sender: 'bot',
+        dateTime: new Date().toLocaleString(),
+      };
+      setMessages((prev) => [...prev, incomingMsg]);
+    });
+
+    return () => {
+      echo.leave(`chat.${chatId}`);
+    };
+  }, [chatId]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
       const message: Message = {
-        id: messages.length + 1,
+        id: Date.now(),
         text: `File uploaded: ${files[0].name}`,
         sender: 'user',
-        dateTime: new Date().toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: true,
-        }),
+        dateTime: new Date().toLocaleString(),
       };
-
       setMessages([...messages, message]);
     }
   };
@@ -77,35 +102,30 @@ const EmployerChatBox
     if (files && files.length > 0) {
       const imageUrl = URL.createObjectURL(files[0]);
       const message: Message = {
-        id: messages.length + 1,
+        id: Date.now(),
         text: '',
         sender: 'user',
-        dateTime: new Date().toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: true,
-        }),
+        dateTime: new Date().toLocaleString(),
         image: imageUrl,
       };
-
       setMessages([...messages, message]);
     }
   };
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
 
   const getLastMessage = (userId: number) => {
-    const userMessages = messages.filter((msg) => msg.sender === 'user' && msg.id === userId);
-    return userMessages.length > 0 ? userMessages[userMessages.length - 1] : null;
+    const userMessages = messages.filter(
+      (msg) => msg.sender === 'user' && selectedUser?.id === userId
+    );
+    return userMessages.length > 0
+      ? userMessages[userMessages.length - 1]
+      : null;
   };
 
   return (
-    <section className='px-2 py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12 max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] mx-auto'>
-      <h2 className='text-[#2aa100] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-sans font-bold mb-4 sm:mb-6 md:mb-8'>Message</h2>
+    <section className="px-2 py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12 max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] mx-auto">
+      <h2 className="text-[#2aa100] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-sans font-bold mb-4 sm:mb-6 md:mb-8">
+        Message
+      </h2>
       <div className="flex flex-col md:flex-row w-full bg-white rounded-lg shadow-lg">
         {/* Chat List Section */}
         <div className="w-full md:w-1/4 border-r-0 md:border-r-2 p-2 sm:p-4">
@@ -116,8 +136,16 @@ const EmployerChatBox
               return (
                 <li
                   key={user.id}
-                  className={`p-2 cursor-pointer ${selectedUser?.id === user.id ? 'bg-[#F5E2EF] text-white rounded-[10px] mb-2 sm:mb-4' : 'hover:bg-[#F5E2EF] rounded-[10px] mb-2 sm:mb-4'}`}
-                  onClick={() => setSelectedUser(user)}
+                  className={`p-2 cursor-pointer ${
+                    selectedUser?.id === user.id
+                      ? 'bg-[#F5E2EF] text-white rounded-[10px] mb-2 sm:mb-4'
+                      : 'hover:bg-[#F5E2EF] rounded-[10px] mb-2 sm:mb-4'
+                  }`}
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setMessages([]);
+                    setChatId(null);
+                  }}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
@@ -127,7 +155,9 @@ const EmployerChatBox
                         className="w-8 h-8 rounded-full mr-2"
                       />
                       <div>
-                        <div className='text-[#000000] font-sans font-semibold text-sm sm:text-base'>{user.name}</div>
+                        <div className="text-[#000000] font-sans font-semibold text-sm sm:text-base">
+                          {user.name}
+                        </div>
                       </div>
                     </div>
                     {lastMessage && (
@@ -138,7 +168,9 @@ const EmployerChatBox
                   </div>
                   {lastMessage && (
                     <div className="text-xs ml-10 text-[#646A73]">
-                      {lastMessage.text.length > 20 ? `${lastMessage.text.substring(0, 20)}...` : lastMessage.text}
+                      {lastMessage.text.length > 20
+                        ? `${lastMessage.text.substring(0, 20)}...`
+                        : lastMessage.text}
                     </div>
                   )}
                 </li>
@@ -155,7 +187,11 @@ const EmployerChatBox
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex items-end my-2 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex items-end my-2 ${
+                      message.sender === 'user'
+                        ? 'justify-end'
+                        : 'justify-start'
+                    }`}
                   >
                     {message.sender === 'user' && (
                       <img
@@ -165,11 +201,23 @@ const EmployerChatBox
                       />
                     )}
                     <div className="flex flex-col">
-                      <div className="text-xs text-gray-500 text-right">{message.dateTime}</div>
+                      <div className="text-xs text-gray-500 text-right">
+                        {message.dateTime}
+                      </div>
                       {message.image ? (
-                        <img src={message.image} alt="Uploaded content" className="w-32 sm:w-48 md:w-64 h-auto rounded-lg" />
+                        <img
+                          src={message.image}
+                          alt="Uploaded content"
+                          className="w-32 sm:w-48 md:w-64 h-auto rounded-lg"
+                        />
                       ) : (
-                        <div className={`p-2 rounded-lg ${message.sender === 'user' ? 'bg-[#ee009d] text-white' : 'bg-gray-300 text-black'}`}>
+                        <div
+                          className={`p-2 rounded-lg ${
+                            message.sender === 'user'
+                              ? 'bg-[#ee009d] text-white'
+                              : 'bg-gray-300 text-black'
+                          }`}
+                        >
                           {message.text}
                         </div>
                       )}
@@ -179,7 +227,9 @@ const EmployerChatBox
                 <div ref={messagesEndRef}></div>
               </>
             ) : (
-              <div className="text-center text-gray-500">Select a chat to start messaging</div>
+              <div className="text-center text-gray-500">
+                Select a chat to start messaging
+              </div>
             )}
           </div>
           {selectedUser && (
@@ -212,7 +262,7 @@ const EmployerChatBox
                 onClick={handleSendMessage}
                 className="ml-2 p-2 bg-[#ee009d] text-white text-xs sm:text-sm font-poppins rounded-lg flex items-center gap-1"
               >
-                Send<UilMessage size={18} className="ml-1" />
+                Send <UilMessage size={18} className="ml-1" />
               </button>
             </div>
           )}
@@ -222,5 +272,4 @@ const EmployerChatBox
   );
 };
 
-export default EmployerChatBox
-;
+export default EmployerChatBox;

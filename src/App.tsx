@@ -78,6 +78,7 @@ import CourseOverview from "./components/candidate-admin/course-overview/CourseO
 import SmartCvForm from "./components/candidate-admin/smart-cv/SmartCv";
 import SmartStartPage from "./pages/findJob/SmartStartPage";
 import ClientCareerTips from "./components/employer-admin/client-career-tips/ClientCareerTips";
+import EmployerChatBox from "./components/employer-admin/message/components/EmployerChatBox";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -228,7 +229,7 @@ function Main({
         <Route path="jobs/:jobId/details" element={<JobDetailsPage />} />
         <Route
           path="employers-messages"
-          element={<EmployersLayout element={<EmployersMessage />} />}
+          element={<EmployersLayout element={<EmployerChatBox />} />}
         />
         <Route
           path="submit-jobs"
