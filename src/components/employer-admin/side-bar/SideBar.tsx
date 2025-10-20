@@ -122,40 +122,43 @@ const SideNav: React.FC = () => {
           <ul>
             <Link to="/employers-dashboard">
               <li
-                className={`py-2 text-[16px] font-semibold flex items-center gap-[1rem] ${
+                className={`py-2  text-[16px]  font-sans font-semibold flex items-center gap-[1rem] ${
                   isActive("/employers-dashboard")
                     ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] mx-[1rem] text-[#2aa100]"
                     : "text-[#2AA100] hover:text-[#2aa100]"
                 }`}
               >
-                <UilCreateDashboard size={25} /> Dashboard
+                <UilCreateDashboard
+                                  size={25}
+                                  color={isActive("/employers-dashboard") ? "#EE009D" : "#EE009D"}
+                                />{" "} Dashboard
               </li>
             </Link>
             <Link to="/employers-messages">
               <li
-                className={`py-2 mt-[1.5rem] flex items-center gap-[1rem] ${
+                className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
                   isActive("/employers-messages")
-                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
+                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] mx-[1rem] text-[#2AA100]"
                     : "text-[#1E2A38] hover:text-[#2AA100]"
                 }`}
               >
-                <FaCertificate size={25} /> SkillStamp
+                <FaCertificate size={25} /> Smartstart
               </li>
             </Link>
             <Link to="/employers-account-settings">
               <li
-                className={`py-2 mt-[1.5rem] flex items-center gap-[1rem] ${
+                className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
                   isActive("/employers-account-settings")
                     ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
                     : "text-[#1E2A38] hover:text-[#2AA100]"
                 }`}
               >
-                <FaRocket size={25} /> SmartStart
+                <FaRocket size={25} /> Account Settings
               </li>
             </Link>
             <Link to="/my-jobs">
               <li
-                className={`py-2 mt-[1.5rem] flex items-center gap-[1rem] ${
+                className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
                   isActive("/my-jobs")
                     ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
                     : "text-[#1E2A38] hover:text-[#2AA100]"
@@ -166,7 +169,7 @@ const SideNav: React.FC = () => {
             </Link>
             <Link to="/submit-jobs">
               <li
-                className={`py-2 mt-[1.5rem] flex items-center gap-[1rem] ${
+                className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
                   isActive("/submit-jobs")
                     ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
                     : "text-[#1E2A38] hover:text-[#2AA100]"
@@ -177,7 +180,7 @@ const SideNav: React.FC = () => {
             </Link>
             <Link to="/saved-candidate">
               <li
-                className={`py-2 mt-[1.5rem] flex items-center gap-[1rem] ${
+                className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
                   isActive("/saved-candidate")
                     ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
                     : "text-[#1E2A38] hover:text-[#2AA100]"
@@ -188,13 +191,24 @@ const SideNav: React.FC = () => {
             </Link>
             <Link to="/employers-wallet-account">
               <li
-                className={`py-2 mt-[1.5rem] flex items-center gap-[1rem] ${
+                className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
                   isActive("/employers-wallet-account")
-                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
+                    ? "outline outline-1 outline-[#7c5770] rounded-lg px-[1rem] text-[#2AA100]"
                     : "text-[#1E2A38] hover:text-[#2AA100]"
                 }`}
               >
                 <UilWallet size={25} /> Wallet Account
+              </li>
+            </Link>
+            <Link to="/client-career-tips">
+              <li
+                className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
+                  isActive("/client-career-tips")
+                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
+                    : "text-[#1E2A38] hover:text-[#2AA100]"
+                }`}
+              >
+                <UilWallet size={25} /> Career Tips
               </li>
             </Link>
           </ul>
