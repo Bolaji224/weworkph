@@ -81,6 +81,7 @@ const SideNav: React.FC = () => {
             src={user?.avatar || Images.ProfileImage}
             alt="Profile"
           />
+          <h1>the new era is here an dtjeonuy i98ebekbujfk</h1>
 
           {/* Username + dropdown */}
           <div ref={dropdownRef} className="relative">

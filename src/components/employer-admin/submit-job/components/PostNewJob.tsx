@@ -1,43 +1,95 @@
-import { UilAngleDown, UilAngleUp, UilTimes } from "@iconscout/react-unicons";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import {
-  httpGetWithoutToken,
-  httpGetWithToken,
-  httpPostWithToken,
-} from "../../../../utils/http_utils";
-import { Button, Toast, useToast } from "@chakra-ui/react";
-import { profile } from "console";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import React, { ChangeEvent, useEffect, useState, useRef } from "react";
+import ls from "localstorage-slim";
 
-const jobCategories = [
-  "Design",
-  "IT & Development",
-  "Digital",
-  "Graphics",
-  "Developer",
-  "Product",
-  "Microsoft",
-  "Brand",
-  "Photoshop",
-  "Business",
-  "IT & Technology",
-  "Marketing",
-  "Article",
-  "Engineer",
-  "HTML5",
-  "Figma",
-  "Automobile",
-  "Account",
+// Inline SVG icons
+const AngleDownIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <polyline points="6 9 12 15 18 9"></polyline>
+  </svg>
+);
+const AngleUpIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <polyline points="18 15 12 9 6 15"></polyline>
+  </svg>
+);
+
+// Mock data
+const mockDepartments = [
+  { id: 1, title: "Design" },
+  { id: 2, title: "IT & Development" },
+  { id: 3, title: "Marketing" },
+  { id: 4, title: "Engineering" },
+  { id: 5, title: "Product" },
+];
+const mockJobTypes = [
+  { id: 1, title: "Full-Time" },
+  { id: 2, title: "Part-Time" },
+  { id: 3, title: "Freelance" },
+];
+const mockWorkTypes = [
+  { id: 1, title: "Remote" },
+  { id: 2, title: "On-site" },
+  { id: 3, title: "Hybrid" },
+];
+const mockCountries = [
+  {
+    code: "US",
+    name: "United States",
+    states: ["California", "Texas", "New York", "Florida"],
+  },
+  {
+    code: "NG",
+    name: "Nigeria",
+    states: ["Lagos", "Abuja", "Kano", "Rivers"],
+  },
+  {
+    code: "GB",
+    name: "United Kingdom",
+    states: ["England", "Scotland", "Wales"],
+  },
 ];
 
-const jobTypes = [
-  "Full-Time",
-  "Part-Time",
-  "Freelance",
-  "Hourly-Contract",
-  "Fixed-Price",
-];
+// Mock API functions
+const httpGetWithoutToken = async (url: string) => {
+  if (url === "countries") return { data: mockCountries };
+  if (url.startsWith("countries/")) {
+    const code = url.split("/")[1];
+    const country = mockCountries.find((c) => c.code === code);
+    return { data: country?.states.map((s) => ({ name: s })) || [] };
+  }
+  return { data: [] };
+};
+
+const httpGetWithToken = async (url: string) => {
+  return {
+    status: "success",
+    data: { work_types: mockWorkTypes, job_type: mockJobTypes, departments: mockDepartments },
+  };
+};
+
+const API_BASE_URL = "http://127.0.0.1:8000/api/v1/";
+
+const httpPostWithToken = async (url: string, data: any) => {
+  try {
+    const token = ls.get("wwph_token", { decrypt: true });
+    if (!token) {
+      console.error("No token found in localstorage-slim");
+      return { status: "error", message: "Authentication required" };
+    }
+
+    const res = await axios.post(`${API_BASE_URL}${url}`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+    });
+    return res.data;
+  } catch (err: any) {
+    console.error("Error posting data:", err.response?.data || err.message);
+    return { status: "error", message: "Failed to connect to backend" };
+  }
+};
 
 const jobSalary = ["Monthly", "Weekly", "Hourly"];
 
@@ -55,185 +107,164 @@ const PostNewJob: React.FC = () => {
   const [description, setDescription] = useState("");
   const [requirements, setRequirements] = useState("");
   const [experience, setExperience] = useState("");
-
-  const [resources, setResources] = useState<any>({
-    work_types: [],
-    job_type: [],
-    departments: "",
-  });
-
   const [selectedWorkType, setSelectedWorkType] = useState<any>(null);
   const [selectedType, setSelectedType] = useState<any>(null);
   const [selectedSalary, setSelectedSalary] = useState("");
   const [salaryOpen, setSalaryOpen] = useState(false);
   const [budget, setBudget] = useState("");
-  const [cvFiles, setCvFiles] = useState<File[]>([]);
   const [countries, setCountries] = useState<any[]>([]);
   const [states, setStates] = useState<any[]>([]);
   const [country, setCountry] = useState<any>("");
   const [user_state, setUserState] = useState<any>("");
   const [city, setCity] = useState<any>("");
-  const navigate = useNavigate();
-  const handleAddSkill = (skill: string) => {
-    if (!skills.includes(skill)) {
-      setSkills([...skills, skill]);
-    }
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+
+  const categoryRef = useRef<HTMLDivElement>(null);
+  const typeRef = useRef<HTMLDivElement>(null);
+  const workTypeRef = useRef<HTMLDivElement>(null);
+  const salaryRef = useRef<HTMLDivElement>(null);
+
+  const closeAllDropdowns = () => {
+    setCategoryOpen(false);
+    setTypeOpen(false);
+    setWorkType(false);
+    setSalaryOpen(false);
   };
 
-  const handleRemoveSkill = (skill: string) => {
-    setSkills(skills.filter((s) => s !== skill));
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (categoryRef.current && !categoryRef.current.contains(event.target as Node)) setCategoryOpen(false);
+      if (typeRef.current && !typeRef.current.contains(event.target as Node)) setTypeOpen(false);
+      if (workTypeRef.current && !workTypeRef.current.contains(event.target as Node)) setWorkType(false);
+      if (salaryRef.current && !salaryRef.current.contains(event.target as Node)) setSalaryOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleAddSkill = (skill: string) => {
+    if (!skills.includes(skill)) setSkills([...skills, skill]);
   };
+  const handleRemoveSkill = (skill: string) => setSkills(skills.filter((s) => s !== skill));
 
   const toggleCategory = () => {
-    setCategoryOpen(!categoryOpen);
+    closeAllDropdowns();
+    setCategoryOpen((prev) => !prev);
   };
-
   const toggleType = () => {
-    setTypeOpen(!typeOpen);
+    closeAllDropdowns();
+    setTypeOpen((prev) => !prev);
   };
   const toggleWorkType = () => {
-    setWorkType(!workType);
+    closeAllDropdowns();
+    setWorkType((prev) => !prev);
   };
-
   const toggleSalary = () => {
-    setSalaryOpen(!salaryOpen);
+    closeAllDropdowns();
+    setSalaryOpen((prev) => !prev);
   };
-
-  const handleSelectCategory = (category: string) => {
+  const handleSelectCategory = (category: any) => {
     setSelectedCategory(category);
     setCategoryOpen(false);
   };
-
-  const handleSelectType = (type: string) => {
+  const handleSelectType = (type: any) => {
     setSelectedType(type);
     setTypeOpen(false);
   };
-  const handleSelectWorktype = (type: string) => {
+  const handleSelectWorktype = (type: any) => {
     setSelectedWorkType(type);
     setWorkType(false);
   };
-
   const handleSelectSalary = (salary: string) => {
     setSelectedSalary(salary);
     setSalaryOpen(false);
   };
 
-  const handleFileChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    setFileState: React.Dispatch<React.SetStateAction<File[]>>
-  ) => {
-    const files = e.target.files;
-    if (files) {
-      setFileState(Array.from(files));
-    }
-  };
-
-  const handleSingleFileChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    setFileState: React.Dispatch<React.SetStateAction<File | null>>
-  ) => {
-    const file = e.target.files?.[0] || null;
-    setFileState(file);
-  };
-
-  // const handleLogoChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   const file = e.target.files?.[0] || null;
-  //   if (file) {
-  //     setLogoFile(file);
-  //   }
-  // };
-
-  const removeFile = (
-    index: number,
-    setFileState: React.Dispatch<React.SetStateAction<File[]>>
-  ) => {
-    setFileState((prevFiles) => prevFiles.filter((_, i) => i !== index));
-  };
-
   const getResoures = async () => {
+    setLoading(true);
     let resp = await httpGetWithToken("resources");
-    if (resp.status == "success") {
+    if (resp.status === "success") {
       setWorktypes(resp.data.work_types);
       setJobTypes(resp.data.job_type);
       setDepartments(resp.data.departments);
-      setLoading(false);
     }
-  };
-  const toast = useToast();
-  const throwError = (message: string) => {
-    toast({
-      title: "Oops.. We hit a snag",
-      description: message,
-      isClosable: true,
-      status: "error",
-    });
+    setLoading(false);
   };
 
-  const submit = async () => {
-    if (title === "") return throwError("Job title cannot be empty");
-    if (description === "") return throwError("Job description cannot be empty");
-    if (selectedWorkType === null) return throwError("Please select Work type");
-    if (selectedType === null) return throwError("Please select Job type");
-    if (selectedCategory == null)
-      return throwError("Please select Job Category");
-    if (selectedSalary === "") return throwError("Please selecte salary type");
-    if (budget === "") return throwError("Enter salary budget");
-    if (city === "") return throwError("City cannot be empty");
-    if (user_state === "") return throwError("State cannot be empty");
-    if (country === "") return throwError("Country cannot be empty");
-    if (skills.length === 0) return throwError("Enter at least one skill");
-    if (requirements === "") return throwError("Job requirement is required");
-    // if (logoFile == null) return throwError ("company logo is require")
-
-    let fd = {
-      title: title,
-      description: description,
-      work_type: selectedWorkType.id,
-      job_type: selectedType.id,
-      category: selectedCategory.id,
-      salary: selectedSalary,
-      budget: budget,
-      experience: experience,
-      requirements: requirements,
-      job_cover: "required",
-      skills: skills.join(","),
-      city: city,
-      state: user_state,
-      country: country,
-    };
-
-    const res = await httpPostWithToken("employer/jobs", fd);
-    // console.log(res)
-    if (res.status === "success") {
-      toast({
-        title: "Job created successful1",
-        isClosable: true,
-        status: "success",
-      });
-      return navigate("/my-jobs");
-    } else {
-      return throwError(res.message || res.error);
-    }
-  };
   const getCountries = async () => {
     try {
       let resp = await httpGetWithoutToken("countries");
-      setCountries(resp.data || []); // fallback to empty array
-    } catch (err) {
-      console.error("Failed to fetch countries:", err);
-      setCountries([]); // ensure countries is always an array
+      setCountries(resp.data || []);
+    } catch {
+      setCountries([]);
     }
   };
-  
+
   const getStates = async (code: string) => {
     let resp = await httpGetWithoutToken("countries/" + code);
     setStates(resp.data);
   };
+
   useEffect(() => {
     setLoading(false);
     getResoures();
     getCountries();
   }, []);
+
+  const showToastMessage = (message: string, type: "success" | "error") => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const throwError = (msg: string) => showToastMessage(msg, "error");
+
+  const submit = async () => {
+    if (loading) return;
+    if (title === "") return throwError("Job title cannot be empty");
+    if (description === "") return throwError("Job description cannot be empty");
+    if (!selectedWorkType) return throwError("Select work type");
+    if (!selectedType) return throwError("Select job type");
+    if (!selectedCategory) return throwError("Select job category");
+    if (selectedSalary === "") return throwError("Select salary type");
+    if (budget === "") return throwError("Enter salary budget");
+    if (city === "") return throwError("City cannot be empty");
+    if (user_state === "") return throwError("State cannot be empty");
+    if (country === "") return throwError("Country cannot be empty");
+
+    const fd = {
+      title,
+      description,
+      requirements,
+      work_type: selectedWorkType?.id || 1,
+      job_type: selectedType?.id || 1,
+      category: selectedCategory?.id || 1,
+      salary: selectedSalary,
+      budget,
+      experience,
+      skills: skills.join(","),
+      city,
+      state: user_state,
+      country,
+      status: "active",
+    };
+
+    try {
+      setLoading(true);
+      const res = await httpPostWithToken("employer/jobs", fd);
+      if (res.status === "success") {
+        showToastMessage("Job created successfully!", "success");
+      } else throwError("Something went wrong");
+    } catch {
+      throwError("Failed to submit job");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <section className="p-8 mt-[4rem]">
@@ -300,7 +331,7 @@ const PostNewJob: React.FC = () => {
                 <label className="block text-[#000000] text-[16px] mb-2 font-medium">
                   Job Category*
                 </label>
-                <div className="relative">
+                <div className="relative" ref={categoryRef}>
                   <button
                     type="button"
                     className="w-full border rounded-lg border-gray-300 bg-white p-4 shadow-sm focus:ring-0 focus:outline-none flex justify-between items-center"
@@ -311,7 +342,7 @@ const PostNewJob: React.FC = () => {
                         ? selectedCategory.title
                         : "Select Category"}
                     </span>
-                    {categoryOpen ? <UilAngleUp /> : <UilAngleDown />}
+                    {categoryOpen ? <AngleUpIcon /> : <AngleDownIcon />}
                   </button>
                   {categoryOpen && (
                     <ul className="absolute z-10 w-full text-gray-500 bg-white border rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto">
@@ -332,7 +363,7 @@ const PostNewJob: React.FC = () => {
                 <label className="block text-[#000000] text-[16px] mb-2 font-medium">
                   Job Type*
                 </label>
-                <div className="relative">
+                <div className="relative" ref={typeRef}>
                   <button
                     type="button"
                     className="w-full border rounded-lg border-gray-300 bg-white p-4 shadow-sm focus:ring-0 focus:outline-none flex justify-between items-center"
@@ -341,7 +372,7 @@ const PostNewJob: React.FC = () => {
                     <span className="text-gray-500">
                       {selectedType ? selectedType.title : "Select Job Type"}
                     </span>
-                    {typeOpen ? <UilAngleUp /> : <UilAngleDown />}
+                    {typeOpen ? <AngleUpIcon /> : <AngleDownIcon />}
                   </button>
                   {typeOpen && (
                     <ul className="absolute z-10 w-full bg-white text-gray-500 border rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto">
@@ -362,7 +393,7 @@ const PostNewJob: React.FC = () => {
                 <label className="block text-[#000000] text-[16px] mb-2 font-medium">
                   Work Type*
                 </label>
-                <div className="relative">
+                <div className="relative" ref={workTypeRef}>
                   <button
                     type="button"
                     className="w-full border rounded-lg border-gray-300 bg-white p-4 shadow-sm focus:ring-0 focus:outline-none flex justify-between items-center"
@@ -373,7 +404,7 @@ const PostNewJob: React.FC = () => {
                         ? selectedWorkType.title
                         : "Select Work Type"}
                     </span>
-                    {workType ? <UilAngleUp /> : <UilAngleDown />}
+                    {workType ? <AngleUpIcon /> : <AngleDownIcon />}
                   </button>
                   {workType && (
                     <ul className="absolute z-10 w-full bg-white text-gray-500 border rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto">
@@ -394,7 +425,7 @@ const PostNewJob: React.FC = () => {
                 <label className="block text-[#000000] text-[16px] mb-2 font-medium">
                   Salary*
                 </label>
-                <div className="relative">
+                <div className="relative" ref={salaryRef}>
                   <button
                     type="button"
                     className="w-full border rounded-lg border-gray-300 bg-white p-4 shadow-sm focus:ring-0 focus:outline-none flex justify-between items-center"
@@ -403,7 +434,7 @@ const PostNewJob: React.FC = () => {
                     <span className="text-gray-500">
                       {selectedSalary || "Monthly"}
                     </span>
-                    {salaryOpen ? <UilAngleUp /> : <UilAngleDown />}
+                    {salaryOpen ? <AngleUpIcon /> : <AngleDownIcon />}
                   </button>
                   {salaryOpen && (
                     <ul className="absolute z-10 w-full bg-white text-gray-500 border rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto">
@@ -486,7 +517,7 @@ const PostNewJob: React.FC = () => {
 
         <div className="bg-white rounded-2xl p-[4rem] mt-8">
           <label className="block font-semibold text-[#ee009d] text-xl tracking-wide mb-2">
-            Address & Location
+            Location
           </label>
           <div className="flex flex-wrap -mx-2">
             <div className="w-full px-2 mb-4">
@@ -494,30 +525,25 @@ const PostNewJob: React.FC = () => {
                 Country*
               </label>
               <select
+                value={country}
                 onChange={(e) => {
-                  if (e.target.value == "") {
+                  if (e.target.value === "") {
                     setStates([]);
+                    setCountry("");
+                    setUserState("");
                   } else {
                     getStates(e.target.value);
                     setCountry(e.target.value);
+                    setUserState("");
                   }
                 }}
                 className="w-full border rounded-lg border-gray-300 bg-white p-2 shadow-sm focus:ring-0 focus:outline-none"
-                defaultValue=""
               >
-                <option value="" disabled>
-                  Country
-                </option>
+                <option value="">Select Country</option>
                 {countries.map((c: any) => (
-                  <>
-                    {country === c.code ? (
-                      <option selected value={c.code}>
-                        {c.name}
-                      </option>
-                    ) : (
-                      <option value={c.code}>{c.name}</option>
-                    )}
-                  </>
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -540,118 +566,63 @@ const PostNewJob: React.FC = () => {
               <label className="block font-semibold text-green-600 text-lg mb-2">
                 State*
               </label>
-              <select
-                onChange={(e) => {
-                  setUserState(e.target.value);
-                }}
-                className="w-full border rounded-lg border-gray-300 bg-white p-2 shadow-sm focus:ring-0 focus:outline-none"
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  State
-                </option>
-                {user_state !== "" && (
-                  <option value={user_state}>{user_state}</option>
-                )}
-                {states.map((state) => (
-                  <option key={state.name} value={state.name}>
-                    {state.name}
-                  </option>
-                ))}
-              </select>
+              {states.length > 0 ? (
+                <select
+                  value={user_state}
+                  onChange={(e) => {
+                    setUserState(e.target.value);
+                  }}
+                  className="w-full border rounded-lg border-gray-300 bg-white p-2 shadow-sm focus:ring-0 focus:outline-none"
+                >
+                  <option value="">Select State</option>
+                  {states.map((state: any) => (
+                    <option key={state.name} value={state.name}>
+                      {state.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  value={user_state}
+                  onChange={(e) => {
+                    setUserState(e.target.value);
+                  }}
+                  placeholder="Enter state"
+                  className="w-full border rounded-lg border-gray-300 bg-white p-2 shadow-sm focus:ring-0 focus:outline-none"
+                />
+              )}
             </div>
           </div>
-          <div className="mb-2">{/* <MapComponent /> */}</div>
         </div>
 
-        {/* <div className="mb-4">
-          <label className="block text-[#000000] text-[16px] font-medium">
-            Company Logo*
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleLogoChange(e)}
-            className="mt-1 w-full px-4 py-4 border rounded-md"
-          />
-        </div> */}
-
-        {/* <div className="bg-white p-[4rem] rounded-lg shadow-md mb-6">
-        {/* <div className="py-[2rem]">
-          <h2 className="text-xl font-semibold mb-4 text-[#EE009d] text-[16px] tracking-[0.3px] font-sans">File Attachment*</h2>
-          <div className='flex items-center  gap-[1rem]'>
-          <label className="cursor-pointer bg-green-100 text-green-600 font-medium py-2 px-4 rounded-[8px]">
-              Upload File
-              <input
-                type="file"
-                accept=".pdf, .doc, .docx"
-                onChange={(e) => handleFileChange(e, setCvFiles)} 
-                className="hidden"
-              />
-            </label>
-            <p>Upload file .pdf, .doc, .docx</p>
-          </div>
-          {cvFiles.map((file, index) => (
-            <div key={index} className="flex items-center justify-between bg-green-100 p-4 mt-[2rem] rounded-[10px]">
-              <span>{file.name}</span>
-              <UilTimes onClick={() => removeFile(index, setCvFiles)} className="cursor-pointer text-red-500" />
-            </div>
-          ))}
-        </div> 
-          <h3 className="text-xl font-semibold mb-4 text-[#EE009d] text-[16px] tracking-[0.3px] font-sans">Address & Location</h3>
-          <div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Address*</label>
-              <input
-                type="text"
-                placeholder="Cowrasta, Chandana, Gazipur Sadar"
-                className="mt-1 w-full px-4 py-2 border rounded-md"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Country*</label>
-              <input
-                type="text"
-                className="mt-1 w-full px-4 py-2 border rounded-md"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">City*</label>
-              <input
-                type="text"
-                className="mt-1 w-full px-4 py-2 border rounded-md"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">State*</label>
-              <input
-                type="text"
-                className="mt-1 w-full px-4 py-2 border rounded-md"
-              />
-            </div>
-          
-          </div>
-        </div> */}
-
-        <div className="flex justify-end space-x-4">
-          <button className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md">
+        <div className="flex justify-end space-x-4 mt-6">
+          <button className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
             Cancel
           </button>
-          <Button
-            bg={"green"}
-            isLoading={loading}
-            onClick={() => submit()}
-            px={4}
-            py={2}
-            textColor={"white"}
-            className="px-4 py-2 bg-green-500 text-white rounded-md"
-            rounded={"2"}
-          >
-            Next
-          </Button>
+          <button
+  onClick={() => {
+    console.log("Next button clicked ");
+    submit();
+  }}
+  disabled={loading}
+  className={`px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition ${
+    loading ? "opacity-50 cursor-not-allowed" : ""
+  }`}
+>
+  {loading ? "Submitting..." : "Next"}
+</button>
         </div>
       </section>
-    </>
+
+       <div
+          className={`fixed bottom-6 right-6 px-6 py-3 rounded-lg text-white shadow-lg transition-all duration-300 ${
+            toastType === "success" ? "bg-green-600" : "bg-red-600"
+          }`}
+        >
+          {toastMessage}
+        </div>
+      </>
   );
 };
 
