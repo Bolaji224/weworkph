@@ -29,18 +29,20 @@ const ApplicantsPage: React.FC = () => {
   }, [jobSlug]);
 
   const fetchJobData = async () => {
-    if (!jobSlug) return; // Ensure jobSlug is defined before making the request
     setLoading(true);
     try {
-      const response = await httpGetWithToken(`jobs/${jobSlug}`); // Use jobSlug in the endpoint
-      setApplicants(response.data.applicants);
-      console.log(response.data.applicants);
-      setJobDetails(response.data);
+      const response = await httpGetWithToken("employer/applications");
+      console.log(response.data);
+  
+      setApplicants(response.data);
+      if (response.data.length > 0) {
+        setJobDetails(response.data[0].job); // 👈 set job details for header
+      }
     } catch (error) {
-      console.error("Error fetching job data:", error);
+      console.error("Error fetching job applications:", error);
       toast({
         status: "error",
-        title: "Failed to load job details.",
+        title: "Failed to load applications.",
         isClosable: true,
         duration: 5000,
       });
@@ -48,6 +50,7 @@ const ApplicantsPage: React.FC = () => {
       setLoading(false);
     }
   };
+  
 
   // Approve an applicant
   const approveApplicant = async (id: number) => {
@@ -171,25 +174,34 @@ const ApplicantsPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-        {applicants.map((applicant, index) => (
-          <ApplicantCard
-            key={applicant.id}
-            name={applicant.candidate?.name || "Unknown"}
-            role={jobDetails.job_role}
-            location={jobDetails.location || "Not specified"}
-            rate={jobDetails.salary || 0}
-            skills={applicant.candidate.skills || ["Skill1", "Skill2"]}
-            profileImage={applicant.avatar}
-            onDelete={() => setApplicants((prev) => prev.filter((_, i) => i !== index))}
-            onApprove={() => approveApplicant(applicant.id)}
-            onReject={() => rejectApplicant(applicant.id)}
-            onView={() => navigate(`/candidate-profile/${applicant.candidate?.id}`)} // Navigate to profile
-            onMessage={() => {
-              setSelectedApplicantId(applicant.candidate);
-              setModalVisible(true);
-            }}
-          />
-        ))}
+      {applicants.map((applicant, index) => (
+  <ApplicantCard
+    key={applicant.id}
+    name={applicant.user?.name || "Unknown"}
+    role={applicant.job?.title || "No job title"}
+    location={applicant.job?.location || "Not specified"}
+    rate={applicant.job?.salary || 0}
+    skills={
+      applicant.user?.skills
+        ? applicant.user.skills.split(",").map((s: string) => s.trim())
+        : ["N/A"]
+    }
+    profileImage={
+      applicant.user?.avatar
+        ? `${process.env.REACT_APP_API_URL}/${applicant.user.avatar}`
+        : "/default-avatar.png"
+    }
+    onDelete={() => setApplicants((prev) => prev.filter((_, i) => i !== index))}
+    onApprove={() => approveApplicant(applicant.id)}
+    onReject={() => rejectApplicant(applicant.id)}
+    onView={() => navigate(`/candidate-profile/${applicant.user?.id}`)}
+    onMessage={() => {
+      setSelectedApplicantId(applicant.user);
+      setModalVisible(true);
+    }}
+  />
+))}
+
       </div>
         {/* Modal for messaging */}
       <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} title={`Send Message : ${selectedApplicantId?.name}`}>

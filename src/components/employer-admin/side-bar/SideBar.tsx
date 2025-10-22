@@ -156,15 +156,15 @@ const SideNav: React.FC = () => {
                 <FaRocket size={25} /> Account Settings
               </li>
             </Link>
-            <Link to="/my-jobs">
+            <Link to="/all-applicant/:slug">
               <li
                 className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
-                  isActive("/my-jobs")
+                  isActive("/all-applicant/:slug")
                     ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
                     : "text-[#1E2A38] hover:text-[#2AA100]"
                 }`}
               >
-                <FaFileAlt size={25} /> My Jobs
+                <FaFileAlt size={25} /> Applicants
               </li>
             </Link>
             <Link to="/submit-jobs">
