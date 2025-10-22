@@ -128,6 +128,7 @@ function Main({
     "/submit-jobs",
     "/saved-candidate",
     "/applied-jobs",
+    "/all-applicant/:slug",
     "/employers-wallet-account",
     "/candidate-dashboard",
     "/candidate-wallet-account",
@@ -222,6 +223,7 @@ function Main({
           element={<EmployersLayout element={<EmployerProfile />} />}
         />
         <Route path="my-jobs" element={<EmployersLayout element={<MyJobs />} />} />
+      {/* the applicant route*/}
         <Route
           path="all-applicant/:slug"
           element={<EmployersLayout element={<AllApplicates />} />}

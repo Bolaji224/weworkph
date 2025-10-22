@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { UilEye, UilShare } from "@iconscout/react-unicons";
-import { httpGetWithToken, httpPostWithToken } from "../../../../utils/http_utils";
+import {
+  httpGetWithToken,
+  httpPostWithToken,
+} from "../../../../utils/http_utils";
 import { useNavigate } from "react-router-dom";
 import { Button, useToast } from "@chakra-ui/react";
 
@@ -42,7 +45,10 @@ const JobAlertTable: React.FC = () => {
     getJobAlert();
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setShowDropdown(null);
       }
     };
@@ -62,7 +68,9 @@ const JobAlertTable: React.FC = () => {
   const shareJob = async () => {
     if (!selectedAlert?.id || !shareEmail) return;
     setShareLoading(true);
-    const resp = await httpPostWithToken(`job/share/${selectedAlert.id}`, { to: shareEmail });
+    const resp = await httpPostWithToken(`job/share/${selectedAlert.id}`, {
+      to: shareEmail,
+    });
     setShareLoading(false);
 
     if (resp.status === "success") {
@@ -117,7 +125,9 @@ const JobAlertTable: React.FC = () => {
 
                     <td className="py-8 px-4 text-green-700">
                       {alert?.company?.name || "Unknown Company"}
-                      <p className="text-gray-800">{alert?.location || "No Location"}</p>
+                      <p className="text-gray-800">
+                        {alert?.location || "No Location"}
+                      </p>
                     </td>
 
                     <td className="py-8 px-4 text-gray-800">
@@ -176,52 +186,63 @@ const JobAlertTable: React.FC = () => {
                     {selectedAlert?.title || "Untitled Job"}
                   </h3>
                   <p className="text-gray-700">
-                    <strong>Company:</strong> {selectedAlert?.company?.name || "Unknown"}
+                    <strong>Company:</strong>{" "}
+                    {selectedAlert?.company?.name || "Unknown"}
                   </p>
                   <p className="text-gray-700">
-                    <strong>Description</strong> {selectedAlert?.description || "N/A"}
+                    <strong>Description</strong>{" "}
+                    {selectedAlert?.description || "N/A"}
                   </p>
                   <p className="text-gray-700">
-                    <strong>Requirement</strong> {selectedAlert?.requirements || "N/A"}
+                    <strong>Requirement</strong>{" "}
+                    {selectedAlert?.requirements || "N/A"}
                   </p>
                   <p className="text-gray-700">
                     <strong>Salary:</strong> {selectedAlert?.salary || "N/A"}
                   </p>
                   <p className="text-gray-700">
-                    <strong>Location:</strong> {selectedAlert?.location || "N/A"}
+                    <strong>Location:</strong>{" "}
+                    {selectedAlert?.location || "N/A"}
                   </p>
                   <p className="text-gray-700">
-                    <strong>Experience:</strong> {selectedAlert?.experience || "N/A"}
+                    <strong>Experience:</strong>{" "}
+                    {selectedAlert?.experience || "N/A"}
                   </p>
                   <p className="text-gray-700">
-                    <strong>Job Type:</strong> {selectedAlert?.job_type?.title || "N/A"}
+                    <strong>Job Type:</strong>{" "}
+                    {selectedAlert?.job_type?.title || "N/A"}
                   </p>
                   <p className="text-gray-700">
-                    <strong>Work Type:</strong> {selectedAlert?.work_type?.title || "N/A"}
+                    <strong>Work Type:</strong>{" "}
+                    {selectedAlert?.work_type?.title || "N/A"}
                   </p>
                   <div className="text-gray-700">
-  <strong>Skills: </strong>
-  {selectedAlert?.skills && selectedAlert.skills.length > 0 ? (
-    <div className="flex flex-wrap gap-2 mt-1">
-      {selectedAlert.skills.map((skill: string, index: number) => (
-        <span
-          key={index}
-          className="bg-gray-200 px-3 py-1 rounded-full text-sm text-gray-800"
-        >
-          {skill}
-        </span>
-      ))}
-    </div>
-  ) : (
-    "N/A"
-  )}
-</div>
+                    <strong>Skills: </strong>
+                    {selectedAlert?.skills &&
+                    selectedAlert.skills.length > 0 ? (
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {selectedAlert.skills.map(
+                          (skill: string, index: number) => (
+                            <span
+                              key={index}
+                              className="bg-gray-200 px-3 py-1 rounded-full text-sm text-gray-800"
+                            >
+                              {skill}
+                            </span>
+                          )
+                        )}
+                      </div>
+                    ) : (
+                      "N/A"
+                    )}
+                  </div>
 
                   <p className="text-gray-700">
                     <strong>Budget</strong> {selectedAlert?.budget || "N/A"}
                   </p>
                   <p className="text-gray-700">
-                    <strong>Date Posted:</strong> {selectedAlert?.date_posted || "N/A"}
+                    <strong>Date Posted:</strong>{" "}
+                    {selectedAlert?.date_posted || "N/A"}
                   </p>
                 </>
               )}
@@ -249,17 +270,94 @@ const JobAlertTable: React.FC = () => {
                 </div>
               )}
 
+              {action === "Apply" && (
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData();
+                    formData.append("cv", (e.target as any).cv.files[0]);
+                    formData.append(
+                      "experience_years",
+                      (e.target as any).experience_years.value
+                    );
+                    formData.append("reason", (e.target as any).reason.value);
+
+                    const res = await httpPostWithToken(
+                      `apply-job/${selectedAlert.id}`,
+                      formData
+                    );
+
+                    if (res.status === "success") {
+                      toast({
+                        status: "success",
+                        title: "Job application submitted successfully!",
+                      });
+                      setSelectedAlert(null);
+                    } else {
+                      toast({
+                        status: "error",
+                        title: res.message || "Failed to apply for job",
+                      });
+                    }
+                  }}
+                  className="flex flex-col gap-4"
+                >
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Upload CV
+                    </label>
+                    <input
+                      type="file"
+                      name="cv"
+                      accept=".pdf,.doc,.docx"
+                      className="border p-2 w-full rounded-md"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Years of Experience
+                    </label>
+                    <input
+                      type="number"
+                      name="experience_years"
+                      min="0"
+                      className="border p-2 w-full rounded-md"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Why do you qualify?
+                    </label>
+                    <textarea name="reason" rows={4} className="border p-2 w-full rounded-md" placeholder="Explain briefly why you are a good fit......." required />
+                  </div>
+
+                  <div className="flex justify-end gap-2 mt-4">
+                    <Button type="submit" bg="green" color="white" px={4} py={2} rounded="md">
+                      Submit Application
+                    </Button>
+
+                    <Button onClick={() => setAction("View")} bg="gray.500" color="white" px={4} py={2} rounded="md">
+                      Cancle
+                    </Button>
+                  </div>
+                </form>
+              )}
+
               <div className="mt-4 flex justify-end gap-2">
                 {action === "View" && (
                   <Button
-                    onClick={() => navigate("/job-details/" + selectedAlert?.slug)}
+                    onClick={() => setAction("Apply")}
                     bg={"green"}
                     color={"white"}
                     px={4}
                     py={2}
                     rounded={"md"}
                   >
-                    Job Details
+                    Apply
                   </Button>
                 )}
                 <Button
