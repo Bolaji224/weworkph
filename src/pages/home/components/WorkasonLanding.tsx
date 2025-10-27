@@ -28,7 +28,7 @@ export default function WorkasonLanding() {
           <span className="font-semibold text-[#2AA100]">ProofToPay</span> protection — all in one service.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className=" text-gray-900 px-6 py-3 rounded-lg font-semibold text-lg hover:bg-[#239100] transition-all duration-300 flex items-center justify-center gap-2 shadow-md">
+          <button className="text-gray-900 px-6 py-3 rounded-lg font-semibold text-lg hover:bg-[#239100] transition-all duration-300 flex items-center justify-center gap-2 shadow-md">
             🚀 Get Started
           </button>
           <button className="bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold text-lg border border-pink-500 hover:bg-pink-500 hover:text-gray-900 transition-all duration-300 flex items-center justify-center gap-2 shadow-md">
@@ -37,6 +37,7 @@ export default function WorkasonLanding() {
         </div>
       </section>
 
+      {/* How It Works Section */}
       <section className="bg-white py-12">
         <div className="max-w-6xl mx-auto px-6">
           <h3 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-10">

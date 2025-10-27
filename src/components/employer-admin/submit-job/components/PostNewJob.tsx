@@ -1,107 +1,20 @@
 import axios from "axios";
 import React, { ChangeEvent, useEffect, useState, useRef } from "react";
-<<<<<<< HEAD
-import ls from "localstorage-slim";
-
-// Inline SVG icons
-=======
 import ls  from 'localstorage-slim';
 
 // Inline SVG icons as components
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
 const AngleDownIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <polyline points="6 9 12 15 18 9"></polyline>
   </svg>
 );
-<<<<<<< HEAD
-=======
 
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
 const AngleUpIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <polyline points="18 15 12 9 6 15"></polyline>
   </svg>
 );
 
-<<<<<<< HEAD
-// Mock data
-const mockDepartments = [
-  { id: 1, title: "Design" },
-  { id: 2, title: "IT & Development" },
-  { id: 3, title: "Marketing" },
-  { id: 4, title: "Engineering" },
-  { id: 5, title: "Product" },
-];
-const mockJobTypes = [
-  { id: 1, title: "Full-Time" },
-  { id: 2, title: "Part-Time" },
-  { id: 3, title: "Freelance" },
-];
-const mockWorkTypes = [
-  { id: 1, title: "Remote" },
-  { id: 2, title: "On-site" },
-  { id: 3, title: "Hybrid" },
-];
-const mockCountries = [
-  {
-    code: "US",
-    name: "United States",
-    states: ["California", "Texas", "New York", "Florida"],
-  },
-  {
-    code: "NG",
-    name: "Nigeria",
-    states: ["Lagos", "Abuja", "Kano", "Rivers"],
-  },
-  {
-    code: "GB",
-    name: "United Kingdom",
-    states: ["England", "Scotland", "Wales"],
-  },
-];
-
-// Mock API functions
-const httpGetWithoutToken = async (url: string) => {
-  if (url === "countries") return { data: mockCountries };
-  if (url.startsWith("countries/")) {
-    const code = url.split("/")[1];
-    const country = mockCountries.find((c) => c.code === code);
-    return { data: country?.states.map((s) => ({ name: s })) || [] };
-  }
-  return { data: [] };
-};
-
-const httpGetWithToken = async (url: string) => {
-  return {
-    status: "success",
-    data: { work_types: mockWorkTypes, job_type: mockJobTypes, departments: mockDepartments },
-  };
-};
-
-const API_BASE_URL = "http://127.0.0.1:8000/api/v1/";
-
-const httpPostWithToken = async (url: string, data: any) => {
-  try {
-    const token = ls.get("wwph_token", { decrypt: true });
-    if (!token) {
-      console.error("No token found in localstorage-slim");
-      return { status: "error", message: "Authentication required" };
-    }
-
-    const res = await axios.post(`${API_BASE_URL}${url}`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-      },
-    });
-    return res.data;
-  } catch (err: any) {
-    console.error("Error posting data:", err.response?.data || err.message);
-    return { status: "error", message: "Failed to connect to backend" };
-  }
-};
-=======
 // Mock data for demonstration
 const mockDepartments = [
   { id: 1, title: "Design" },
@@ -120,7 +33,6 @@ const mockJobTypes = [
   { id: 4, title: "Hourly-Contract" },
   { id: 5, title: "Fixed-Price" },
 ];
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
 
 const mockWorkTypes = [
   { id: 1, title: "Remote" },
@@ -206,15 +118,13 @@ const PostNewJob: React.FC = () => {
   const [description, setDescription] = useState("");
   const [requirements, setRequirements] = useState("");
   const [experience, setExperience] = useState("");
-<<<<<<< HEAD
-=======
 
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
   const [selectedWorkType, setSelectedWorkType] = useState<any>(null);
   const [selectedType, setSelectedType] = useState<any>(null);
   const [selectedSalary, setSelectedSalary] = useState("");
   const [salaryOpen, setSalaryOpen] = useState(false);
   const [budget, setBudget] = useState("");
+  const [cvFiles, setCvFiles] = useState<File[]>([]);
   const [countries, setCountries] = useState<any[]>([]);
   const [states, setStates] = useState<any[]>([]);
   const [country, setCountry] = useState<any>("");
@@ -224,26 +134,18 @@ const PostNewJob: React.FC = () => {
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
 
-<<<<<<< HEAD
-=======
   // Refs for click outside detection
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
   const categoryRef = useRef<HTMLDivElement>(null);
   const typeRef = useRef<HTMLDivElement>(null);
   const workTypeRef = useRef<HTMLDivElement>(null);
   const salaryRef = useRef<HTMLDivElement>(null);
 
-<<<<<<< HEAD
-=======
   // Close all dropdowns
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
   const closeAllDropdowns = () => {
     setCategoryOpen(false);
     setTypeOpen(false);
     setWorkType(false);
     setSalaryOpen(false);
-<<<<<<< HEAD
-=======
   };
 
   // Handle click outside
@@ -282,29 +184,17 @@ const PostNewJob: React.FC = () => {
     if (!skills.includes(skill)) {
       setSkills([...skills, skill]);
     }
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (categoryRef.current && !categoryRef.current.contains(event.target as Node)) setCategoryOpen(false);
-      if (typeRef.current && !typeRef.current.contains(event.target as Node)) setTypeOpen(false);
-      if (workTypeRef.current && !workTypeRef.current.contains(event.target as Node)) setWorkType(false);
-      if (salaryRef.current && !salaryRef.current.contains(event.target as Node)) setSalaryOpen(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleAddSkill = (skill: string) => {
-    if (!skills.includes(skill)) setSkills([...skills, skill]);
+  const handleRemoveSkill = (skill: string) => {
+    setSkills(skills.filter((s) => s !== skill));
   };
-  const handleRemoveSkill = (skill: string) => setSkills(skills.filter((s) => s !== skill));
 
   const toggleCategory = () => {
     closeAllDropdowns();
     setCategoryOpen((prev) => !prev);
   };
+
   const toggleType = () => {
     closeAllDropdowns();
     setTypeOpen((prev) => !prev);
@@ -314,34 +204,32 @@ const PostNewJob: React.FC = () => {
     closeAllDropdowns();
     setWorkType((prev) => !prev);
   };
+
   const toggleSalary = () => {
     closeAllDropdowns();
     setSalaryOpen((prev) => !prev);
   };
-  const handleSelectCategory = (category: any) => {
+
+  const handleSelectCategory = (category: string) => {
     setSelectedCategory(category);
     setCategoryOpen(false);
   };
-  const handleSelectType = (type: any) => {
+
+  const handleSelectType = (type: string) => {
     setSelectedType(type);
     setTypeOpen(false);
   };
-<<<<<<< HEAD
-  const handleSelectWorktype = (type: any) => {
-=======
 
   const handleSelectWorktype = (type: string) => {
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
     setSelectedWorkType(type);
     setWorkType(false);
   };
+
   const handleSelectSalary = (salary: string) => {
     setSelectedSalary(salary);
     setSalaryOpen(false);
   };
 
-<<<<<<< HEAD
-=======
   const handleFileChange = (
     e: ChangeEvent<HTMLInputElement>,
     setFileState: React.Dispatch<React.SetStateAction<File[]>>
@@ -359,20 +247,15 @@ const PostNewJob: React.FC = () => {
     setFileState((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
   const getResoures = async () => {
     setLoading(true);
     let resp = await httpGetWithToken("resources");
-    if (resp.status === "success") {
+    if (resp.status == "success") {
       setWorktypes(resp.data.work_types);
       setJobTypes(resp.data.job_type);
       setDepartments(resp.data.departments);
+      setLoading(false);
     }
-<<<<<<< HEAD
-    setLoading(false);
-  };
-
-=======
   };
 
   const showToastMessage = (message: string, type: "success" | "error") => {
@@ -437,17 +320,12 @@ const PostNewJob: React.FC = () => {
     }
   };
 
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
   const getCountries = async () => {
     try {
       let resp = await httpGetWithoutToken("countries");
       setCountries(resp.data || []);
-<<<<<<< HEAD
-    } catch {
-=======
     } catch (err) {
       console.error("Failed to fetch countries:", err);
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
       setCountries([]);
     }
   };
@@ -463,61 +341,6 @@ const PostNewJob: React.FC = () => {
     getCountries();
   }, []);
 
-<<<<<<< HEAD
-  const showToastMessage = (message: string, type: "success" | "error") => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
-  };
-
-  const throwError = (msg: string) => showToastMessage(msg, "error");
-
-  const submit = async () => {
-    if (loading) return;
-    if (title === "") return throwError("Job title cannot be empty");
-    if (description === "") return throwError("Job description cannot be empty");
-    if (!selectedWorkType) return throwError("Select work type");
-    if (!selectedType) return throwError("Select job type");
-    if (!selectedCategory) return throwError("Select job category");
-    if (selectedSalary === "") return throwError("Select salary type");
-    if (budget === "") return throwError("Enter salary budget");
-    if (city === "") return throwError("City cannot be empty");
-    if (user_state === "") return throwError("State cannot be empty");
-    if (country === "") return throwError("Country cannot be empty");
-
-    const fd = {
-      title,
-      description,
-      requirements,
-      work_type: selectedWorkType?.id || 1,
-      job_type: selectedType?.id || 1,
-      category: selectedCategory?.id || 1,
-      salary: selectedSalary,
-      budget,
-      experience,
-      skills: skills.join(","),
-      city,
-      state: user_state,
-      country,
-      status: "active",
-    };
-
-    try {
-      setLoading(true);
-      const res = await httpPostWithToken("employer/jobs", fd);
-      if (res.status === "success") {
-        showToastMessage("Job created successfully!", "success");
-      } else throwError("Something went wrong");
-    } catch {
-      throwError("Failed to submit job");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-=======
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
   return (
     <>
       <section className="p-8 mt-[4rem]">
@@ -868,25 +691,17 @@ const PostNewJob: React.FC = () => {
         </div>
       </section>
 
-<<<<<<< HEAD
-       <div
-=======
       {/* ✅ Toast Notification */}
       {showToast && (
         <div
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
           className={`fixed bottom-6 right-6 px-6 py-3 rounded-lg text-white shadow-lg transition-all duration-300 ${
             toastType === "success" ? "bg-green-600" : "bg-red-600"
           }`}
         >
           {toastMessage}
         </div>
-<<<<<<< HEAD
-      </>
-=======
       )}
     </>
->>>>>>> 264328629a3fff4e434478a98b2b0843f9a276c7
   );
 };
 
