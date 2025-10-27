@@ -1,400 +1,259 @@
-import React, { useState, useEffect, useRef } from "react";
-import { BiDotsVerticalRounded } from "react-icons/bi";
-import { UilEye, UilShare } from "@iconscout/react-unicons";
-import {
-  httpGetWithToken,
-  httpPostWithToken,
-} from "../../../../utils/http_utils";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { httpGetWithToken, httpPostWithToken } from "../../../../utils/http_utils";
 import { Button, useToast } from "@chakra-ui/react";
+import { UilEye, UilShareAlt } from "@iconscout/react-unicons";
 
 const JobAlertTable: React.FC = () => {
   const [jobAlerts, setJobAlerts] = useState<any[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedAlert, setSelectedAlert] = useState<any | null>(null);
-  const [action, setAction] = useState<string | null>(null);
-  const [showDropdown, setShowDropdown] = useState<number | null>(null);
-  const [shareEmail, setShareEmail] = useState<string>("");
-  const [shareLoading, setShareLoading] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [action, setAction] = useState<"View" | "Apply" | "Share" | null>(null);
   const toast = useToast();
-  const navigate = useNavigate();
 
-  const itemsPerPage = 5;
-  const totalPages = Math.ceil(jobAlerts.length / itemsPerPage);
-
-  // ✅ Fetch jobs correctly
   const getJobAlert = async () => {
     try {
       const res = await httpGetWithToken("jobs-alert");
-      console.log("Fetched Job Alerts:", res);
-
       const jobs = res?.data?.data || res?.data || [];
-      if (Array.isArray(jobs)) {
-        setJobAlerts(jobs);
-      } else {
-        setJobAlerts([]);
-      }
+      setJobAlerts(Array.isArray(jobs) ? jobs : []);
     } catch (err) {
-      console.error("Error fetching job alerts:", err);
+      console.error(err);
       setJobAlerts([]);
     }
   };
 
   useEffect(() => {
     getJobAlert();
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowDropdown(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handlePageChange = (page: number) => setCurrentPage(page);
+  return (
+    <section className="mt-12 px-6 max-w-5xl mx-auto">
+      <h2 className="text-2xl font-semibold text-green-700 mb-6">
+        Job Alerts
+      </h2>
 
-  const handleActionClick = (alert: any, actionType: string) => {
-    setSelectedAlert(alert);
-    setAction(actionType);
-    setShowDropdown(null);
-  };
+      <div className="space-y-6">
+        {jobAlerts.length > 0 ? (
+          jobAlerts.map((job, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-5 mt-12"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm text-gray-500">
+                    Posted {job.posted || "recently"}
+                  </p>
+                  <h3 className="text-xl font-semibold text-gray-800 mt-1">
+                    {job.title || "Untitled Job"}
+                  </h3>
+                  <p className="text-gray-600 text-sm mt-1">
+                    {job.company?.name || "Unknown Company"}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {job.type || "Full-time"} •{" "}
+                    {job.level || "Intermediate"} •{" "}
+                    {job.duration || "6+ months"}
+                  </p>
+                </div>
 
-  const shareJob = async () => {
-    if (!selectedAlert?.id || !shareEmail) return;
-    setShareLoading(true);
-    const resp = await httpPostWithToken(`job/share/${selectedAlert.id}`, {
-      to: shareEmail,
-    });
-    setShareLoading(false);
+                {/* Action buttons */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setSelectedAlert(job);
+                      setAction("Apply");
+                    }}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition"
+                  >
+                    Apply
+                  </button>
 
-    if (resp.status === "success") {
-      toast({
-        status: "success",
-        title: resp.message || "Job shared successfully",
-        isClosable: true,
-      });
-    } else {
+                  <button
+                    onClick={() => {
+                      setSelectedAlert(job);
+                      setAction("Share");
+                    }}
+                    className="border border-green-600 text-green-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-50 transition flex items-center gap-1"
+                  >
+                    <UilShareAlt size={16} />
+                    Share
+                  </button>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className="text-gray-700 text-sm mt-3 leading-relaxed line-clamp-3">
+                {job.description ||
+                  "No job description available. Please check later."}
+              </p>
+
+              {/* Skills */}
+              <div className="flex flex-wrap gap-2 mt-3">
+                {job.skills && job.skills.length > 0 ? (
+                  job.skills.map((skill: string, idx: number) => (
+                    <span
+                      key={idx}
+                      className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs"
+                    >
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-xs text-gray-500">No skills listed</span>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
+                <div className="flex items-center gap-3">
+                  <span className="flex items-center gap-1">
+                    ⭐ {job.rating || "5.0"}
+                  </span>
+                  <span>${job.salary || "N/A"} spent</span>
+                  <span>{job.location || "Remote"}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setSelectedAlert(job);
+                    setAction("View");
+                  }}
+                  className="text-green-700 font-medium hover:underline flex items-center gap-1"
+                >
+                  <UilEye size={16} /> View
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500">No job alerts available.</p>
+        )}
+      </div>
+
+      {/* Modal (reuses your existing modal logic) */}
+      {selectedAlert && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-40 px-4">
+          <div className="bg-white p-6 rounded-xl max-w-lg w-full shadow-lg relative">
+            <button
+              onClick={() => {
+                setSelectedAlert(null);
+                setAction(null);
+              }}
+              className="absolute top-3 right-3 text-gray-600 hover:text-red-600"
+            >
+              ✕
+            </button>
+
+            {action === "View" && (
+              <>
+                <h3 className="text-xl font-semibold text-green-700 mb-3">
+                  {selectedAlert.title}
+                </h3>
+                <p className="text-gray-700 text-sm mb-2">
+                  {selectedAlert.description}
+                </p>
+              </>
+            )}
+
+            {action === "Share" && (
+              <div>
+                <h3 className="text-lg font-semibold mb-2 text-green-600">
+                  Share this Job
+                </h3>
+                <input
+                  type="email"
+                  placeholder="Enter email to share"
+                  className="w-full border rounded-md p-2 mb-4"
+                />
+                <Button colorScheme="green" w="full">
+                  Send Invite
+                </Button>
+              </div>
+            )}
+
+            {action === "Apply" && (
+              <div>
+                <h3 className="text-lg font-semibold mb-2 text-green-600">
+                  Apply for this Job
+                </h3>
+                <form
+  className="flex flex-col gap-3"
+  onSubmit={async (e) => {
+    e.preventDefault();
+
+    const form = e.target as HTMLFormElement;
+    const cvFile = (form.querySelector('input[type="file"]') as HTMLInputElement)
+      ?.files?.[0];
+    const reason = (form.querySelector('textarea') as HTMLTextAreaElement)?.value;
+
+    if (!cvFile || !reason) {
       toast({
         status: "error",
-        title: resp.message || "Failed to share job",
+        title: "Please upload your CV and provide a reason.",
+        isClosable: true,
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("cv", cvFile);
+    formData.append("experience_years", "0"); // optional if you don't have that field in UI
+    formData.append("reason", reason);
+
+    try {
+      const res = await httpPostWithToken(
+        `apply-job/${selectedAlert.id}`,
+        formData
+      );
+      console.log("Response:", res);
+
+      if (res.status === "success") {
+        toast({
+          status: "success",
+          title: "Application submitted successfully!",
+          isClosable: true,
+        });
+        setSelectedAlert(null); // closes modal
+      } else {
+        toast({
+          status: "error",
+          title: res.message || "Failed to submit application",
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      toast({
+        status: "error",
+        title: "Something went wrong. Please try again.",
         isClosable: true,
       });
     }
-    setSelectedAlert(null);
-    setAction(null);
-  };
+  }}
+>
+  <input
+    type="file"
+    name="cv"
+    className="border p-2 rounded-md"
+    accept=".pdf,.doc,.docx"
+    required
+  />
+  <textarea
+    name="reason"
+    placeholder="Why are you a good fit?"
+    className="border p-2 rounded-md"
+    rows={4}
+    required
+  />
+  <Button colorScheme="green" w="full" type="submit">
+    Submit Application
+  </Button>
+</form>
 
-  const displayAlerts = jobAlerts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  return (
-    <section className="mt-[8rem] px-[2.5rem]">
-      <section className="flex flex-col md:flex-row gap-4 md:gap-12 justify-between items-center">
-        <h2 className="text-green-700 text-2xl sm:text-3xl md:text-4xl font-poppins font-semibold">
-          Job Alerts
-        </h2>
-      </section>
-
-      <div className="max-w-full mx-auto p-4 mt-4 bg-white shadow-md rounded-xl">
-        <div className="overflow-x-auto p-4">
-          <table className="min-w-full bg-white rounded-[20px]">
-            <thead className="bg-pink-100 rounded-xl mt-2">
-              <tr className="text-green-700 font-poppins font-medium">
-                <th className="py-2 px-4 text-left">Title</th>
-                <th className="py-2 px-4 text-left">Company</th>
-                <th className="py-2 px-4 text-left">Work Type</th>
-                <th className="py-2 px-4 text-left">Job Type</th>
-                <th className="py-2 px-4 text-left">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayAlerts.length > 0 ? (
-                displayAlerts.map((alert, index) => (
-                  <tr key={index} className="text-left border-b">
-                    <td className="py-4 px-4 text-green-900 font-sans font-semibold">
-                      {alert?.title || "Untitled Job"}
-                    </td>
-
-                    <td className="py-8 px-4 text-green-700">
-                      {alert?.company?.name || "Unknown Company"}
-                      <p className="text-gray-800">
-                        {alert?.location || "No Location"}
-                      </p>
-                    </td>
-
-                    <td className="py-8 px-4 text-gray-800">
-                      {alert?.work_type?.title || "N/A"}
-                    </td>
-
-                    <td className="py-8 px-4 text-gray-800">
-                      {alert?.job_type?.title || "N/A"}
-                    </td>
-
-                    <td className="py-8 px-4 text-gray-800 relative">
-                      <button onClick={() => setShowDropdown(index)}>
-                        <BiDotsVerticalRounded size={25} color="#ABB2B9" />
-                      </button>
-
-                      {showDropdown === index && (
-                        <div
-                          ref={dropdownRef}
-                          className="absolute right-0 mt-2 w-36 z-20 bg-white border rounded shadow-lg"
-                        >
-                          <button
-                            onClick={() => handleActionClick(alert, "View")}
-                            className="w-full flex items-center gap-2 text-left text-gray-600 font-poppins px-4 py-2 hover:bg-gray-200"
-                          >
-                            <UilEye size="18" /> View
-                          </button>
-                          <button
-                            onClick={() => handleActionClick(alert, "Share")}
-                            className="w-full flex items-center gap-2 text-left text-gray-600 font-poppins px-4 py-2 hover:bg-gray-200"
-                          >
-                            <UilShare size="18" /> Share
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="text-center py-8 text-gray-600">
-                    No job alerts found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Modal */}
-        {selectedAlert && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-30">
-            <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
-              {action === "View" && (
-                <>
-                  <h3 className="text-xl font-semibold mb-4 text-green-600">
-                    {selectedAlert?.title || "Untitled Job"}
-                  </h3>
-                  <p className="text-gray-700">
-                    <strong>Company:</strong>{" "}
-                    {selectedAlert?.company?.name || "Unknown"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Description</strong>{" "}
-                    {selectedAlert?.description || "N/A"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Requirement</strong>{" "}
-                    {selectedAlert?.requirements || "N/A"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Salary:</strong> {selectedAlert?.salary || "N/A"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Location:</strong>{" "}
-                    {selectedAlert?.location || "N/A"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Experience:</strong>{" "}
-                    {selectedAlert?.experience || "N/A"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Job Type:</strong>{" "}
-                    {selectedAlert?.job_type?.title || "N/A"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Work Type:</strong>{" "}
-                    {selectedAlert?.work_type?.title || "N/A"}
-                  </p>
-                  <div className="text-gray-700">
-                    <strong>Skills: </strong>
-                    {selectedAlert?.skills &&
-                    selectedAlert.skills.length > 0 ? (
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {selectedAlert.skills.map(
-                          (skill: string, index: number) => (
-                            <span
-                              key={index}
-                              className="bg-gray-200 px-3 py-1 rounded-full text-sm text-gray-800"
-                            >
-                              {skill}
-                            </span>
-                          )
-                        )}
-                      </div>
-                    ) : (
-                      "N/A"
-                    )}
-                  </div>
-
-                  <p className="text-gray-700">
-                    <strong>Budget</strong> {selectedAlert?.budget || "N/A"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Date Posted:</strong>{" "}
-                    {selectedAlert?.date_posted || "N/A"}
-                  </p>
-                </>
-              )}
-
-              {action === "Share" && (
-                <div className="flex flex-col gap-4">
-                  <input
-                    value={shareEmail}
-                    onChange={(e) => setShareEmail(e.target.value)}
-                    type="email"
-                    className="border p-2 rounded-md flex-grow"
-                    placeholder="Enter email address"
-                  />
-                  <Button
-                    onClick={shareJob}
-                    isLoading={shareLoading}
-                    bg={"green"}
-                    color={"white"}
-                    px={4}
-                    py={2}
-                    rounded={"md"}
-                  >
-                    Send
-                  </Button>
-                </div>
-              )}
-
-              {action === "Apply" && (
-                <form
-                  onSubmit={async (e) => {
-                    e.preventDefault();
-                    const formData = new FormData();
-                    formData.append("cv", (e.target as any).cv.files[0]);
-                    formData.append(
-                      "experience_years",
-                      (e.target as any).experience_years.value
-                    );
-                    formData.append("reason", (e.target as any).reason.value);
-
-                    const res = await httpPostWithToken(
-                      `apply-job/${selectedAlert.id}`,
-                      formData
-                    );
-
-                    if (res.status === "success") {
-                      toast({
-                        status: "success",
-                        title: "Job application submitted successfully!",
-                      });
-                      setSelectedAlert(null);
-                    } else {
-                      toast({
-                        status: "error",
-                        title: res.message || "Failed to apply for job",
-                      });
-                    }
-                  }}
-                  className="flex flex-col gap-4"
-                >
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Upload CV
-                    </label>
-                    <input
-                      type="file"
-                      name="cv"
-                      accept=".pdf,.doc,.docx"
-                      className="border p-2 w-full rounded-md"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Years of Experience
-                    </label>
-                    <input
-                      type="number"
-                      name="experience_years"
-                      min="0"
-                      className="border p-2 w-full rounded-md"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Why do you qualify?
-                    </label>
-                    <textarea name="reason" rows={4} className="border p-2 w-full rounded-md" placeholder="Explain briefly why you are a good fit......." required />
-                  </div>
-
-                  <div className="flex justify-end gap-2 mt-4">
-                    <Button type="submit" bg="green" color="white" px={4} py={2} rounded="md">
-                      Submit Application
-                    </Button>
-
-                    <Button onClick={() => setAction("View")} bg="gray.500" color="white" px={4} py={2} rounded="md">
-                      Cancle
-                    </Button>
-                  </div>
-                </form>
-              )}
-
-              <div className="mt-4 flex justify-end gap-2">
-                {action === "View" && (
-                  <Button
-                    onClick={() => setAction("Apply")}
-                    bg={"green"}
-                    color={"white"}
-                    px={4}
-                    py={2}
-                    rounded={"md"}
-                  >
-                    Apply
-                  </Button>
-                )}
-                <Button
-                  onClick={() => setSelectedAlert(null)}
-                  bg={"gray.500"}
-                  color={"white"}
-                  px={4}
-                  py={2}
-                  rounded={"md"}
-                >
-                  Close
-                </Button>
               </div>
-            </div>
+            )}
           </div>
-        )}
-
-        {/* Pagination */}
-        <div className="flex justify-center mt-4">
-          <ul className="flex list-none">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <li key={page} className="mx-1">
-                <button
-                  onClick={() => handlePageChange(page)}
-                  className={`px-3 py-1 rounded-full ${
-                    currentPage === page
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-300 text-gray-700"
-                  }`}
-                >
-                  {page}
-                </button>
-              </li>
-            ))}
-          </ul>
         </div>
-      </div>
+      )}
     </section>
   );
 };
