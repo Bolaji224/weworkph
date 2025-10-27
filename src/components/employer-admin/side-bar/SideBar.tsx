@@ -189,6 +189,17 @@ const SideNav: React.FC = () => {
                 <IoBookmarkOutline size={25} /> Saved Candidate
               </li>
             </Link>
+            <Link to="/approved-candidate">
+              <li
+                className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
+                  isActive("/approved-candidate")
+                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
+                    : "text-[#1E2A38] hover:text-[#2AA100]"
+                }`}
+              >
+                <IoBookmarkOutline size={25} /> Approved Candidates
+              </li>
+            </Link>
             <Link to="/employers-wallet-account">
               <li
                 className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${

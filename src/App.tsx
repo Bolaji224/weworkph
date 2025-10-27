@@ -79,6 +79,7 @@ import SmartCvForm from "./components/candidate-admin/smart-cv/SmartCv";
 import SmartStartPage from "./pages/findJob/SmartStartPage";
 import ClientCareerTips from "./components/employer-admin/client-career-tips/ClientCareerTips";
 import EmployerChatBox from "./components/employer-admin/message/components/EmployerChatBox";
+import ApprovedCandidatesPage from "./components/employer-admin/approved-candidates/ApprovedCandidates";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -127,6 +128,7 @@ function Main({
     "/employers-profile",
     "/submit-jobs",
     "/saved-candidate",
+    "/approved-candidate",
     "/applied-jobs",
     "/all-applicant/:slug",
     "/employers-wallet-account",
@@ -244,6 +246,10 @@ function Main({
         <Route
           path="saved-candidate"
           element={<EmployersLayout element={<SavedCandidate />} />}
+        />
+        <Route
+          path="approved-candidate"
+          element={<EmployersLayout element={<ApprovedCandidatesPage />} />}
         />
         <Route
           path="employers-account-settings"

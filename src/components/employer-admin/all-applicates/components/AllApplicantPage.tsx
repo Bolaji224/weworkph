@@ -36,7 +36,7 @@ const ApplicantsPage: React.FC = () => {
   
       setApplicants(response.data);
       if (response.data.length > 0) {
-        setJobDetails(response.data[0].job); // 👈 set job details for header
+        setJobDetails(response.data[0].job); 
       }
     } catch (error) {
       console.error("Error fetching job applications:", error);
@@ -57,16 +57,24 @@ const ApplicantsPage: React.FC = () => {
     if (loading) return;
     setLoading(true);
     try {
-      await httpPostWithToken(`employer/jobs/application/${id}`, {
+      await httpPostWithToken(`employer/applications/${id}/update-status`, {
         status: "approved"
       });
-      fetchJobData();
+
+      setApplicants(prev =>
+        prev.map(app =>
+          app.id === id ? { ...app, status: "approved" } : app
+        )
+      );
+      
       toast({
         status: "success",
         title: "Applicant approved successfully!",
         isClosable: true,
-        duration: 5000,
+        duration: 3000,
       });
+
+
     } catch (error) {
       console.error("Error approving applicant:", error);
       toast({
@@ -85,7 +93,7 @@ const ApplicantsPage: React.FC = () => {
     if (loading) return;
     setLoading(true);
     try {
-      await httpPostWithToken(`employer/jobs/application/${id}`, {
+      await httpPostWithToken(`employer/applications/${id}/update-status`, {
         status: "rejected"
       });
       fetchJobData()
@@ -166,10 +174,10 @@ const ApplicantsPage: React.FC = () => {
             Rejected:{" "}
             <span className="font-bold text-red-600">{applicants.filter(a => a.status === "rejected").length}</span>
           </span>
-          <span>
+          {/* <span>
             Pending:{" "}
             <span className="font-bold text-yellow-300">{applicants.filter(a => a.status === "submitted").length}</span>
-          </span>
+          </span> */}
         </div>
       </div>
 
@@ -191,6 +199,7 @@ const ApplicantsPage: React.FC = () => {
         ? `${process.env.REACT_APP_API_URL}/${applicant.user.avatar}`
         : "/default-avatar.png"
     }
+    status={applicant.status}
     onDelete={() => setApplicants((prev) => prev.filter((_, i) => i !== index))}
     onApprove={() => approveApplicant(applicant.id)}
     onReject={() => rejectApplicant(applicant.id)}
