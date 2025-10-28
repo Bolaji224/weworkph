@@ -9,11 +9,23 @@ const JobAlertTable: React.FC = () => {
   const [action, setAction] = useState<"View" | "Apply" | "Share" | null>(null);
   const toast = useToast();
 
+  const [appliedJobs, setAppliedJobs] = useState<number[]>(() => {
+    const saved = localStorage.getItem("appliedJobs");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [justAppliedJobs, setJustAppliedJobs] = useState<number[]>([]);
+
   const getJobAlert = async () => {
     try {
       const res = await httpGetWithToken("jobs-alert");
       const jobs = res?.data?.data || res?.data || [];
-      setJobAlerts(Array.isArray(jobs) ? jobs : []);
+
+      const filteredJobs = jobs.filter(
+        (job: any) => !appliedJobs.includes(job.id)
+      );
+
+      setJobAlerts(Array.isArray(filteredJobs) ? filteredJobs : []);
     } catch (err) {
       console.error(err);
       setJobAlerts([]);
@@ -23,6 +35,16 @@ const JobAlertTable: React.FC = () => {
   useEffect(() => {
     getJobAlert();
   }, []);
+
+  const handleApplySuccess = (jobId: number) => {
+    setJustAppliedJobs((prev) => [...prev, jobId]);
+
+    const updated = [...appliedJobs, jobId];
+    setAppliedJobs(updated);
+    localStorage.setItem("appliedJobs", JSON.stringify(updated));
+
+    setJobAlerts((prev) => prev.filter((job) => job.id !== jobId));
+  };
 
   return (
     <section className="mt-12 px-6 max-w-5xl mx-auto">
@@ -173,7 +195,7 @@ const JobAlertTable: React.FC = () => {
             {action === "Apply" && (
               <div>
                 <h3 className="text-lg font-semibold mb-2 text-green-600">
-                  Apply for this Job
+                  Apply for {selectedAlert.title}
                 </h3>
                 <form
   className="flex flex-col gap-3"
@@ -210,14 +232,15 @@ const JobAlertTable: React.FC = () => {
         toast({
           status: "success",
           title: "Application submitted successfully!",
-          isClosable: true,
         });
+
+        handleApplySuccess(selectedAlert.id);
         setSelectedAlert(null); // closes modal
       } else {
         toast({
           status: "error",
           title: res.message || "Failed to submit application",
-          isClosable: true,
+
         });
       }
     } catch (error) {
@@ -225,7 +248,6 @@ const JobAlertTable: React.FC = () => {
       toast({
         status: "error",
         title: "Something went wrong. Please try again.",
-        isClosable: true,
       });
     }
   }}
