@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBell, FaPlus } from 'react-icons/fa';
-import { UilBriefcaseAlt, UilSearch } from '@iconscout/react-unicons';
+import { UilBriefcaseAlt, UilSearch, UilEnvelope } from '@iconscout/react-unicons';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FaEye } from 'react-icons/fa6';
 
@@ -34,6 +34,14 @@ const Header: React.FC = () => {
 
       {/* Right Section */}
       <div className="flex items-center gap-2">
+        {/* Message Icon */}
+        <Link to="/messages" className="cursor-pointer">
+          <UilEnvelope
+            className="text-[#4ADE80] hover:text-[#3BC96E] transition-colors"
+            size={25}
+          />
+        </Link>
+
         {/* Notification Bell */}
         <div className="relative">
           <FaBell

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaCircle, FaFileAlt } from "react-icons/fa";
 import { UilCreateDashboard, UilSignout, UilWallet } from "@iconscout/react-unicons";
-import { FaBarsStaggered, FaCertificate, FaRocket } from "react-icons/fa6";
+import { FaBarsStaggered, FaCertificate, FaEnvelope, FaRocket } from "react-icons/fa6";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { IoBookmarkOutline, IoNotificationsOutline } from "react-icons/io5";
 import Images from "../../constant/Images";
@@ -81,7 +81,7 @@ const SideNav: React.FC = () => {
             src={user?.avatar || Images.ProfileImage}
             alt="Profile"
           />
-          <h1>the new era is here an dtjeonuy i98ebekbujfk</h1>
+          
 
           {/* Username + dropdown */}
           <div ref={dropdownRef} className="relative">
@@ -134,24 +134,13 @@ const SideNav: React.FC = () => {
                                 />{" "} Dashboard
               </li>
             </Link>
-            <Link to="/employers-messages">
-              <li
-                className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
-                  isActive("/employers-messages")
-                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] mx-[1rem] text-[#2AA100]"
-                    : "text-[#1E2A38] hover:text-[#2AA100]"
-                }`}
-              >
-                <FaCertificate size={25} /> Smartstart
-              </li>
-            </Link>
             <Link to="/employers-account-settings">
               <li
                 className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
-                  isActive("/employers-account-settings")
-                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
-                    : "text-[#1E2A38] hover:text-[#2AA100]"
-                }`}
+    isActive("/employers-messages")
+      ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] mx-[1rem] text-[#2AA100]"
+      : "text-[#1E2A38] hover:text-[#2AA100]"
+  }`}
               >
                 <FaRocket size={25} /> Account Settings
               </li>
@@ -199,6 +188,17 @@ const SideNav: React.FC = () => {
               >
                 <IoBookmarkOutline size={25} /> Approved Candidates
               </li>
+            </Link>
+             <Link to="/employers-messages">
+              <li
+                className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
+                  isActive("/approved-candidate")
+                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
+                    : "text-[#1E2A38] hover:text-[#2AA100]"
+                }`}
+>
+  <FaEnvelope size={25} /> Message
+</li>
             </Link>
             <Link to="/employers-wallet-account">
               <li
