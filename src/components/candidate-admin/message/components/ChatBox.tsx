@@ -1,248 +1,227 @@
-import { UilImage, UilMessage, UilPaperclip } from '@iconscout/react-unicons';
-import React, { useState, useEffect, useRef, useContext } from 'react';
-import Images from '../../../constant/Images';
-import { httpGetWithToken, httpPostWithToken } from '../../../../utils/http_utils';
-import { AppContext } from '../../../../global/state';
+// src/components/candidate-admin/message/components/ApplicantChatBox.tsx
+import React, { useState, useRef, useEffect } from "react";
+import { UilMessage } from "@iconscout/react-unicons";
 import ls from "localstorage-slim";
-import moment from 'moment/moment';
-import { echo } from '../../../../utils/echo';
+import moment from "moment";
+import { useChat } from "./../../../../hooks/useChat";
+import { httpGetWithToken } from "./../../../../utils/http_utils";
 
-interface ChatUser {
-  id: number;
-  name: string;
-  profileImage: string;
+const defaultAvatar = "/default-avatar.png";
+
+// normalize user_id to number
+function normalizeUserId(raw: any): number | null {
+  if (raw == null) return null;
+  if (typeof raw === "number") return raw;
+  if (typeof raw === "string") {
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
+  }
+  if (typeof raw === "object" && "id" in raw) {
+    const n = Number(raw.id);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
 }
 
-const ChatBox: React.FC = () => {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [newMessage, setNewMessage] = useState<string>('');
-  const user:any = ls.get("wwph_usr", {decrypt : true})
+const ApplicantChatBox: React.FC = () => {
+  const user: any =
+    ls.get("wwph_usr", { decrypt: true }) ||
+    JSON.parse(localStorage.getItem("wwph_usr") || "{}");
 
-  const [chatUsers, setChatUsers] = useState<any[]>([
-  ]);
-  const [selectedChat, setselectedChat] = useState<any | null>(null);
+  const [chatList, setChatList] = useState<any[]>([]);
+  const [selectedChat, setSelectedChat] = useState<any | null>(null);
+  const [text, setText] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [loading, setLoading] = useState(false)
-  const handleSendMessage = async () => {
-    if (newMessage.trim() === '') return;
-    if(loading) return;
-    setLoading(true)
-    const message = {
-      "user_id" : user.id === selectedChat.user1.id ?  selectedChat.user2.id :  selectedChat.user1.id,
-      "message" : newMessage,
-      "chat_id" : selectedChat.id
-    }
-    await httpPostWithToken("chat/send-chat", message)
-    setLoading(false)
-    setNewMessage('');
-    getChatSingle(selectedChat.id)
-    getChat()
-  };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const message: any = {
-        id: messages.length + 1,
-        text: `File uploaded: ${files[0].name}`,
-        sender: 'user',
-        dateTime: new Date().toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: true,
-        }),
-      };
+  const { messages, sendMessage, loading } = useChat(selectedChat?.id ?? null);
 
-      setMessages([...messages, message]);
-    }
-  };
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const imageUrl = URL.createObjectURL(files[0]);
-      const message: any = {
-        id: messages.length + 1,
-        text: '',
-        sender: 'user',
-        dateTime: new Date().toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: true,
-        }),
-        image: imageUrl,
-      };
-
-      setMessages([...messages, message]);
-    }
-  };
+  // Fetch chats
+  useEffect(() => {
+    getChatList();
+  }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    getChat();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-  const getChat = async () => {
-    const resp = await httpGetWithToken("chat")
-    if (resp.status == "success") {
-      setChatUsers(resp.data)
-    }
-  }
 
-  const getChatSingle = async (id:string) => {
-    const resp = await httpGetWithToken("chat/"+id)
-    if (resp.status == "success") {
-      setMessages(resp.data.messages)
+  const getChatList = async () => {
+    const resp = await httpGetWithToken("chat");
+    if (!resp?.error && resp?.data) {
+      // normalize to array
+      const chatsArray = Array.isArray(resp.data) ? resp.data : [resp.data];
+      setChatList(chatsArray);
     }
-    console.log("Fetched chat:", resp);
-  }
-  useEffect(() => {
-    if (!selectedChat) return;
-  
-    const channelName = `chat.${selectedChat.id}`;
-    console.log('Joining channel:', channelName);
-  
-    const channel = echo.private(channelName);
-  
-    channel.listen('MessageSent', (event: any) => {
-      console.log('📩 New message received:', event.message);
-      setMessages((prev) => [...prev, event.message]);
-    });
-  
-    return () => {
-      echo.leave(channelName);
-      console.log('Left channel:', channelName);
-    };
-  }, [selectedChat]);
-  
+  };
+
+  const handleSend = async () => {
+    if (!selectedChat || !text.trim() || loading) return;
+
+    const receiver_id =
+      Number(user.id) === selectedChat.user1?.id
+        ? selectedChat.user2?.id
+        : selectedChat.user1?.id;
+
+    try {
+      await sendMessage({
+        message: text.trim(),
+        receiver_id,
+        chat_id: selectedChat.id,
+      });
+      setText("");
+      await getChatList(); // refresh last_message
+    } catch (err) {
+      console.error("sendMessage failed:", err);
+    }
+  };
+
+  // Safely get the "other" user
+  const otherUserFromChat = (chat: any) => {
+    if (!chat) return {};
+    if (!chat.user1 || !chat.user2) return {};
+    return Number(user.id) === chat.user1.id ? chat.user2 : chat.user1;
+  };
 
   return (
-    <section className='px-2 py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12 max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] mx-auto'>
-      <h2 className='text-[#2aa100] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-sans font-bold mb-4 sm:mb-6 md:mb-8'>Message</h2>
-      <div className="flex flex-col min-h-[350px] md:flex-row w-full bg-white rounded-lg shadow-lg">
-        {/* Chat List Section */}
-        <div className="w-full md:w-1/4 border-r-0 md:border-r-2 p-2 sm:p-4">
-          <h2 className="text-lg font-bold mb-2 sm:mb-4">Chats</h2>
+    <section className="px-2 py-4 max-w-full mx-auto">
+      <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-lg min-h-[400px]">
+        {/* Chat List */}
+        <div className="w-full md:w-1/4 border-r p-3 overflow-y-auto">
+          <h3 className="font-semibold mb-3">Chats</h3>
           <ul>
-            {chatUsers.map((chat:any) => {
-              const lastMessage:any = chat.last_message;
+            {chatList.map((chat) => {
+              const last =
+                chat.last_message ??
+                (chat.messages && chat.messages[chat.messages.length - 1]);
+              const other = otherUserFromChat(chat);
               return (
                 <li
-                  key={user.id}
-                  className={`p-2 cursor-pointer ${selectedChat?.id === chat.id ? 'bg-[#F5E2EF] text-white rounded-[10px] mb-2 sm:mb-4' : 'hover:bg-[#F5E2EF] rounded-[10px] mb-2 sm:mb-4'}`}
-                  onClick={() => setselectedChat(chat)}
+                  key={chat.id}
+                  className={`p-2 cursor-pointer rounded-md ${
+                    selectedChat?.id === chat.id ? "bg-pink-50" : "hover:bg-pink-50"
+                  }`}
+                  onClick={() => setSelectedChat(chat)}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
                       <img
-                        src={ user.id == chat.user1.id ? chat.user2.avatar : chat.user1.avatar}
-                        alt={`${user.id == chat.user1.id ? chat.user2.name : chat.user1.name}'s profile`}
-                        className="w-8 h-8 rounded-full mr-2"
+                        src={other.avatar ?? defaultAvatar}
+                        className="w-8 h-8 rounded-full object-cover"
+                        alt={other.name ?? "User"}
                       />
-                      <div>
-                        <div className='text-[#000000] font-sans font-semibold text-sm sm:text-base'>{user.id == chat.user1.id ? chat.user2.name : chat.user1.name}</div>
+                      <div className="min-w-0">
+                        <div className="font-medium text-sm">{other.name ?? "User"}</div>
+                        <div className="text-xs text-gray-500 truncate max-w-[140px]">
+                          {last?.message ?? "No messages"}
+                        </div>
                       </div>
                     </div>
-                    {lastMessage && (
-                      <div className="text-xs text-[#646A73]">
-                        {moment(lastMessage.created_at).format("Do, MMM").toString()}
-                      </div>
-                    )}
+                    <div className="text-xs text-gray-400">
+                      {last ? moment(last.created_at).format("Do, MMM") : ""}
+                    </div>
                   </div>
-                  {lastMessage && (
-                    <div className="text-xs ml-10 text-[#646A73]">
-                      {lastMessage.message.length > 20 ? `${lastMessage.message.substring(0, 20)}...` : lastMessage.message}
-                    </div>
-                  )}
                 </li>
               );
             })}
           </ul>
         </div>
 
-        {/* Chat Box Section */}
-        <div className="flex-1 flex flex-col">
-          <div className="flex-1 overflow-auto mb-2 sm:mb-4 p-2 sm:p-4">
-            {selectedChat ? (
-              <>
-                {messages.map((message:any) =>{
-                  let user2 = user.id == selectedChat.user1.id ? selectedChat.user2 : selectedChat.user1
-                  return (
-                  <div
-                    key={message.id}
-                    className={`flex items-end my-2 ${message.user_id === user.id ? 'justify-end' : 'justify-start'}`}
-                  >
-                    {message.user_id === user.id ? (
-                      <img
-                        src={user.avatar}
-                        alt={`${user.name}'s profile`}
-                        className="w-8 h-8 rounded-full ml-2"
-                      />
-                    ):
-                    <img
-                    src={user2.avatar}
-                    alt={`${user2.name}'s profile`}
-                    className="w-8 h-8 rounded-full ml-2"
-                  />
-                    }
-                    <div className="flex flex-col">
-                      <div className="text-xs text-gray-500 text-right">
-                        {moment(message.created_at).format("Do, MMM | h:mm a").toString()}
-                      </div>
+        {/* Chat Window */}
+        <div className="flex-1 flex flex-col p-3">
+          {selectedChat ? (
+            <>
+              {/* Header */}
+              <div className="p-3 border-b font-semibold">
+                {otherUserFromChat(selectedChat).name ?? "Conversation"}
+              </div>
 
-                      {message.image ? (
-                        <img src={message.image} alt="Uploaded content" className="w-32 sm:w-48 md:w-64 h-auto rounded-lg" />
-                      ) : (
-                        <div className={`p-2 rounded-lg ${message.user_id === user.id ? 'bg-[#ee009d] text-white' : 'bg-gray-300 text-black'}`}>
-                          {message.message}
+              {/* Message List */}
+              <div className="flex-1 overflow-auto p-4">
+                <div className="flex flex-col gap-3">
+                  {messages.length === 0 && (
+                    <div className="text-center text-gray-400">No messages yet</div>
+                  )}
+
+                  {messages.map((m: any) => {
+                    const messageUserId = normalizeUserId(m.user_id);
+                    const currentUserId = normalizeUserId(user.id);
+                    const isMe = messageUserId === currentUserId;
+
+                    const avatar = isMe
+                      ? user.avatar ?? defaultAvatar
+                      : otherUserFromChat(selectedChat).avatar ?? defaultAvatar;
+
+                    return (
+                      <div
+                        key={m.id ?? Math.random()}
+                        className={`flex items-end gap-2 ${isMe ? "justify-end" : "justify-start"}`}
+                      >
+                        {!isMe && (
+                          <img
+                            src={avatar}
+                            alt="other"
+                            className="w-7 h-7 rounded-full object-cover mt-1"
+                          />
+                        )}
+
+                        <div
+                          className={`relative p-3 rounded-2xl max-w-[72%] break-words shadow-md ${
+                            isMe
+                              ? "bg-[#ee009d] text-white rounded-tr-none"
+                              : "bg-gray-100 text-gray-900 rounded-tl-none"
+                          }`}
+                        >
+                          <div className="text-sm leading-snug">{m.message}</div>
+                          <div
+                            className={`text-[10px] mt-1 ${isMe ? "text-pink-100" : "text-gray-500"}`}
+                          >
+                            {m.created_at ? moment(m.created_at).format("h:mm a") : ""}
+                          </div>
+
+                          <div
+                            className={`absolute bottom-0 ${
+                              isMe
+                                ? "-right-2 w-0 h-0 border-l-[8px] border-l-transparent border-t-[8px] border-t-[#ee009d]"
+                                : "-left-2 w-0 h-0 border-r-[8px] border-r-transparent border-t-[8px] border-t-gray-100"
+                            }`}
+                            aria-hidden
+                          />
                         </div>
-                      )}
-                    </div>
-                  </div>
-                )})}
-                <div ref={messagesEndRef}></div>
-              </>
-            ) : (
-              <div className="text-center text-gray-500">Select a chat to start messaging</div>
-            )}
-          </div>
-          {selectedChat && (
-            <div className="flex items-center p-2 sm:p-4 border-t-2">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                className="flex-1 p-2 sm:p-4 border border-gray-300 focus:ring-0 focus:outline-none rounded-[20px]"
-                placeholder="Type your message..."
-              />
-              <label className="ml-2 p-2 cursor-pointer">
-                <UilPaperclip size={25} className="text-[#646A73]" />
+
+                        {isMe && (
+                          <img
+                            src={avatar}
+                            alt="me"
+                            className="w-7 h-7 rounded-full object-cover mt-1"
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Input */}
+              <div className="border-t p-3 flex items-center gap-2">
                 <input
-                  type="file"
-                  onChange={handleFileUpload}
-                  className="hidden"
+                  type="text"
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Type a message..."
+                  className="flex-1 border rounded-full p-2 px-4 focus:outline-none focus:ring-2 focus:ring-pink-300"
                 />
-              </label>
-              <label className="p-2 cursor-pointer">
-                <UilImage size={25} className="text-[#646a73]" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-              </label>
-              <button
-                onClick={handleSendMessage}
-                className="ml-2 p-2 bg-[#ee009d] text-white text-xs sm:text-sm font-poppins rounded-lg flex items-center gap-1"
-              >
-                {loading ? "...." : "Send"}<UilMessage size={18} className="ml-1" />
-              </button>
+                <button
+                  onClick={handleSend}
+                  disabled={loading}
+                  className="ml-2 bg-[#ee009d] hover:bg-[#d1008c] transition text-white px-4 py-2 rounded-full flex items-center gap-1 disabled:opacity-60"
+                >
+                  Send <UilMessage size={18} />
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-gray-500">
+              Select a chat to start messaging
             </div>
           )}
         </div>
@@ -251,4 +230,4 @@ const ChatBox: React.FC = () => {
   );
 };
 
-export default ChatBox;
+export default ApplicantChatBox;

@@ -1,5 +1,6 @@
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import ls from 'localstorage-slim';
 
 (window as any).Pusher = Pusher;
 
@@ -7,8 +8,8 @@ export const echo = new Echo({
   broadcaster: 'pusher',
   key: process.env.REACT_APP_PUSHER_APP_KEY || 'local',
   wsHost: process.env.REACT_APP_PUSHER_HOST || window.location.hostname,
-  wsPort: process.env.REACT_APP_PUSHER_PORT ? Number(process.env.REACT_APP_PUSHER_PORT) : 6001,
-  wssPort: process.env.REACT_APP_PUSHER_PORT ? Number(process.env.REACT_APP_PUSHER_PORT) : 6001,
+  wsPort: Number(process.env.REACT_APP_PUSHER_PORT) || 6001,
+  wssPort: Number(process.env.REACT_APP_PUSHER_PORT) || 6001,
   forceTLS: false,
   encrypted: false,
   disableStats: true,
@@ -17,7 +18,7 @@ export const echo = new Echo({
   authEndpoint: `${process.env.REACT_APP_API_URL}/broadcasting/auth`,
   auth: {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${ls.get('wwph_token', { decrypt: true }) || ''}`,
     },
   },
 });
