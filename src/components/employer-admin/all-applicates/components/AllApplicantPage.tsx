@@ -117,34 +117,44 @@ const ApplicantsPage: React.FC = () => {
   };
 
   // Message an applicant
-  const messageApplicant = async (id: number) => {
-    if (loading) return;
-    setLoading(true);
-    try {
-      const message = {
-        "user_id" : id,
-        "message" : messageText,
-      }
-      await httpPostWithToken("chat/send-chat", message)
-      toast({
-        status: "success",
-        title: "Message sent successfully!",
-        isClosable: true,
-        duration: 5000,
-      });
-    } catch (error) {
-      console.error("Error messaging applicant:", error);
-      toast({
-        status: "error",
-        title: "Failed to send message.",
-        isClosable: true,
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
-      setModalVisible(false)
+const messageApplicant = async (id: number) => {
+  if (loading) return;
+  setLoading(true);
+  try {
+    const payload = {
+      receiver_id: id,
+      message: messageText
+    };
+    const res = await httpPostWithToken("chat/send-chat", payload);
+    // res.data is chat object (ChatResource) if backend matches
+    const chatId = res?.data?.id ?? res?.data?.chat_id ?? null;
+    toast({
+      status: "success",
+      title: "Message sent successfully!",
+      isClosable: true,
+      duration: 5000,
+    });
+    // Navigate to employer chat page and open the chat
+    if (chatId) {
+      navigate("/employers-messages", { state: { chatId } });
+    } else {
+      // just open chat list if chatId not returned
+      navigate("/employers-messages");
     }
-  };
+  } catch (error) {
+    console.error("Error messaging applicant:", error);
+    toast({
+      status: "error",
+      title: "Failed to send message.",
+      isClosable: true,
+      duration: 5000,
+    });
+  } finally {
+    setLoading(false);
+    setModalVisible(false);
+  }
+};
+
 
   if (!jobDetails) {
     return <div>Loading job details...</div>;
