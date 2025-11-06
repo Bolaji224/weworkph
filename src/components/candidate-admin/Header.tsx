@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-<<<<<<< HEAD
-import { FaBell } from 'react-icons/fa';
-import { UilSearch, UilEnvelope, UilBriefcaseAlt } from '@iconscout/react-unicons';
-=======
-import { FaBell, FaPlus } from 'react-icons/fa';
-import { UilBriefcaseAlt, UilSearch, UilEnvelope } from '@iconscout/react-unicons';
->>>>>>> 111583847a74fd4bdd504d3c1f0ae2823202dd6d
-import { AnimatePresence, motion } from 'framer-motion';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { FaBell } from "react-icons/fa";
+import {
+  UilSearch,
+  UilEnvelope,
+  UilBriefcaseAlt,
+} from "@iconscout/react-unicons";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Header: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const MotionLink = motion(Link);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    // Implement search functionality here
+    // Optional: implement live search functionality here
   };
 
   const toggleNotificationDropdown = () => {
@@ -24,17 +23,20 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-[#FFF5F8] text-white px-[4rem] fixed py-4 flex sm:left-0 left-40 top-0 justify-between items-center lg:absolute w-full">
-      <div className="relative sm:block hidden md:left-[10rem] xl:left-[50rem] lg:left-[24rem]">
-        <UilSearch className="absolute font-light cursor-pointer top-2 left-2 text-[#2AA100]" />
+    <header className="bg-[#FFF5F8] text-white px-16 py-4 flex justify-between items-center fixed top-0 left-0 w-full shadow-sm z-50">
+      {/* Search Bar */}
+      <div className="relative hidden sm:block">
+        <UilSearch className="absolute top-2 left-3 text-[#2AA100]" />
         <input
           type="text"
           placeholder="Search here..."
           value={searchTerm}
           onChange={handleSearch}
-          className="lg:px-[2.5rem] xl:px-[2.5rem] md:px-[2.5rem] py-[0.5rem] w-[300px] font-sans font-light xl:px[8rem] lg:py-[0.5rem] pl-[2px] rounded-[50px] bg-[#FFFFFF] text-[#646A73] placeholder-gray-400"
+          className="pl-10 pr-4 py-2 w-72 rounded-full bg-white text-[#646A73] placeholder-gray-400 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2AA100] transition-all"
         />
       </div>
+
+      {/* Right Section */}
       <div className="flex items-center gap-4">
         {/* Message Icon */}
         <Link to="/messages" className="cursor-pointer">
@@ -44,19 +46,6 @@ const Header: React.FC = () => {
           />
         </Link>
 
-<<<<<<< HEAD
-=======
-      {/* Right Section */}
-      <div className="flex items-center gap-2">
-        {/* Message Icon */}
-        <Link to="/messages" className="cursor-pointer">
-          <UilEnvelope
-            className="text-[#4ADE80] hover:text-[#3BC96E] transition-colors"
-            size={25}
-          />
-        </Link>
-
->>>>>>> 111583847a74fd4bdd504d3c1f0ae2823202dd6d
         {/* Notification Bell */}
         <div className="relative">
           <FaBell
@@ -70,9 +59,11 @@ const Header: React.FC = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute right-0 mt-2 w-64 bg-white text-black rounded shadow-lg z-10"
+                className="absolute right-0 mt-2 w-64 bg-white text-black rounded-lg shadow-lg z-10"
               >
-                <div className="p-4">You have no new notifications.</div>
+                <div className="p-4 text-sm text-gray-700">
+                  You have no new notifications.
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -81,11 +72,11 @@ const Header: React.FC = () => {
         {/* Find Job Button */}
         <MotionLink
           to="/find-job"
-          className="bg-[#ee009d] hover:bg-[#2AA100] text-white font-bold py-2 px-4 rounded-[50px] flex items-center gap-2"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          className="bg-[#ee009d] hover:bg-[#d1008a] text-white font-bold py-2 px-5 rounded-full flex items-center gap-2 transition-all duration-300"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <UilBriefcaseAlt />
+          <UilBriefcaseAlt size={18} />
           Find Job
         </MotionLink>
       </div>

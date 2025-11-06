@@ -137,17 +137,11 @@ const SideNav: React.FC = () => {
             <Link to="/employers-account-settings">
               <li
                 className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
-<<<<<<< HEAD
-                  isActive("/employers-messages")
-                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] mx-[1rem] text-[#2AA100]"
-                    : "text-[#1E2A38] hover:text-[#2AA100]"
-                }`}
-=======
+
     isActive("/employers-messages")
       ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] mx-[1rem] text-[#2AA100]"
       : "text-[#1E2A38] hover:text-[#2AA100]"
   }`}
->>>>>>> 111583847a74fd4bdd504d3c1f0ae2823202dd6d
               >
                 <FaRocket size={25} /> Account Settings
               </li>
@@ -196,18 +190,6 @@ const SideNav: React.FC = () => {
                 <IoBookmarkOutline size={25} /> Approved Candidates
               </li>
             </Link>
-<<<<<<< HEAD
-            <Link to="/employers-messages">
-              <li
-               className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
-                  isActive("/all-applicant/:slug")
-                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
-                    : "text-[#1E2A38] hover:text-[#2AA100]"
-                }`}
-              >
-                <FaCertificate size={25} /> Messages
-              </li>
-=======
              <Link to="/employers-messages">
               <li
                 className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
@@ -218,7 +200,6 @@ const SideNav: React.FC = () => {
 >
   <FaEnvelope size={25} /> Message
 </li>
->>>>>>> 111583847a74fd4bdd504d3c1f0ae2823202dd6d
             </Link>
             <Link to="/employers-wallet-account">
               <li
