@@ -80,6 +80,7 @@ import SmartStartPage from "./pages/findJob/SmartStartPage";
 import ClientCareerTips from "./components/employer-admin/client-career-tips/ClientCareerTips";
 import EmployerChatBox from "./components/employer-admin/message/components/EmployerChatBox";
 import ApprovedCandidatesPage from "./components/employer-admin/approved-candidates/ApprovedCandidates";
+import BrowseCandidates from "./components/employer-admin/browse-candidates/BrowseCandidates";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -126,6 +127,7 @@ function Main({
     "/delete-account",
     "/employers-dashboard",
     "/employers-profile",
+    "/browse-candidates",
     "/submit-jobs",
     "/saved-candidate",
     "/approved-candidate",
@@ -247,6 +249,8 @@ function Main({
           path="saved-candidate"
           element={<EmployersLayout element={<SavedCandidate />} />}
         />
+        <Route path="browse-candidates"
+        element={<EmployersLayout element={<BrowseCandidates />} />} />
         <Route
           path="approved-candidate"
           element={<EmployersLayout element={<ApprovedCandidatesPage />} />}

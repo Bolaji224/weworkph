@@ -64,7 +64,7 @@ const EmployerChatPage: React.FC = () => {
   };
 
   return (
-    <div className="flex mt-28 h-[85vh] mt-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+    <div className="flex h-[85vh] mt-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
       {/* Sidebar */}
       <div className="w-[380px] bg-white border-r border-gray-200 flex flex-col">
         {/* Sidebar Header */}

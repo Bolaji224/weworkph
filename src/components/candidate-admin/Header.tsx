@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+<<<<<<< HEAD
 import { FaBell } from 'react-icons/fa';
 import { UilSearch, UilEnvelope, UilBriefcaseAlt } from '@iconscout/react-unicons';
+=======
+import { FaBell, FaPlus } from 'react-icons/fa';
+import { UilBriefcaseAlt, UilSearch, UilEnvelope } from '@iconscout/react-unicons';
+>>>>>>> 111583847a74fd4bdd504d3c1f0ae2823202dd6d
 import { AnimatePresence, motion } from 'framer-motion';
 
 const Header: React.FC = () => {
@@ -39,6 +44,19 @@ const Header: React.FC = () => {
           />
         </Link>
 
+<<<<<<< HEAD
+=======
+      {/* Right Section */}
+      <div className="flex items-center gap-2">
+        {/* Message Icon */}
+        <Link to="/messages" className="cursor-pointer">
+          <UilEnvelope
+            className="text-[#4ADE80] hover:text-[#3BC96E] transition-colors"
+            size={25}
+          />
+        </Link>
+
+>>>>>>> 111583847a74fd4bdd504d3c1f0ae2823202dd6d
         {/* Notification Bell */}
         <div className="relative">
           <FaBell
