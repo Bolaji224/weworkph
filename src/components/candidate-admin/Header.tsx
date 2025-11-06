@@ -15,7 +15,6 @@ const Header: React.FC = () => {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    // Optional: implement live search functionality here
   };
 
   const toggleNotificationDropdown = () => {
@@ -23,21 +22,21 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-[#FFF5F8] text-white px-16 py-4 flex justify-between items-center fixed top-0 left-0 w-full shadow-sm z-50">
-      {/* Search Bar */}
-      <div className="relative hidden sm:block">
-        <UilSearch className="absolute top-2 left-3 text-[#2AA100]" />
-        <input
-          type="text"
-          placeholder="Search here..."
-          value={searchTerm}
-          onChange={handleSearch}
-          className="pl-10 pr-4 py-2 w-72 rounded-full bg-white text-[#646A73] placeholder-gray-400 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2AA100] transition-all"
-        />
-      </div>
-
-      {/* Right Section */}
+    <header className="bg-[#FFF5F8] text-white px-6 py-4 flex justify-end items-center fixed top-0 left-0 w-full shadow-sm z-50 gap-4">
+      {/* Right Section (Search + Icons + Button) */}
       <div className="flex items-center gap-4">
+        {/* Search Bar */}
+        <div className="relative hidden md:block">
+          <UilSearch className="absolute top-2 left-3 text-[#2AA100]" />
+          <input
+            type="text"
+            placeholder="Search here..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="pl-10 pr-4 py-2 w-64 rounded-full bg-white text-[#646A73] placeholder-gray-400 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2AA100] transition-all"
+          />
+        </div>
+
         {/* Message Icon */}
         <Link to="/messages" className="cursor-pointer">
           <UilEnvelope
