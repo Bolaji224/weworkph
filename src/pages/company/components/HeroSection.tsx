@@ -26,7 +26,7 @@ const HeroSection: React.FC = () => {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4 leading-tight">
-            Skill<span className="bg-gradient-to-r from-green-500 to-pink-500 bg-clip-text text-transparent">Stamp</span>
+            Skill<span className="bg-gradient-to-r from-green-500 to-pink-500 bg-clip-text text-transparent">Stamp™</span>
           </h1>
 
           <p className="text-lg md:text-xl text-gray-700 leading-relaxed mb-8">

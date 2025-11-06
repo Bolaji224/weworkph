@@ -31,7 +31,7 @@ const SmartGuideHeroSection: React.FC = () => {
             {/* Main Heading */}
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                SmartGuide™
+                SmartGuide
               </span>
               <span className="text-gray-800 block mt-2">
                 – Your Roadmap to Freelance Success
@@ -45,7 +45,7 @@ const SmartGuideHeroSection: React.FC = () => {
 
             {/* Description */}
             <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-              SmartGuide™ is your personalized blueprint to becoming a top-rated
+              SmartGuide is your personalized blueprint to becoming a top-rated
               freelancer on WeWorkPerHour — with step-by-step guidance based on
               your specific category.
             </p>
@@ -151,10 +151,10 @@ const SmartGuideHeroSection: React.FC = () => {
             {/* SkillStamped Section */}
             <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl p-6 mb-10">
               <h3 className="text-xl font-bold text-gray-800 mb-3">
-                Want to get SkillStamped™?
+                Want to get SkillStamped?
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                SmartGuide™ is the path to earning your SkillStamp™ verification
+                SmartGuide is the path to earning your SkillStamp verification
                 badge. Complete your guide, submit your test project, and unlock
                 new opportunities on the platform!
               </p>

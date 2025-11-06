@@ -1,10 +1,10 @@
 import React from 'react'
-import AppliedJobsPage from './components/AppliedJobsPage'
+import CandidateAppliedJobs from './components/AppliedJobsPage'
 
 const AppliedJobs = () => {
   return (
     <div>
-      <AppliedJobsPage />
+      <CandidateAppliedJobs />
     </div>
   )
 }

@@ -81,7 +81,7 @@ const SideNav: React.FC = () => {
             src={user?.avatar || Images.ProfileImage}
             alt="Profile"
           />
-          <h1>the new era is here an dtjeonuy i98ebekbujfk</h1>
+          
 
           {/* Username + dropdown */}
           <div ref={dropdownRef} className="relative">
@@ -134,22 +134,11 @@ const SideNav: React.FC = () => {
                                 />{" "} Dashboard
               </li>
             </Link>
-            <Link to="/employers-messages">
+            <Link to="/employers-account-settings">
               <li
                 className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
                   isActive("/employers-messages")
                     ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] mx-[1rem] text-[#2AA100]"
-                    : "text-[#1E2A38] hover:text-[#2AA100]"
-                }`}
-              >
-                <FaCertificate size={25} /> Smartstart
-              </li>
-            </Link>
-            <Link to="/employers-account-settings">
-              <li
-                className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
-                  isActive("/employers-account-settings")
-                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
                     : "text-[#1E2A38] hover:text-[#2AA100]"
                 }`}
               >
@@ -198,6 +187,17 @@ const SideNav: React.FC = () => {
                 }`}
               >
                 <IoBookmarkOutline size={25} /> Approved Candidates
+              </li>
+            </Link>
+            <Link to="/employers-messages">
+              <li
+               className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
+                  isActive("/all-applicant/:slug")
+                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
+                    : "text-[#1E2A38] hover:text-[#2AA100]"
+                }`}
+              >
+                <FaCertificate size={25} /> Messages
               </li>
             </Link>
             <Link to="/employers-wallet-account">

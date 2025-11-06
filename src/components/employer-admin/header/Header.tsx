@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaBell, FaPlus } from 'react-icons/fa';
-import { UilSearch } from '@iconscout/react-unicons';
+import { FaBell } from 'react-icons/fa';
+import { UilSearch, UilEnvelope, UilBriefcaseAlt } from '@iconscout/react-unicons';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const Header: React.FC = () => {
@@ -31,20 +31,38 @@ const Header: React.FC = () => {
         />
       </div>
       <div className="flex items-center gap-4">
-      <div className="relative">
-      <AnimatePresence>
-        {isNotificationOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute right-0 mt-2 w-64 bg-white text-black rounded shadow-lg z-10"
-          >
-            <div className="p-4">You have no new notifications.</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+
+        {/* Notification Bell */}
+        <div className="relative">
+          <FaBell
+            className="cursor-pointer text-[#4ADE80] hover:text-[#2AA100] transition-colors"
+            size={20}
+            onClick={toggleNotificationDropdown}
+          />
+          <AnimatePresence>
+            {isNotificationOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute right-0 mt-2 w-64 bg-white text-black rounded shadow-lg z-10"
+              >
+                <div className="p-4">You have no new notifications.</div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Find Job Button */}
+        <MotionLink
+          to="/find-job"
+          className="bg-[#ee009d] hover:bg-[#2AA100] text-white font-bold py-2 px-4 rounded-[50px] flex items-center gap-2"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <UilBriefcaseAlt />
+          Post Job
+        </MotionLink>
       </div>
     </header>
   );

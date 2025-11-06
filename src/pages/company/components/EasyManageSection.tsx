@@ -86,7 +86,7 @@ const WhySkillStampMatters: React.FC<WhySkillStampMattersProps> = ({ benefits })
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Why <span className="text-green-600">SkillStamp</span> Matters
+            Why <span className="text-green-600">SkillStamp™</span> Matters
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
             SkillStamp benefits both freelancers and clients by creating a trusted ecosystem of

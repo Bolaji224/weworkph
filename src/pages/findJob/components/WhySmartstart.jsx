@@ -123,7 +123,7 @@ const WhySmartStartMatters = ({ purpose }) => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Why <span className="text-green-600">SmartStart™</span> 
+            Why <span className="text-green-600">SmartStart</span> 
           </h2>
           {/* <p className="text-xl text-gray-700 max-w-3xl mx-auto">
             SkillStamp benefits both freelancers and clients by creating a trusted ecosystem of
@@ -166,7 +166,7 @@ const WhySmartStartMatters = ({ purpose }) => {
               <div className="bg-gradient-to-r from-pink-500 to-pink-600 p-3 rounded-2xl mr-4">
                 <Target className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-3xl font-bold text-gray-900">Purpose of SmartStart™</h3>
+              <h3 className="text-3xl font-bold text-gray-900">Purpose of SmartStart</h3>
             </div>
 
             <div className="space-y-6">

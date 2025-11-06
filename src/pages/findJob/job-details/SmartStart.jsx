@@ -48,7 +48,7 @@ const SmartStartSection: React.FC = () => {
             {/* Main Heading */}
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                SmartStart™
+                SmartStart
               </span>
             </h1>
 
@@ -59,7 +59,7 @@ const SmartStartSection: React.FC = () => {
 
             {/* Description */}
             <span className="text-gray-800 text-2xl block mt-2 font-bold leading-tight">
-                What is SmartStart™?
+                What is SmartStart?
               </span>
             <p className="text-lg text-gray-700 mb-8 leading-relaxed">
             SmartStart™ is a launch toolkit that helps new freelancers get
@@ -71,7 +71,7 @@ const SmartStartSection: React.FC = () => {
             {/* What's Inside Section*/}
             <div className="mb-10">
               <h2 className="text-2xl font-bold to-gray-800 mb-6">
-                What's Inside SmartStart™
+                What's Inside SmartStart
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-start gap-3">

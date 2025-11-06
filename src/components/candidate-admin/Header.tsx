@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaBell, FaPlus } from 'react-icons/fa';
-import { UilBriefcaseAlt, UilSearch } from '@iconscout/react-unicons';
+import { FaBell } from 'react-icons/fa';
+import { UilSearch, UilEnvelope, UilBriefcaseAlt } from '@iconscout/react-unicons';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FaEye } from 'react-icons/fa6';
 
 const Header: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,6 +11,7 @@ const Header: React.FC = () => {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
+    // Implement search functionality here
   };
 
   const toggleNotificationDropdown = () => {
@@ -19,30 +19,33 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-[#FFF5F8] text-white px-[4rem] absolute py-4 flex sm:left-0 left-40 top-0 justify-between items-center lg:absolute w-full">
-      {/* Search Input */}
+    <header className="bg-[#FFF5F8] text-white px-[4rem] fixed py-4 flex sm:left-0 left-40 top-0 justify-between items-center lg:absolute w-full">
       <div className="relative sm:block hidden md:left-[10rem] xl:left-[50rem] lg:left-[24rem]">
-        <UilSearch className="absolute font-light cursor-pointer top-2 left-2 text-[#4ADE80]" />
+        <UilSearch className="absolute font-light cursor-pointer top-2 left-2 text-[#2AA100]" />
         <input
           type="text"
           placeholder="Search here..."
           value={searchTerm}
           onChange={handleSearch}
-          className="lg:px-[2.5rem] xl:px-[2.5rem] md:px-[2.5rem] py-[0.5rem] w-[300px] font-sans font-light pl-[2px] rounded-[50px] bg-[#FFFFFF] text-[#646A73] placeholder-gray-400"
+          className="lg:px-[2.5rem] xl:px-[2.5rem] md:px-[2.5rem] py-[0.5rem] w-[300px] font-sans font-light xl:px[8rem] lg:py-[0.5rem] pl-[2px] rounded-[50px] bg-[#FFFFFF] text-[#646A73] placeholder-gray-400"
         />
       </div>
+      <div className="flex items-center gap-4">
+        {/* Message Icon */}
+        <Link to="/messages" className="cursor-pointer">
+          <UilEnvelope
+            className="text-[#4ADE80] hover:text-[#2AA100] transition-colors"
+            size={24}
+          />
+        </Link>
 
-      {/* Right Section */}
-      <div className="flex items-center gap-2">
         {/* Notification Bell */}
         <div className="relative">
           <FaBell
-            className="cursor-pointer text-[#4ADE80]"
+            className="cursor-pointer text-[#4ADE80] hover:text-[#2AA100] transition-colors"
             size={20}
             onClick={toggleNotificationDropdown}
           />
-
-          {/* AnimatePresence must always render; condition goes inside */}
           <AnimatePresence>
             {isNotificationOpen && (
               <motion.div
@@ -57,7 +60,7 @@ const Header: React.FC = () => {
           </AnimatePresence>
         </div>
 
-        {/* Post Job Button */}
+        {/* Find Job Button */}
         <MotionLink
           to="/find-job"
           className="bg-[#ee009d] hover:bg-[#2AA100] text-white font-bold py-2 px-4 rounded-[50px] flex items-center gap-2"
@@ -65,7 +68,7 @@ const Header: React.FC = () => {
           whileTap={{ scale: 0.9 }}
         >
           <UilBriefcaseAlt />
-         Find Job
+          Find Job
         </MotionLink>
       </div>
     </header>

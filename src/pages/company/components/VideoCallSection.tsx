@@ -37,7 +37,7 @@ const HowItWorks: React.FC = () => {
             How It <span className="text-blue-600">Works</span>
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-            Getting your SkillStamp is a simple 3-step process designed to verify your skills and expertise.
+            Getting your SkillStamp™ is a simple 3-step process designed to verify your skills and expertise.
           </p>
         </div>
 
