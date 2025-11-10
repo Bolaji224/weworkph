@@ -1,68 +1,79 @@
-import React, { useEffect, useState } from 'react';
-import CandidateDetails from './components/CandidateDetails';
-import PersonalProfile from './components/PersonalProfile';
-import { UilAngleRight } from '@iconscout/react-unicons';
-import { httpGetWithoutToken } from '../../../utils/http_utils';
-import { useParams } from 'react-router-dom';
-import { useToast } from '@chakra-ui/react';
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
+import { httpGetWithToken } from './../../../utils/http_utils';
 
-
-const CandidateProfile = () => {
-  const [candidate,  setCandidate] = useState<any>(null)
-  const param = useParams();
-  const toast = useToast();
-
-
-
-
+const CandidateProfile: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   
-  
-  const getCandidate = async () => {
-    const response = await httpGetWithoutToken(`candidates/${param.candidateId}`)
-    try {
-      if(response.status === "success") {
-        setCandidate(response.data)
+  // Try to get applicant from navigation state
+  const initialApplicant = location.state?.applicant || null;
+
+  const [applicant, setApplicant] = useState<any>(initialApplicant);
+  const [loading, setLoading] = useState(!initialApplicant); // Only load if no state
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // If we already have applicant from state, skip fetching
+    if (applicant) return;
+
+    const fetchApplicant = async () => {
+      setLoading(true);
+      try {
+        const response = await httpGetWithToken(`employer/applications/${id}`);
+        if (response?.data) {
+          setApplicant(response.data);
+        } else {
+          setError("Applicant not found.");
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch applicant data.");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching candidate:", error);
-      toast({
-        status: "error",
-        title: "Failed to load candidate profile.",
-        isClosable: true,
-        duration: 5000,
-      });
-    }
-  }
+    };
 
-  useEffect( () => {
-  getCandidate();
-  }, []);
-  
+    if (id) {
+      fetchApplicant();
+    } else {
+      setError("Invalid applicant ID.");
+      setLoading(false);
+    }
+  }, [id, applicant]);
+
+  if (loading) return <div>Loading applicant data...</div>;
+  if (error) return <div>{error}</div>;
+  if (!applicant) return <div>No applicant data available</div>;
 
   return (
-    <section>
-      <header className="flex items-center justify-center bg-[#f5f5f5] py-[4rem] md:py-[8rem] mb-6">
-        <div className="text-center px-4">
-          <h1 className="text-[#2aa100] text-[28px] md:text-[38px] font-sans font-bold mb-4 md:mb-8">Candidate Profile</h1>
-          <nav>
-            <ul className="flex justify-center space-x-2 md:space-x-4">
-              <li className="cursor-pointer flex gap-1 md:gap-2 text-[#2aa100]">
-                Home <UilAngleRight />
-              </li>
-              <li className="cursor-pointer text-[#646A73]">Candidate Profile</li>
-            </ul>
-          </nav>
-        </div>
+    <div className="p-6 bg-gray-100 min-h-screen py-[8rem]">
+     <header className="mb-6">
+      <h1 className="text-2xl font-bold text-gray-800"> Applicant Information</h1>
+      <p className="text-gray-600">{applicant.user?.first_name || "Unnamed Applicant"}</p>
       </header>
 
-      {
-       candidate && <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-[4rem] max-w-[95%] md:max-w-[1300px] mx-auto px-4">
-       <CandidateDetails candidate={candidate} />
-       <PersonalProfile profileData={candidate} />
-     </div>
-      }
-    </section>
+      <div className="bg-white p-4 rounded shadow">
+        <p><strong>Job:</strong> {applicant.job?.title || "N/A"}</p>
+        <p><strong>Experience:</strong> {applicant.experience_years} {applicant.experience_years === 1 ? "year" : "years"}</p>
+        <p><strong>Reason for applying:</strong> {applicant.reason || "N/A"}</p>
+        <p><strong>Status:</strong> {applicant.status || "N/A"}</p>
+        {applicant.cv && (
+          <p>
+            <strong>CV:</strong>{" "}
+            <a
+              href={`${process.env.REACT_APP_API_URL}/${applicant.cv}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline"
+            >
+              Download CV
+            </a>
+          </p>
+        )}
+      </div>
+    </div>
   );
-}
+};
 
 export default CandidateProfile;

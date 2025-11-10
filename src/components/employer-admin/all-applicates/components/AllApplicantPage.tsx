@@ -213,7 +213,7 @@ const messageApplicant = async (id: number) => {
     onDelete={() => setApplicants((prev) => prev.filter((_, i) => i !== index))}
     onApprove={() => approveApplicant(applicant.id)}
     onReject={() => rejectApplicant(applicant.id)}
-    onView={() => navigate(`/candidate-profile/${applicant.user?.id}`)}
+    onView={() => navigate(`/candidate-profile/${applicant.user?.id}`, { state: { applicant } })}
     onMessage={() => {
       setSelectedApplicantId(applicant.user);
       setModalVisible(true);
