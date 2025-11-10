@@ -104,13 +104,13 @@ const BrowseCandidates: React.FC = () => {
               <ApplicantCard
                 key={candidate.id}
                 name={candidate.first_name || candidate.name || "Unnamed"}
-                role="Candidate"
-                location={candidate.country || "Not specified"}
-                rate={0}
-                skills={["No skills provided"]}
-                profileImage={"/default-avatar.png"}
+                role={candidate.experience || "Candidate"}
+                location={`${candidate.city || ''}, ${candidate.country || ''}`}
+                rate={candidate.expected_salary || "Not specified"}
+                skills={candidate.skills ? candidate.skills.split(',') : []}
+                profileImage={candidate.avatar || '/default-avatar.png'}
                 status=""
-                onView={() => {}}
+                onView={() => window.open(candidate.cv || '#', '_blank')}
                 onDelete={() => {}}
                 onApprove={() => {}}
                 onReject={() => {}}
