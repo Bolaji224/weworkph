@@ -40,7 +40,6 @@ import SubscriptionPlan from "./components/candidate-admin/subscription-plan/Sub
 import CandidateWallet from "./components/candidate-admin/candidate-payment-account/CandidteWallet";
 import LogoutPage from "./components/candidate-admin/logout/LogoutPage";
 
-
 // Employers/Admin Components
 import EmployersLayout from "./components/employer-admin/EmployersLayout";
 import EmployersDashboard from "./components/employer-admin/dashboard/EmployersDashboard";
@@ -64,7 +63,6 @@ import TestimonialsPage from "./components/reusable/testimonial/TestimonialPage"
 import Courses from "./components/reusable/training/Courses";
 import CandidatesHireTalent from "./components/hire-talent/HireTalent";
 import CandidateProfile from "./components/hire-talent/candidate-profile/CandidateProfile";
-
 // Master Admin
 import AdminLogin from "./components/master-admin/components/AdminLogin";
 import AdminJobList from "./components/master-admin/components/JobList";
@@ -110,7 +108,7 @@ function Main({
 }) {
   const location = useLocation();
 
-  // ✅ Hide Navbar on dashboard-like routes
+  //  Hide Navbar on dashboard-like routes
   const hideNavbarPaths = [
     "/login",
     "/register",
@@ -119,6 +117,7 @@ function Main({
     "/resume-page",
     "/messages",
     "/job-alerts",
+    "/candidate-profile/:id",
     "/saved-jobs",
     "/my-jobs",
     "/employers-messages",
@@ -146,12 +145,17 @@ function Main({
     "/smart-guide",
     "/paid-course",
     "/smart-cv",
-    "/smart-guide/va-advanced"
+    "/smart-guide/va-advanced",
   ];
 
-  const shouldHideNavbar =
-    hideNavbarPaths.includes(location.pathname) ||
-    location.pathname.startsWith("/smartguide");
+  const shouldHideNavbar = hideNavbarPaths.some((path) => {
+    if (path.includes(":")) {
+      const regex = new RegExp("^" + path.replace(/:\w+/g, "[^/]+") + "$");
+      return regex.test(location.pathname);
+    }
+    return path === location.pathname;
+  });
+  
 
   return (
     <div>
@@ -167,10 +171,7 @@ function Main({
         <Route path="login" element={<LoginForm />} />
         <Route path="register" element={<RegisterForm />} />
         <Route path="hire-talent" element={<CandidatesHireTalent />} />
-        <Route
-          path="candidate-profile/:candidateId"
-          element={<CandidateProfile />}
-        />
+
         {/* <Route path="job-details/:slug" element={<JobDataPage />} /> */}
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
         <Route path="for-company-footer" element={<ForCompany />} />
@@ -202,20 +203,59 @@ function Main({
           path="resume-page"
           element={<AdminLayout element={<ResumeSection />} />}
         />
-        <Route path="messages" element={<AdminLayout element={<Message />} />} />
-        <Route path="job-alerts" element={<AdminLayout element={<JobAlert />} />} />
-        <Route path="saved-jobs" element={<AdminLayout element={<SavedJobs />} />} />
-        <Route path="paid-course" element={<AdminLayout element={<CourseOverview />} />} />
-        <Route path="smart-cv" element={<AdminLayout element={<SmartCvForm />} />} />
-        <Route path="subscriptions" element={<AdminLayout element={<SubscriptionPlan />} />} />
-        <Route path="applied-jobs" element={<AdminLayout element={<AppliedJobs />} />} />
-        <Route path="account-setting" element={<AdminLayout element={<AccountSettings />} />} />
-        <Route path="delete-account" element={<AdminLayout element={<DeletePage />} />} />
-        <Route path="candidate-wallet-account" element={<AdminLayout element={<CandidateWallet />} />} />
-        <Route path="freelance-career-tips" element={<AdminLayout element={<FreelanceCareerTips />} />} />
-        <Route path="logout-account" element={<AdminLayout element={<LogoutPage />} />} />
+        <Route
+          path="messages"
+          element={<AdminLayout element={<Message />} />}
+        />
+        <Route
+          path="job-alerts"
+          element={<AdminLayout element={<JobAlert />} />}
+        />
+        <Route
+          path="saved-jobs"
+          element={<AdminLayout element={<SavedJobs />} />}
+        />
+        <Route
+          path="paid-course"
+          element={<AdminLayout element={<CourseOverview />} />}
+        />
+        <Route
+          path="smart-cv"
+          element={<AdminLayout element={<SmartCvForm />} />}
+        />
+        <Route
+          path="subscriptions"
+          element={<AdminLayout element={<SubscriptionPlan />} />}
+        />
+        <Route
+          path="applied-jobs"
+          element={<AdminLayout element={<AppliedJobs />} />}
+        />
+        <Route
+          path="account-setting"
+          element={<AdminLayout element={<AccountSettings />} />}
+        />
+        <Route
+          path="delete-account"
+          element={<AdminLayout element={<DeletePage />} />}
+        />
+        <Route
+          path="candidate-wallet-account"
+          element={<AdminLayout element={<CandidateWallet />} />}
+        />
+        <Route
+          path="freelance-career-tips"
+          element={<AdminLayout element={<FreelanceCareerTips />} />}
+        />
+        <Route
+          path="logout-account"
+          element={<AdminLayout element={<LogoutPage />} />}
+        />
         {/* SmartGuide Route */}
-        <Route path="smart-guide/:guideId" element={<AdminLayout element={<SmartGuidePage />} />} />
+        <Route
+          path="smart-guide/:guideId"
+          element={<AdminLayout element={<SmartGuidePage />} />}
+        />
 
         {/* Employers/Admin Routes */}
         <Route
@@ -226,8 +266,11 @@ function Main({
           path="employers-profile"
           element={<EmployersLayout element={<EmployerProfile />} />}
         />
-        <Route path="my-jobs" element={<EmployersLayout element={<MyJobs />} />} />
-      {/* the applicant route*/}
+        <Route
+          path="my-jobs"
+          element={<EmployersLayout element={<MyJobs />} />}
+        />
+        {/* the applicant route*/}
         <Route
           path="all-applicant/:slug"
           element={<EmployersLayout element={<AllApplicates />} />}
@@ -249,8 +292,10 @@ function Main({
           path="saved-candidate"
           element={<EmployersLayout element={<SavedCandidate />} />}
         />
-        <Route path="browse-candidates"
-        element={<EmployersLayout element={<BrowseCandidates />} />} />
+        <Route
+          path="browse-candidates"
+          element={<EmployersLayout element={<BrowseCandidates />} />}
+        />
         <Route
           path="approved-candidate"
           element={<EmployersLayout element={<ApprovedCandidatesPage />} />}
@@ -270,6 +315,11 @@ function Main({
         <Route
           path="employers-logout-account"
           element={<EmployersLayout element={<EmployersLogoutPage />} />}
+        />
+
+        <Route
+          path="candidate-profile/:id"
+          element={<EmployersLayout element={<CandidateProfile />} />}
         />
 
         {/* Master Admin Routes */}
