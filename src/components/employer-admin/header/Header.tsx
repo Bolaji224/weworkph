@@ -55,7 +55,7 @@ const Header: React.FC = () => {
 
         {/* Find Job Button */}
         <MotionLink
-          to="/find-job"
+          to="/submit-jobs"
           className="bg-[#ee009d] hover:bg-[#2AA100] text-white font-bold py-2 px-4 rounded-[50px] flex items-center gap-2"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
