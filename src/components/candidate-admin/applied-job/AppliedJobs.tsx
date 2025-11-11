@@ -9,4 +9,4 @@ const AppliedJobs = () => {
   )
 }
 
-export default AppliedJobs
+export default AppliedJobs;
