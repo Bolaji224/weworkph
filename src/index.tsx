@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import { ChakraProvider } from '@chakra-ui/react'
 import AppStateProvider from './global/state';
+import { JobNotificationProvider } from './components/job-alert-system/JobNotificationContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -12,7 +13,9 @@ root.render(
   // <React.StrictMode>
   <AppStateProvider>
     <ChakraProvider>
+      <JobNotificationProvider>
     <App />
+    </JobNotificationProvider>
     </ChakraProvider>
     </AppStateProvider>
   // </React.StrictMode>

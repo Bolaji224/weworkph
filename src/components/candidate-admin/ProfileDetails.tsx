@@ -34,10 +34,10 @@ const ProfileImageUpload: React.FC = () => {
 
   const [fullname, setFullname] = useState("");
   const [bio, setBio] = useState("");
-  const [user_country, setUserCountry] = useState("");
-  const [user_state, setUserState] = useState("");
-  const [user_city, setUserCity] = useState("");
-  const [user_zipcode, setUserZipCode] = useState("");
+  const [country, setCountry] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
+  const [zipcode, setZipCode] = useState("");
   const [address, setAddress] = useState("");
   const [expected_salary, setExpectedSalary] = useState("");
   const [experience, setExperience] = useState("");
@@ -63,10 +63,10 @@ const ProfileImageUpload: React.FC = () => {
       setProfile(profileData);
       setFullname(profileData.name ?? "");
       setBio(profileData.bio ?? "");
-      setUserCity(profileData.city ?? "");
-      setUserCountry(profileData.country ?? "");
-      setUserState(profileData.state ?? "");
-      setUserZipCode(profileData.zip_code ?? "");
+      setCity(profileData.city ?? "");
+      setCountry(profileData.country ?? "");
+      setState(profileData.state ?? "");
+      setZipCode(profileData.zip_code ?? "");
       setAddress(profileData.address ?? "");
       setExpectedSalary(profileData.expected_salary ?? "");
       setExperience(profileData.experience ?? "");
@@ -107,10 +107,10 @@ const ProfileImageUpload: React.FC = () => {
       const fd = new FormData();
       fd.append("name", fullname);
       fd.append("bio", bio);
-      fd.append("country", user_country);
-      fd.append("state", user_state);
-      fd.append("city", user_city);
-      fd.append("zip_code", user_zipcode);
+      fd.append("country", country);
+      fd.append("state", state);
+      fd.append("city", city);
+      fd.append("zip_code", zipcode);
       fd.append("address", address);
       fd.append("expected_salary", expected_salary);
       fd.append("experience", experience);
@@ -419,8 +419,8 @@ const ProfileImageUpload: React.FC = () => {
             </label>
             <input
               type="text"
-              value={user_country}
-              onChange={(e) => setUserCountry(e.target.value)}
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
               className="w-full border rounded-lg p-2"
             />
           </div>
@@ -430,8 +430,8 @@ const ProfileImageUpload: React.FC = () => {
             </label>
             <input
               type="text"
-              value={user_city}
-              onChange={(e) => setUserCity(e.target.value)}
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
               className="w-full border rounded-lg p-2"
             />
           </div>
@@ -441,8 +441,8 @@ const ProfileImageUpload: React.FC = () => {
             </label>
             <input
               type="text"
-              value={user_zipcode}
-              onChange={(e) => setUserZipCode(e.target.value)}
+              value={zipcode}
+              onChange={(e) => setZipCode(e.target.value)}
               className="w-full border rounded-lg p-2"
             />
           </div>
@@ -452,8 +452,8 @@ const ProfileImageUpload: React.FC = () => {
             </label>
             <input
               type="text"
-              value={user_state}
-              onChange={(e) => setUserState(e.target.value)}
+              value={state}
+              onChange={(e) => setState(e.target.value)}
               className="w-full border rounded-lg p-2"
             />
           </div>
