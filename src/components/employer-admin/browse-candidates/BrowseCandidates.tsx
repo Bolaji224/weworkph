@@ -184,9 +184,13 @@ const BrowseCandidates: React.FC = () => {
                     <h2 className="font-semibold text-gray-800 text-lg">
                       {candidate.first_name || candidate.name || "Unnamed"}
                     </h2>
+<<<<<<< HEAD
                     <p className="text-sm text-gray-500">
                       {candidate.experience || "Candidate"}
                     </p>
+=======
+                    <p className="text-sm text-gray-500">{candidate.bio || "Candidate"}</p>
+>>>>>>> de0cdbef34f0c863a295e3a2cc81125e3b4ce8e8
                   </div>
                 </div>
 
@@ -235,10 +239,15 @@ const BrowseCandidates: React.FC = () => {
                 )}
 
                 {/* Bio */}
+<<<<<<< HEAD
                 {candidate.bio && (
                   <p className="text-sm text-gray-500 mb-4 line-clamp-2">
                     {candidate.bio}
                   </p>
+=======
+                {candidate.experience && (
+                  <p className="text-sm text-gray-500 mb-4 line-clamp-2">{candidate.experience}</p>
+>>>>>>> de0cdbef34f0c863a295e3a2cc81125e3b4ce8e8
                 )}
 
                 {/* Action Buttons */}

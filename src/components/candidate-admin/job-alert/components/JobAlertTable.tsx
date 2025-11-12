@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { httpGetWithToken, httpPostWithToken } from "../../../../utils/http_utils";
 import { Button, useToast } from "@chakra-ui/react";
 import { UilEye, UilShareAlt } from "@iconscout/react-unicons";
+import { useJobNotifications } from "../../../job-alert-system/JobNotificationContext";
 
 const JobAlertTable: React.FC = () => {
   const [jobAlerts, setJobAlerts] = useState<any[]>([]);
   const [selectedAlert, setSelectedAlert] = useState<any | null>(null);
   const [action, setAction] = useState<"View" | "Apply" | "Share" | null>(null);
   const toast = useToast();
+
+  const { setNewJobsCount, setJobAlerts: setGlobalJobAlerts } = useJobNotifications();
 
   const [appliedJobs, setAppliedJobs] = useState<number[]>(() => {
     const saved = localStorage.getItem("appliedJobs");
@@ -26,11 +29,17 @@ const JobAlertTable: React.FC = () => {
       );
 
       setJobAlerts(Array.isArray(filteredJobs) ? filteredJobs : []);
+
+      setNewJobsCount(filteredJobs.length);
+  setGlobalJobAlerts(filteredJobs);
     } catch (err) {
       console.error(err);
       setJobAlerts([]);
+      setNewJobsCount(0);
+      setGlobalJobAlerts([]);
     }
   };
+
 
   useEffect(() => {
     getJobAlert();
@@ -43,7 +52,11 @@ const JobAlertTable: React.FC = () => {
     setAppliedJobs(updated);
     localStorage.setItem("appliedJobs", JSON.stringify(updated));
 
-    setJobAlerts((prev) => prev.filter((job) => job.id !== jobId));
+    const updatedAlerts = jobAlerts.filter((job) => job.id !== jobId);
+    setJobAlerts(updatedAlerts);
+
+    setNewJobsCount(updatedAlerts.length);
+    setGlobalJobAlerts(updatedAlerts);
   };
 
   return (

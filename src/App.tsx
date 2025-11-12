@@ -85,7 +85,7 @@ function App() {
 
   const handleLoginSuccess = () => setIsLoggedIn(true);
 
-  // ✅ Seed guides in localStorage once
+  //  Seed guides in localStorage once
   useEffect(() => {
     seedGuidesIfEmpty();
   }, []);
