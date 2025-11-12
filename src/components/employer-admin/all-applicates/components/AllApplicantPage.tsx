@@ -266,7 +266,7 @@ const ApplicantsPage: React.FC = () => {
             onClick={() =>
               selectedApplicantId && messageApplicant(selectedApplicantId.id)
             }
-            className="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="mt-4 bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition"
           >
             Send Message
           </button>
