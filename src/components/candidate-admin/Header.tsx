@@ -39,6 +39,16 @@ const Header: React.FC = () => {
           />
         </div>
 
+         <MotionLink
+          to="/find-job"
+          className="bg-[#ee009d] hover:bg-[#d1008a] text-white font-bold py-2 px-5 rounded-full flex items-center gap-2 transition-all duration-300"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <UilBriefcaseAlt size={18} />
+          Find Job
+        </MotionLink>
+
         {/* Message Icon */}
         <Link to="/messages" className="cursor-pointer">
           <UilEnvelope
@@ -114,15 +124,7 @@ const Header: React.FC = () => {
         </div>
 
         {/* Find Job Button */}
-        <MotionLink
-          to="/find-job"
-          className="bg-[#ee009d] hover:bg-[#d1008a] text-white font-bold py-2 px-5 rounded-full flex items-center gap-2 transition-all duration-300"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <UilBriefcaseAlt size={18} />
-          Find Job
-        </MotionLink>
+
       </div>
     </header>
   );
