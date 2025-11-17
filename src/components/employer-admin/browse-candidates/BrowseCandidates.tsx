@@ -12,7 +12,17 @@ import {
 } from "lucide-react";
 
 // ✅ Simple Modal Component
-const Modal = ({ isOpen, onClose, title, children }: any) => {
+const Modal = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+}) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -34,7 +44,7 @@ const BrowseCandidates: React.FC = () => {
   const [candidates, setCandidates] = useState<any[]>([]);
   const [hasPaid, setHasPaid] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userType, setUserType] = useState("Free Users"); // Dropdown selection
+  const [userType, setUserType] = useState("Free Users");
   const toast = useToast();
 
   // ✅ Modal States
@@ -98,13 +108,11 @@ const BrowseCandidates: React.FC = () => {
     });
   };
 
-  // ✅ Open modal when Message button is clicked
   const handleOpenModal = (candidate: any) => {
     setSelectedApplicantId(candidate);
     setModalVisible(true);
   };
 
-  // ✅ Handle sending message (frontend only — integrate backend if needed)
   const messageApplicant = (id: any) => {
     console.log("Message sent to:", id, messageText);
     toast({
@@ -184,13 +192,9 @@ const BrowseCandidates: React.FC = () => {
                     <h2 className="font-semibold text-gray-800 text-lg">
                       {candidate.first_name || candidate.name || "Unnamed"}
                     </h2>
-<<<<<<< HEAD
                     <p className="text-sm text-gray-500">
                       {candidate.experience || "Candidate"}
                     </p>
-=======
-                    <p className="text-sm text-gray-500">{candidate.bio || "Candidate"}</p>
->>>>>>> de0cdbef34f0c863a295e3a2cc81125e3b4ce8e8
                   </div>
                 </div>
 
@@ -239,15 +243,10 @@ const BrowseCandidates: React.FC = () => {
                 )}
 
                 {/* Bio */}
-<<<<<<< HEAD
                 {candidate.bio && (
                   <p className="text-sm text-gray-500 mb-4 line-clamp-2">
                     {candidate.bio}
                   </p>
-=======
-                {candidate.experience && (
-                  <p className="text-sm text-gray-500 mb-4 line-clamp-2">{candidate.experience}</p>
->>>>>>> de0cdbef34f0c863a295e3a2cc81125e3b4ce8e8
                 )}
 
                 {/* Action Buttons */}
