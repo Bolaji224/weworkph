@@ -1,6 +1,19 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { httpGetWithToken, httpPostWithToken } from './../utils/http_utils';
 import { echo } from './../utils/echo';
+
+
+interface Message {
+  id: number;
+  message: string;
+  user_id: number;
+  chat_id: number;
+  created_at: string;
+  user?: {
+    id: number;
+    name: string;
+  };
+}
 
 interface SendMessagePayload {
   message: string;
@@ -9,48 +22,97 @@ interface SendMessagePayload {
 }
 
 export function useChat(chatId: number | null) {
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
+  const channelRef = useRef<any>(null);
 
   const fetchMessages = useCallback(async () => {
-    if (!chatId) return;
-    setLoading(true);
-    const resp = await httpGetWithToken(`chat/${chatId}`);
-    if (!resp?.error && resp?.data) {
-      setMessages(resp.data.messages || []);
+    if (!chatId) {
+      setMessages([])
+      return;
     }
-    setLoading(false);
+
+    try {
+      const resp = await httpGetWithToken(`chat/${chatId}`);
+      if (!resp?.error && resp?.data?.messages) {
+        setMessages(resp.data.messages);
+      }
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+    }
   }, [chatId]);
 
   const sendMessage = async (payload: SendMessagePayload) => {
     if (!payload.message.trim()) return null;
-    const resp = await httpPostWithToken("chat/send-chat", payload);
-    if (!resp?.error && resp?.data) {
-      if (Array.isArray(resp.data.messages)) {
-        setMessages(resp.data.messages);
-      } else {
-        setMessages((prev) => [...prev, resp.data]);
+    
+    setLoading(true);
+    try {
+      const resp = await httpPostWithToken("chat/send-chat", payload);
+      setLoading(false);
+
+      if (!resp?.error) {
+        return resp.data;
       }
-      return resp.data;
+      return null;
+    } catch (err) {
+      console.error('Error sending message:', err);
+      setLoading(false);
+      return null;
     }
-    return null;
   };
 
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId) {
+      setMessages([]);
+      return;
+    }
+
     fetchMessages();
 
-    const channel = echo.private(`chat.${chatId}`);
-    channel.listen(".message.sent", (e: any) => {
-      if (e?.message) {
-        setMessages((prev) => [...prev, e.message]);
-      }
+    console.log(`Subscribing to private-chat.${chatId}`);
+
+    try {
+      channelRef.current = echo.private(`chat.${chatId}`);
+
+      channelRef.current.listen('.message.sent', (data: any) => {
+        console.log('New message received:', data);
+
+        setMessages((prev) => {
+          if (prev.some(m => m.id === data.id)) {
+            return prev;
+          }
+
+          return [...prev, data];
+        });
+      });
+
+
+    channelRef.current.subscribed(() => {
+      console.log('Successfully subscribed to chat.' + chatId);
     });
 
-    return () => {
-      echo.leave(`chat.${chatId}`);
-    };
-  }, [chatId, fetchMessages]);
+    channelRef.current.error((error: any) => {
+      console.error('channel subscription error:', error);
+    });
 
-  return { messages, sendMessage, loading };
+  } catch (err) {
+    console.error('Error subscribing to channel:', err);
+  }
+
+  return () => {
+    if (channelRef.current) {
+      console.log(`Unsubscribing from chat.${chatId}`);
+      echo.leave(`chat.${chatId}`);
+      channelRef.current = null;
+    }
+  };
+}, [chatId, fetchMessages]);
+
+return {
+  messages,
+  sendMessage,
+  loading,
+  refetch: fetchMessages
+};
+
 }
