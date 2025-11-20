@@ -1,18 +1,37 @@
 import React, { useEffect, useState, useRef } from "react";
-import { UilMessage, UilSearch } from "@iconscout/react-unicons";
+import { UilMessage, UilSearch, UilCheckCircle } from "@iconscout/react-unicons";
 import ls from "localstorage-slim";
 import moment from "moment";
 import { useLocation } from "react-router-dom";
 import { httpGetWithToken } from './../../../../utils/http_utils';
 import { useChat } from './../../../../hooks/useChat';
 
+// Normalize user_id to number
+function normalizeUserId(raw: any): number | null {
+  if (raw == null) return null;
+  if (typeof raw === "number") return raw;
+  if (typeof raw === "string") {
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
+  }
+  if (typeof raw === "object" && "id" in raw) {
+    const n = Number(raw.id);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
 const EmployerChatPage: React.FC = () => {
   const user: any = ls.get("wwph_usr", { decrypt: true }) || JSON.parse(localStorage.getItem("wwph_usr") || "{}");
   const [chats, setChats] = useState<any[]>([]);
   const [selectedChat, setSelectedChat] = useState<any | null>(null);
   const [text, setText] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const { messages, sendMessage, loading } = useChat(selectedChat?.id ?? null);
 
   useEffect(() => {
     if (location?.state?.chatId) {
@@ -21,6 +40,19 @@ const EmployerChatPage: React.FC = () => {
       loadChats();
     }
   }, []);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 128)}px`;
+    }
+  }, [text]);
 
   const loadChats = async (openChatId?: number) => {
     const resp = await httpGetWithToken("chat");
@@ -33,14 +65,9 @@ const EmployerChatPage: React.FC = () => {
     }
   };
 
-  const { messages, sendMessage, loading } = useChat(selectedChat?.id ?? null);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
   const handleSend = async () => {
-    if (!text.trim()) return;
+    if (!text.trim() || loading) return;
+    
     const receiver_id = selectedChat
       ? (selectedChat.user1?.id
           ? (selectedChat.user1.id === user.id ? selectedChat.user2.id : selectedChat.user1.id)
@@ -48,7 +75,7 @@ const EmployerChatPage: React.FC = () => {
       : undefined;
 
     await sendMessage({
-      message: text,
+      message: text.trim(),
       receiver_id,
       chat_id: selectedChat?.id,
     });
@@ -63,6 +90,18 @@ const EmployerChatPage: React.FC = () => {
     }
   };
 
+  const otherUserFromChat = (chat: any) => {
+    if (!chat) return {};
+    return chat.user1 === user.id ? chat.ChatUser ?? chat.user2 : chat.Host ?? chat.user1;
+  };
+
+  // Filter chats based on search
+  const filteredChats = chats.filter(chat => {
+    const other = otherUserFromChat(chat);
+    const name = other?.name ?? "";
+    return name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
   return (
     <div className="flex h-[85vh] mt-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
       {/* Sidebar */}
@@ -75,6 +114,8 @@ const EmployerChatPage: React.FC = () => {
             <input
               type="text"
               placeholder="Search conversations..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
             />
           </div>
@@ -82,14 +123,16 @@ const EmployerChatPage: React.FC = () => {
 
         {/* Chat List */}
         <div className="flex-1 overflow-y-auto">
-          {chats.length === 0 ? (
+          {filteredChats.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-400 px-6">
               <UilMessage size="48" className="mb-3 opacity-50" />
-              <p className="text-sm text-center">No conversations yet</p>
+              <p className="text-sm text-center">
+                {searchQuery ? "No conversations found" : "No conversations yet"}
+              </p>
             </div>
           ) : (
-            chats.map((chat) => {
-              const other = chat.user1 === user.id ? chat.ChatUser ?? chat.user2 : chat.Host ?? chat.user1;
+            filteredChats.map((chat) => {
+              const other = otherUserFromChat(chat);
               const last = chat.last_message ?? (chat.messages && chat.messages[chat.messages.length - 1]);
               const isSelected = selectedChat?.id === chat.id;
               
@@ -135,13 +178,11 @@ const EmployerChatPage: React.FC = () => {
             <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-white to-gray-50">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-semibold shadow-md">
-                  {(selectedChat.user1 === user.id 
-                    ? selectedChat.ChatUser?.name 
-                    : selectedChat.Host?.name ?? "U").charAt(0).toUpperCase()}
+                  {(otherUserFromChat(selectedChat).name ?? "U").charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 text-lg">
-                    {selectedChat.user1 === user.id ? selectedChat.ChatUser?.name : selectedChat.Host?.name}
+                    {otherUserFromChat(selectedChat).name ?? "Conversation"}
                   </h3>
                   <p className="text-xs text-gray-500">Active now</p>
                 </div>
@@ -151,32 +192,45 @@ const EmployerChatPage: React.FC = () => {
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-6 pt-8 bg-gradient-to-b from-gray-50 to-white">
               <div className="max-w-4xl mx-auto space-y-4 mt-4">
-                {messages.map((m: any) => {
-                  const isOwn = m.user_id === user.id;
-                  return (
-                    <div
-                      key={m.id || Math.random()}
-                      className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
-                    >
-                      <div className={`max-w-[70%] ${isOwn ? "order-2" : "order-1"}`}>
-                        <div
-                          className={`px-4 py-3 rounded-2xl shadow-sm ${
-                            isOwn
-                              ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-br-sm"
-                              : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"
-                          }`}
-                        >
-                          <p className="text-sm leading-relaxed break-words">{m.message}</p>
-                        </div>
-                        <div className={`flex items-center gap-1 mt-1.5 px-1 ${isOwn ? "justify-end" : "justify-start"}`}>
-                          <span className="text-xs text-gray-400">
-                            {moment(m.created_at).format("h:mm A")}
-                          </span>
+                {messages.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-gray-400 py-12">
+                    <UilMessage size="48" className="mb-3 opacity-50" />
+                    <p className="text-sm">No messages yet. Start the conversation!</p>
+                  </div>
+                ) : (
+                  messages.map((m: any) => {
+                    const messageUserId = normalizeUserId(m.user_id);
+                    const currentUserId = normalizeUserId(user.id);
+                    const isOwn = messageUserId === currentUserId;
+
+                    return (
+                      <div
+                        key={m.id || Math.random()}
+                        className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+                      >
+                        <div className={`max-w-[70%] ${isOwn ? "order-2" : "order-1"}`}>
+                          <div
+                            className={`px-4 py-3 rounded-2xl shadow-sm ${
+                              isOwn
+                                ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-br-sm"
+                                : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"
+                            }`}
+                          >
+                            <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">{m.message}</p>
+                          </div>
+                          <div className={`flex items-center gap-1 mt-1.5 px-1 ${isOwn ? "justify-end" : "justify-start"}`}>
+                            <span className="text-xs text-gray-400">
+                              {moment(m.created_at).format("h:mm A")}
+                            </span>
+                            {isOwn && (
+                              <UilCheckCircle size="14" className="text-gray-400" />
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
                 <div ref={messagesEndRef} />
               </div>
             </div>
@@ -187,6 +241,7 @@ const EmployerChatPage: React.FC = () => {
                 <div className="flex items-end gap-3">
                   <div className="flex-1 bg-gray-50 rounded-2xl border border-gray-200 focus-within:border-pink-500 focus-within:ring-2 focus-within:ring-pink-100 transition-all">
                     <textarea
+                      ref={textareaRef}
                       value={text}
                       onChange={(e) => setText(e.target.value)}
                       onKeyPress={handleKeyPress}
@@ -194,6 +249,7 @@ const EmployerChatPage: React.FC = () => {
                       rows={1}
                       className="w-full px-4 py-3 bg-transparent border-none focus:outline-none resize-none max-h-32 text-gray-800 placeholder-gray-400"
                       style={{ minHeight: '44px' }}
+                      disabled={loading}
                     />
                   </div>
                   
@@ -206,8 +262,17 @@ const EmployerChatPage: React.FC = () => {
                         : "bg-gray-200 text-gray-400 cursor-not-allowed"
                     }`}
                   >
-                    <span>Send</span>
-                    <UilMessage size="20" />
+                    {loading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Send</span>
+                        <UilMessage size="20" />
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

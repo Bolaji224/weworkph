@@ -55,7 +55,7 @@ const ProfileImageUpload: React.FC = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // ✅ Fetch profile
+  //  Fetch profile
   const getProfile = async () => {
     try {
       const res = await httpGetWithToken("profile");
@@ -99,7 +99,7 @@ const ProfileImageUpload: React.FC = () => {
     }
   };
 
-  // ✅ Update profile details (including new fields)
+  //  Update profile details (including new fields)
   const updateProfile = async () => {
     if (loading) return;
     setLoading(true);
@@ -139,7 +139,7 @@ const ProfileImageUpload: React.FC = () => {
     }
   };
 
-  // ✅ Save profile image
+  //  Save profile image
   const handleImageSave = async () => {
     if (!selected || saveLoading) return;
     const fd = new FormData();
@@ -165,7 +165,7 @@ const ProfileImageUpload: React.FC = () => {
     }
   };
 
-  // ✅ File & social link handlers
+  //  File & social link handlers
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -388,21 +388,23 @@ const ProfileImageUpload: React.FC = () => {
           <label className="block text-green-600 font-semibold mb-2">
             Upload CV
           </label>
-          <input
+          {/* <input
             type="file"
             accept=".pdf,.doc,.docx"
             onChange={handleCvChange}
             className="w-full border rounded-lg p-2"
-          />
-          {profile.cv && (
+          /> */}
+          {profile.smartcv ? (
             <a
-              href={profile.cv}
+              href={profile.smartcv}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 mt-2 inline-block"
             >
-              View Uploaded CV
+              View SmartCV
             </a>
+          ) :(
+            <p className="text-gray-500">No SmartCV created yet.</p>
           )}
         </div>
       </div>
