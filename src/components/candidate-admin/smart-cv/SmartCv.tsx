@@ -200,29 +200,32 @@ const SmartCvForm: React.FC = () => {
   
     try {
       const response = await axios.post(`${APP_API_URL}/cv`, form, {
-        headers: { 
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}`
-        },
-        responseType: "blob", // very important for downloading file
+          headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}`,
+          }
       });
-
   
-      // Get blob and download
-      const blob = new Blob([response.data], { type: "application/pdf" });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "cv.pdf";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    } catch (err) {
+      // Backend returns the URL of the saved SmartCV
+      const cvUrl = response.data.cv_url;
+  
+      // Save SmartCV URL to user profile if needed
+      await axios.post(`${APP_API_URL}/profile/update-smartcv`, {
+          smartcv: cvUrl
+      }, {
+          headers: {
+              Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}`
+          }
+      });
+  
+      alert("SmartCV saved! You can now view it in your profile.");
+  
+  } catch (err) {
       console.error("CV generation failed:", err);
       alert("Something went wrong");
-    }
-  };
+  }
   
+}
 
   const skillOptions = [
     'Calendar Management',
