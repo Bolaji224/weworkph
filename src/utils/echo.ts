@@ -30,7 +30,6 @@ const getToken = (): string => {
   return "";
 };
 
-
 // ENV
 const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000/api";
 const WS_HOST = process.env.REACT_APP_PUSHER_HOST || "127.0.0.1";
@@ -62,9 +61,9 @@ export const echo = new Echo({
   enabledTransports: ["ws", "wss"],
 
   /**
-   * Dynamic authorizer ensures token is always fresh.
+   * TS FIX: add types to channel & options
    */
-  authorizer: (channel, options) => {
+  authorizer: (channel: any, options: any) => {
     return {
       authorize: async (socketId: string, callback: any) => {
         const token = getToken();
