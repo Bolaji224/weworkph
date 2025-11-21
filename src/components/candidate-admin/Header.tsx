@@ -61,7 +61,7 @@ const Header: React.FC = () => {
         <div className="relative">
           <FaBell
             className="cursor-pointer text-[#4ADE80] hover:text-[#2AA100] transition-colors"
-            size={20}
+            size={24}
             onClick={toggleNotificationDropdown}
           />
 

@@ -11,7 +11,6 @@ import {
 
 const CandidateAppliedJobs: React.FC = () => {
   const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -19,7 +18,6 @@ const CandidateAppliedJobs: React.FC = () => {
   }, []);
 
   const fetchAppliedJobs = async () => {
-    setLoading(true);
     try {
       const res = await httpGetWithToken("candidate/applied-jobs");
 
@@ -40,8 +38,6 @@ const CandidateAppliedJobs: React.FC = () => {
         title: "Error fetching applied jobs.",
         isClosable: true,
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -58,19 +54,6 @@ const CandidateAppliedJobs: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ee009d] mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">
-            Loading your applied jobs...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   if (appliedJobs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] bg-[#FFF5F8] rounded-2xl p-8">
@@ -83,8 +66,8 @@ const CandidateAppliedJobs: React.FC = () => {
           skills.
         </p>
         <Link
-          to="/find-job"
-          className="bg-[#ee009d] hover:bg-[#d1008a] text-white font-semibold py-3 px-6 rounded-full transition-all duration-300"
+          to="/job-alerts"
+          className="bg-[#4ADE80] hover:bg-[#2AA100] text-white font-semibold py-3 px-6 rounded-full transition-all duration-300"
         >
           Browse Jobs
         </Link>

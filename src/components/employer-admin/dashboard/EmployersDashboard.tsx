@@ -146,48 +146,51 @@ const EmployersDashboard = () => {
     { title: "Data Analyst", applicants: 12, views: 87, status: "paused" },
   ];
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 mt-20">
-      <div className="max-w-7xl mx-auto">
-
-        {/* HEADER */}
+   return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto mt-20">
+        
+        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900">Employer Dashboard</h1>
-          <p className="text-slate-600 flex items-center gap-2 mt-1">
-            <Calendar size={18} className="text-blue-500" />
-            {new Date().toLocaleDateString("en-US", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
+                Employer Dashboard
+              </h1>
+              <p className="text-slate-600 flex items-center gap-2">
+                <Calendar className="text-blue-500" size={18} />
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* STATS CARDS */}
+        {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {statsCards.map((stat, index) => (
-            <div
+            <div 
               key={index}
-              className="bg-white rounded-2xl p-6 shadow-sm"
+              className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 group"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div
-                  className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white shadow-md`}
-                >
+              <div className="flex items-start justify-between mb-4">
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform`}>
                   {stat.icon}
                 </div>
-                <span className="text-xs text-green-600 font-semibold">{stat.change}</span>
+                <span className="text-emerald-500 text-sm font-semibold flex items-center gap-1">
+                  <TrendingUp size={16} /> {stat.change}
+                </span>
               </div>
-
-              <h3 className="text-3xl font-bold text-slate-900">{stat.value}</h3>
-              <p className="text-sm text-slate-600">{stat.title}</p>
+              <h3 className="text-3xl font-bold text-slate-900 mb-1">{stat.value}</h3>
+              <p className="text-sm text-slate-600 font-medium">{stat.title}</p>
             </div>
           ))}
         </div>
 
-        {/* CHARTS */}
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          
+          {/* Applicants Trend */}
+          <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-slate-900">Applicant Trends</h2>
               <button className="text-slate-400 hover:text-slate-600">
@@ -256,7 +259,7 @@ const EmployersDashboard = () => {
         {/* Bottom Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-    
+          {/* Top Performing Jobs */}
 
           {/* Recent Activity */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
@@ -278,8 +281,8 @@ const EmployersDashboard = () => {
           </div>
         </div>
 
-
-        </div>
+      </div>
+    </div>
   );
 };
 
