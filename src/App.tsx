@@ -226,7 +226,7 @@ function Main({
         <Route
           path="subscriptions"
           element={<AdminLayout element={<SubscriptionPlan />} />}
-        />
+        /> 
         <Route
           path="applied-jobs"
           element={<AdminLayout element={<AppliedJobs />} />}
