@@ -5,6 +5,7 @@ import { UilEye, UilShareAlt } from "@iconscout/react-unicons";
 import { useJobNotifications } from "../../../job-alert-system/JobNotificationContext";
 
 const JobAlertTable: React.FC = () => {
+  const [profile, setProfile] = useState<any>({});
   const [jobAlerts, setJobAlerts] = useState<any[]>([]);
   const [selectedAlert, setSelectedAlert] = useState<any | null>(null);
   const [action, setAction] = useState<"View" | "Apply" | "Share" | null>(null);
@@ -40,8 +41,17 @@ const JobAlertTable: React.FC = () => {
     }
   };
 
+  const getProfile = async () => {
+    try {
+      const res = await httpGetWithToken("profile");
+      setProfile(res.data);
+    } catch (err) {
+      console.error("Profile load failed:", err);
+    }
+  };
 
   useEffect(() => {
+    getProfile();
     getJobAlert();
   }, []);
 
@@ -215,22 +225,18 @@ const JobAlertTable: React.FC = () => {
   onSubmit={async (e) => {
     e.preventDefault();
 
-    const form = e.target as HTMLFormElement;
-    const cvFile = (form.querySelector('input[type="file"]') as HTMLInputElement)
-      ?.files?.[0];
-    const reason = (form.querySelector('textarea') as HTMLTextAreaElement)?.value;
+   const reason = (e.target as HTMLFormElement).reason.value;
 
-    if (!cvFile || !reason) {
-      toast({
+   if (!profile.smartcv) {
+    toast({
         status: "error",
-        title: "Please upload your CV and provide a reason.",
-        isClosable: true,
+        title: "you must generate your SmartCV before applying",
       });
       return;
-    }
+   }
 
     const formData = new FormData();
-    formData.append("cv", cvFile);
+    formData.append("cv_url", profile.smartcv);
     formData.append("experience_years", "0"); // optional if you don't have that field in UI
     formData.append("reason", reason);
 
@@ -239,7 +245,6 @@ const JobAlertTable: React.FC = () => {
         `apply-job/${selectedAlert.id}`,
         formData
       );
-      console.log("Response:", res);
 
       if (res.status === "success") {
         toast({
@@ -265,13 +270,21 @@ const JobAlertTable: React.FC = () => {
     }
   }}
 >
-  <input
-    type="file"
-    name="cv"
-    className="border p-2 rounded-md"
-    accept=".pdf,.doc,.docx"
-    required
-  />
+  {profile.smartcv ? (
+    <a
+    href={profile.smartcv}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-blue-600 underline"
+    >
+    View Attached SmartCV
+    </a>
+  ) : (
+    <p className="text-red-500 text-sm">
+      No SmartCV available. Go to profile to generate one.
+    </p>
+  )}
+
   <textarea
     name="reason"
     placeholder="Why are you a good fit?"

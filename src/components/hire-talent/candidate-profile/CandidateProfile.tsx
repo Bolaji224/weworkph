@@ -62,13 +62,13 @@ const CandidateProfile: React.FC = () => {
           <p>
             <strong>CV:</strong>{" "}
             <a
-              href={`${process.env.REACT_APP_API_URL}/${applicant.cv}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 underline"
-            >
-              Download CV
-            </a>
+  href={applicant.cv}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-blue-500 underline"
+>
+  Download CV
+</a>
           </p>
         )}
       </div>
