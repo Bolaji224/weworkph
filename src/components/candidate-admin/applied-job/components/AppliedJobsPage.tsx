@@ -44,13 +44,15 @@ const CandidateAppliedJobs: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "approved":
-        return "bg-green-100 text-green-700 border-green-300";
+        return "bg-green-100 text-green-700";
       case "rejected":
-        return "bg-red-100 text-red-700 border-red-300";
+        return "bg-red-100 text-red-700";
       case "pending":
-        return "bg-yellow-100 text-yellow-700 border-yellow-300";
+        return "bg-yellow-100 text-yellow-700";
+      case "under review":
+        return "bg-blue-100 text-blue-700";
       default:
-        return "bg-gray-100 text-gray-700 border-gray-300";
+        return "bg-gray-100 text-gray-700";
     }
   };
 
@@ -76,7 +78,7 @@ const CandidateAppliedJobs: React.FC = () => {
   }
 
   return (
-    <div className="p-6 mt-20 bg-white min-h-screen">
+    <div className="p-6 mt-20 bg-white min-h-screen lg:ml-64">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">
@@ -87,55 +89,56 @@ const CandidateAppliedJobs: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-4">
           {appliedJobs.map((job) => (
             <div
               key={job.id}
-              className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
             >
-              <div className="flex justify-between items-start mb-4">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
-                    job.status
-                  )}`}
-                >
-                  {job.status || "Pending"}
-                </span>
-                <div className="bg-[#FFF5F8] p-2 rounded-lg">
-                  <UilBriefcaseAlt className="text-[#ee009d]" size={24} />
+              <div className="flex items-start gap-4">
+                {/* Profile Picture */}
+                <div className="w-16 h-16 bg-gradient-to-br from-[#4ADE80] to-[#ee009d] rounded-lg flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                  {job.company?.name?.charAt(0) || "C"}
+                </div>
+
+                {/* Job Details */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-4 mb-3">
+                    <div>
+                      <h3 className="font-bold text-xl text-gray-800 mb-1">
+                        {job.title}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+                        <span className="font-medium">
+                          {job.company?.name || "Company Name"}
+                        </span>
+                        <span>•</span>
+                        <span>{job.location || "Ikeja"}</span>
+                      </div>
+                    </div>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getStatusColor(
+                        job.status
+                      )}`}
+                    >
+                      Status: {job.status || "Pending"}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <UilCalendarAlt size={16} className="text-gray-400" />
+                      <span>
+                        Applied: {new Date(job.date_applied).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <UilMapMarker size={16} className="text-gray-400" />
+                      <span>{job.work_mode || "Remote"}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <h3 className="font-bold text-xl text-gray-800 mb-2 line-clamp-2">
-                {job.title}
-              </h3>
-
-              <div className="flex items-center gap-2 text-gray-600 mb-3">
-                <UilBuilding size={18} className="text-[#4ADE80]" />
-                <span className="font-medium">
-                  {job.company?.name || "Company Name"}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 text-gray-500 mb-3">
-                <UilMapMarker size={18} className="text-gray-400" />
-                <span className="text-sm">{job.location || "Remote"}</span>
-              </div>
-
-              <div className="flex items-center gap-2 text-gray-500 mb-4">
-                <UilCalendarAlt size={18} className="text-gray-400" />
-                <span className="text-sm">
-                  Applied on{" "}
-                  {new Date(job.date_applied).toLocaleDateString()}
-                </span>
-              </div>
-
-              <Link
-                to={`/job-details/${job.slug}`}
-                className="block text-center bg-[#4ADE80] hover:bg-[#2AA100] text-white font-semibold py-2.5 px-4 rounded-full transition-all duration-300 transform hover:scale-105"
-              >
-                View Job Details
-              </Link>
             </div>
           ))}
         </div>

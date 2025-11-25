@@ -384,29 +384,21 @@ const ProfileImageUpload: React.FC = () => {
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-green-600 font-semibold mb-2">
-            Upload CV
-          </label>
-          {/* <input
-            type="file"
-            accept=".pdf,.doc,.docx"
-            onChange={handleCvChange}
-            className="w-full border rounded-lg p-2"
-          /> */}
-          {profile.smartcv ? (
-            <a
-              href={profile.smartcv}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 mt-2 inline-block"
-            >
-              View SmartCV
-            </a>
-          ) :(
-            <p className="text-gray-500">No SmartCV created yet.</p>
-          )}
-        </div>
+      <div className="mb-4">
+  {profile.smartcv ? (
+    <a
+      href={profile.smartcv}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="bg-green-600 text-white px-4 py-2 rounded-lg inline-block hover:bg-green-700"
+    >
+      View SmartCV
+    </a>
+  ) : (
+    <p className="text-gray-500">No SmartCV created yet.</p>
+  )}
+</div>
+
       </div>
 
       {/* Address */}

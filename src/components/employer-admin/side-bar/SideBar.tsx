@@ -66,10 +66,13 @@ const SideNav: React.FC = () => {
 
       {/* Sidebar */}
       <div
-        className={`h-full w-64 bg-white p-4 flex flex-col fixed lg:static transition-transform transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}
-      >
+  className={`h-screen w-64 bg-white p-4 flex flex-col 
+  fixed top-0 left-0 lg:sticky lg:top-0
+  overflow-y-auto scrollbar-hide
+  transition-transform transform
+  ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+  lg:translate-x-0`}
+>
         {/* Profile section */}
         <div className="p-6 flex items-center flex-col">
           <Link to="/">
