@@ -26,6 +26,7 @@ body {
   color: green; /* Color for active dot */
 }
 
+
 /* .course-card {
   position: relative;
   overflow: hidden;
@@ -49,3 +50,14 @@ body {
   justify-content: center;
   cursor: pointer;
 } */
+
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;      /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;              /* Chrome, Safari, Opera */
+  }
+}

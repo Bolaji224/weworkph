@@ -49,7 +49,7 @@ const FreelanceCareerTips: React.FC = () => {
   ];
 
   return (
-    <div className="mt-[8rem] px-[2.5rem]">
+    <div className="mt-[8rem] px-[2.5rem] lg:ml-64">
       <div className="max-w-7xl mx-auto">
         {/* Tips Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

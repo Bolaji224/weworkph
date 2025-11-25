@@ -161,6 +161,7 @@ const SideNav: React.FC = () => {
   
 
   return (
+    
     <div>
       <SwitchAccountModal
         isOpen={isModalOpen}
@@ -179,11 +180,11 @@ const SideNav: React.FC = () => {
           )}
         </button>
       </div>
-      <div
-        className={`h-full w-64 bg-white z-100 text-white flex flex-col fixed lg:static transition-transform transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}
-      >
+   <div
+  className={`h-screen w-64 bg-white text-black flex flex-col 
+  fixed top-0 left-0 overflow-y-auto scrollbar-hide transition-transform transform 
+  ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 z-50`}
+>
         <div className="p-6 flex items-center flex-col" ref={dropdownRef}>
           <div onClick={toggleSidebar} className="lg:hidden block">
             {isSidebarOpen ? (
