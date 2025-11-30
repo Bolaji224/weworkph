@@ -271,14 +271,14 @@ const JobAlertTable: React.FC = () => {
   }}
 >
   {profile.smartcv ? (
-    <a
-    href={profile.smartcv}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-blue-600 underline"
-    >
-    View Attached SmartCV
-    </a>
+  <a
+  href={profile.smartcv}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex w-auto shrink-0 bg-green-600 hover:bg-green-700 text-white px-2 py-1.5 rounded-md font-medium transition text-sm"
+>
+  View SmartCV
+</a>
   ) : (
     <p className="text-red-500 text-sm">
       No SmartCV available. Go to profile to generate one.

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef } from "react";
+import Hls from "hls.js";
 import { Play } from "lucide-react";
 
 interface VideoItem {
-  id: number;
+  id: number | string;
   title: string;
   duration: string;
   videoUrl: string;
@@ -10,7 +11,31 @@ interface VideoItem {
 }
 
 const VideoPlayer: React.FC<{ currentVideo: VideoItem | null }> = ({ currentVideo }) => {
-  const [isPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    if (!currentVideo || !videoRef.current) return;
+    const video = videoRef.current;
+
+    // If URL ends with .m3u8 → use HLS.js
+    if (currentVideo.videoUrl.includes(".m3u8")) {
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(currentVideo.videoUrl);
+        hls.attachMedia(video);
+
+        return () => {
+          hls.destroy();
+        };
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        // Safari native HLS support
+        video.src = currentVideo.videoUrl;
+      }
+    } else {
+      // Direct MP4 playback
+      video.src = currentVideo.videoUrl;
+    }
+  }, [currentVideo]);
 
   if (!currentVideo) {
     return (
@@ -31,9 +56,9 @@ const VideoPlayer: React.FC<{ currentVideo: VideoItem | null }> = ({ currentVide
       {/* Video Area */}
       <div className="relative bg-gray-900 aspect-video">
         <video
-          src={currentVideo.videoUrl}
+          ref={videoRef}
           controls
-          autoPlay={isPlaying}
+          autoPlay
           className="w-full h-full object-cover"
         />
       </div>

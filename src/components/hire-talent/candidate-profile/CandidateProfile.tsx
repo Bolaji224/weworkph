@@ -47,7 +47,7 @@ const CandidateProfile: React.FC = () => {
   if (!applicant) return <div>No applicant data available</div>;
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen py-[8rem]">
+    <div className=" mt-12 p-6 bg-gray-100 min-h-screen py-[8rem]">
      <header className="mb-6">
       <h1 className="text-2xl font-bold text-gray-800"> Applicant Information</h1>
       <p className="text-gray-600">{applicant.user?.first_name || "Unnamed Applicant"}</p>
@@ -67,7 +67,7 @@ const CandidateProfile: React.FC = () => {
   rel="noopener noreferrer"
   className="text-blue-500 underline"
 >
-  Download CV
+  View CV
 </a>
           </p>
         )}

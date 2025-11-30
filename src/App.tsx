@@ -35,6 +35,7 @@ import JobAlert from "./components/candidate-admin/job-alert/JobAlert";
 import SavedJobs from "./components/candidate-admin/saved-job/SavedJobs";
 import AccountSettings from "./components/candidate-admin/account-settings/AccountSettings";
 import DeletePage from "./components/candidate-admin/delete-account/DeletePage";
+import QuizPage from "./components/candidate-admin/quizpage/Quizpage"; 
 import AppliedJobs from "./components/candidate-admin/applied-job/AppliedJobs";
 import SubscriptionPlan from "./components/candidate-admin/subscription-plan/SubscriptionPlan";
 import CandidateWallet from "./components/candidate-admin/candidate-payment-account/CandidteWallet";
@@ -145,6 +146,7 @@ function Main({
     "/smart-guide",
     "/paid-course",
     "/smart-cv",
+    "/paid-course/quiz",
     "/smart-guide/va-advanced",
   ];
 
@@ -215,10 +217,8 @@ function Main({
           path="saved-jobs"
           element={<AdminLayout element={<SavedJobs />} />}
         />
-        <Route
-          path="paid-course"
-          element={<AdminLayout element={<CourseOverview />} />}
-        />
+        <Route path="paid-course" element={<AdminLayout element={<CourseOverview />} />} /> {/* course overview */}
+        <Route path="paid-course/quiz" element={<AdminLayout element={<QuizPage />} />} />
         <Route
           path="smart-cv"
           element={<AdminLayout element={<SmartCvForm />} />}
