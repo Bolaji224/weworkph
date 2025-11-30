@@ -47,8 +47,8 @@ const FooterSection: React.FC = () => {
         </p>
         <div className='w-full md:w-1/8 px-4 lg:w-auto mb-8'>
         <ul className='text-sm lg:flex items-center gap-4'>
-          <li className='flex items-center gap-2 [#1E2A38]'><UilEnvelope size={30} className="rounded-full" color="#0a2414" />weworkperhour.com</li>
-          <li className='flex items-center gap-2 [#1E2A38]'><UilEnvelope size={30} className="rounded-full" color="#0a2414" />contact@weworkperhour.com</li>
+          <li className='flex items-center gap-2 [#1E2A38]'><UilEnvelope size={30} className="rounded-full" color="#0a2414" />workason.com</li>
+          <li className='flex items-center gap-2 [#1E2A38]'><UilEnvelope size={30} className="rounded-full" color="#0a2414" />contact@workason.com</li>
         </ul>
       </div>
         <div className="flex mt-4 mb-3 space-x-4 bg-white rounded-xl px-4 py-2">
