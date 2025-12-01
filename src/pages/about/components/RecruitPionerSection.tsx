@@ -1,62 +1,199 @@
-import React from "react";
-import { FaTrophy, FaUser, FaUsers } from "react-icons/fa6";
-import PioneerCardSection from "./PioneerCardSection";
-import Images from "../../../components/constant/Images";
+import React from 'react';
+import { CheckCircle, Award, Users, Zap, Shield, Target, TrendingUp, Brain, Briefcase, Clock, Star } from 'lucide-react';
 
-const jobData = [
-  {
-    personImage: <FaUser color="#ee009d" size={20} />,
-    sliderImage: Images.CareerCardImageFour,
-    sliderTitle: "For job seekers",
-    sliderDescription:
-      "Weworkperhour is committed to providing a fun and transparent experience for finding work with a focus on their ethos, skills and aspirations. If you desire to work remotely as a full-time staff or a freelancer then we are your number one plug.",
-    buttonName: "View All",
-    link: "/find-job",
-  },
-  {
-    personImage: <FaUsers color="#ee009d" size={20} />,
-    sliderImage: Images.CareerCardImageFive,
-    sliderTitle: "For Companies",
-    sliderDescription: "If you are looking for a smart way to recruit a freelancer to assist you with that project or a full-time remote talent to join your team, then Weworkperhour is your go-to. At Weworkperhour we make recruitment seamless by matching quality candidates with companies at the snap of a finger.",
-    buttonName: "View All",
-    link: "/hire-talent",
-  },
-];
-
-const RecruitPioneerSection: React.FC = () => {
+export default function RecruitPionerSection() {
   return (
-    <section>
-      <div className="text-center">
-        <div className="flex items-center justify-center">
-          <p className="text-[#2AA100] flex justify-center text-center items-center gap-2 py-[0.5rem] px-[0.5rem] w-[250px] rounded-[5px] bg-[#D1FFBD]">
-            <FaTrophy /> Goals want to achieve
+    <div className="min-h-screen bg-white">
+      <div className="max-w-6xl mx-auto px-6 py-20">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Built for the Modern Workforce
+          </h2>
+          <div className="w-20 h-1 bg-gradient-to-r from-pink-500 to-green-500 mx-auto mb-6"></div>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Workason was created to solve three major problems in today's freelance industry
           </p>
         </div>
-        <h1 className="lg:text-[38px] md:text-[28px] text-[20px] mt-[0.5rem] font-sans font-semibold tracking-[1px]">
-          Become the best
-          <br />
-          Recruitment <span className="text-[#EE009D]">pioneer</span>
-        </h1>
-      </div>
-      <section className="py-[2rem] max-w-[1400px] mx-auto">
-        <div className="flex justify-center">
-          <div className="grid lg:grid-cols-2 md:grid-cols-2 lg:items-center justify-center gap-[1rem] space-y-[2rem] sm:space-y-0 py-[4rem]">
-            {jobData.map((job, index) => (
-              <PioneerCardSection
-                key={index}
-                personImage={job.personImage}
-                sliderDescription={job.sliderDescription}
-                sliderImage={job.sliderImage}
-                sliderTitle={job.sliderTitle}
-                buttonName={job.buttonName}
-                link={job.link}
-              />
-            ))}
+        
+        <div className="grid md:grid-cols-3 gap-8 mb-20">
+          <div className="group">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 hover:border-pink-300 transition-all h-full hover:shadow-lg">
+              <div className="w-14 h-14 bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl flex items-center justify-center mb-6">
+                <Shield className="w-7 h-7 text-pink-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Unverified Talent</h3>
+              <p className="text-gray-600 leading-relaxed">No guarantee of skills or credentials in traditional platforms</p>
+            </div>
+          </div>
+
+          <div className="group">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 hover:border-green-300 transition-all h-full hover:shadow-lg">
+              <div className="w-14 h-14 bg-gradient-to-br from-green-50 to-green-100 rounded-xl flex items-center justify-center mb-6">
+                <Clock className="w-7 h-7 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Missed Deadlines</h3>
+              <p className="text-gray-600 leading-relaxed">Unreliable delivery timelines impact project success</p>
+            </div>
+          </div>
+
+          <div className="group">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 hover:border-gray-400 transition-all h-full hover:shadow-lg">
+              <div className="w-14 h-14 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center mb-6">
+                <Star className="w-7 h-7 text-gray-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Trust Issues</h3>
+              <p className="text-gray-600 leading-relaxed">Poor job quality and lack of transparency</p>
+            </div>
           </div>
         </div>
-      </section>
-    </section>
-  );
-};
 
-export default RecruitPioneerSection;
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Our Solution</h2>
+            <p className="text-gray-600">Comprehensive tools designed for excellence</p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="bg-gradient-to-r from-white to-pink-50 rounded-xl p-8 border border-pink-200 hover:shadow-md transition-shadow">
+              <div className="flex items-start gap-6">
+                <div className="w-16 h-16 bg-white rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 border border-pink-200">
+                  <Award className="w-8 h-8 text-pink-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    SkillStamps™
+                  </h3>
+                  <p className="text-gray-700 text-lg leading-relaxed">
+                    A role-specific verification badge issued only after passing real assessments. Each SkillStamp represents proven competency and professional standards.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-white to-green-50 rounded-xl p-8 border border-green-200 hover:shadow-md transition-shadow">
+              <div className="flex items-start gap-6">
+                <div className="w-16 h-16 bg-white rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 border border-green-200">
+                  <TrendingUp className="w-8 h-8 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    SmartStart
+                  </h3>
+                  <p className="text-gray-700 text-lg leading-relaxed">
+                    A comprehensive training pathway that equips freelancers with the skills clients actually need. Build expertise that drives real results.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-white to-gray-50 rounded-xl p-8 border border-gray-200 hover:shadow-md transition-shadow">
+              <div className="flex items-start gap-6">
+                <div className="w-16 h-16 bg-white rounded-xl shadow-sm flex items-center justify-center flex-shrink-0 border border-gray-200">
+                  <Users className="w-8 h-8 text-gray-700" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    TalentVault
+                  </h3>
+                  <p className="text-gray-700 text-lg leading-relaxed">
+                    A dedicated space for verified, reliable talent. Access pre-vetted professionals who meet our rigorous quality standards.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-[#023020] rounded-2xl p-12 mb-20">
+          <div className="text-center">
+            <p className="text-2xl text-white leading-relaxed max-w-4xl mx-auto">
+              Every feature is designed to ensure <span className="font-bold text-pink-400">high-quality work</span>, <span className="font-bold text-green-400">fair payments</span>, and <span className="font-bold text-white">complete transparency</span> for both freelancers and employers.
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-12 border border-gray-200">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-pink-500 to-green-500 rounded-2xl mb-6 shadow-lg">
+              <Brain className="w-10 h-10 text-white" />
+            </div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              AI Matching That Works for You
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Our AI engine reads job requirements and instantly recommends the most suitable freelancers
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-pink-300 transition-colors">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Zap className="w-6 h-6 text-pink-600" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg text-gray-900 mb-2">Skills Match</h4>
+                  <p className="text-gray-600">Precise alignment of technical and soft skills with job requirements</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-green-300 transition-colors">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Award className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg text-gray-900 mb-2">Verified Credentials</h4>
+                  <p className="text-gray-600">Authenticated SkillStamps and professional certifications</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-pink-300 transition-colors">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Target className="w-6 h-6 text-pink-600" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg text-gray-900 mb-2">Completion History</h4>
+                  <p className="text-gray-600">Proven track record of successfully delivered projects</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-green-300 transition-colors">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg text-gray-900 mb-2">Role-Specific Performance</h4>
+                  <p className="text-gray-600">Demonstrated success in similar positions and industries</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="bg-[#023020] py-32">
+  <div className="max-w-5xl mx-auto px-6">
+    
+    {/* Small Heading */}
+    <p className="text-white text-lg font-semibold mb-6">
+      Our culture
+    </p>
+
+    {/* Main Text */}
+    <h1 className="text-white text-4xl md:text-6xl font-bold leading-snug max-w-3xl">
+      We love what we do and collaborate every day  
+      hungry to change the world of work
+    </h1>
+
+  </div>
+</div>
+
+
+    </div>
+  );
+}

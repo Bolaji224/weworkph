@@ -47,7 +47,7 @@ const OurPlatformSection: React.FC = () => {
           animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
           transition={{ duration: 1}}
         >
-          <img src={Images.PlatformCardImage} alt="platform" />
+          <img src={Images.CareerImageTag} alt="platform" />
         </motion.div>
       </section>
     </section>

@@ -19,7 +19,9 @@ const Navbar: React.FC = () => {
   const [activeLink, setActiveLink] = useState("");
   const [role, setRole] = useState("");
   const activeToken = sessionStorage.getItem("wwph_token");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // FIXED: Track which dropdown is open
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   useEffect(() => {
     let u: any = ls.get("wwph_usr", { decrypt: true });
@@ -39,16 +41,35 @@ const Navbar: React.FC = () => {
 
   const navigationLinks: NavLink[] = useMemo(
     () => [
-      { label: "Home", path: "/" },
+      { label: "", path: "/" },
       { label: "About Us", path: "about" },
 
-      // UPDATED AS REQUESTED
-      {
-        label: "SmartStart",
-        path: "smart-start",
+      // {
+//   label: "SmartStart",
+//   path: "smart-start",
+//   subMenu: [
+//     { label: "SkillStamp", path: "company" },
+//     { label: "SmartGuide", path: "career-tips" },
+//   ],
+// },
+
+       {
+        label: "Employers",
+        path: "employers-dashboard",
         subMenu: [
-          { label: "SkillStamp", path: "company" },
-          { label: "SmartGuide", path: "career-tips" },
+          { label: "Ordinary", path: "company" },
+          { label: "SmartStart", path: "career-tips" },
+        ],
+      },
+
+      {
+        label: "Freelancers",
+        path: "login",
+        subMenu: [
+          { label: "Ordinary", path: "login" },
+          { label: "SmartStart", path: "login" },
+          { label: "TalentVault", path: "login" },
+          { label: "In-House ", path: "login" },
         ],
       },
 
@@ -58,16 +79,9 @@ const Navbar: React.FC = () => {
   );
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
   const handleClick = (path: string) => {
     setActiveLink(path);
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const closeDropdown = () => {
-    setIsDropdownOpen(false);
   };
 
   return (
@@ -87,29 +101,28 @@ const Navbar: React.FC = () => {
 
         <nav className={`navbar-menu ${isMenuOpen ? "open" : ""} font-sans text-[14px] font-medium`}>
           {navigationLinks.map((link) => {
-            if (link.path === "login" && activeToken) {
-              return null;
-            }
+            if (link.path === "login" && activeToken) return null;
 
+            // DROPDOWN MENU
             if (link.subMenu) {
               return (
                 <div
                   key={link.label}
                   className="dropdown"
-                  onMouseEnter={toggleDropdown}
-                  onMouseLeave={toggleDropdown}
+                  onMouseEnter={() => setOpenDropdown(link.label)}
+                  onMouseLeave={() => setOpenDropdown(null)}
                 >
-                  <button className="menu-link flex items-center" onClick={toggleDropdown}>
+                  <button className="menu-link flex items-center">
                     {link.label}
                     <IoMdArrowDropdown
                       color="#2AA100"
                       className={`ml-1 transition-transform duration-300 ${
-                        isDropdownOpen ? "rotate-180" : "rotate-0"
+                        openDropdown === link.label ? "rotate-180" : "rotate-0"
                       }`}
                     />
                   </button>
 
-                  {isDropdownOpen && (
+                  {openDropdown === link.label && (
                     <div className="dropdown-menu column-layout">
                       {link.subMenu.map((subLink) => (
                         <Link
@@ -117,7 +130,7 @@ const Navbar: React.FC = () => {
                           to={subLink.path}
                           className="dropdown-link"
                           onClick={() => {
-                            closeDropdown();
+                            setOpenDropdown(null);
                             toggleMenu();
                             handleClick(subLink.path);
                           }}
@@ -131,6 +144,7 @@ const Navbar: React.FC = () => {
               );
             }
 
+            // NORMAL LINK
             return (
               <Link
                 key={link.path}
