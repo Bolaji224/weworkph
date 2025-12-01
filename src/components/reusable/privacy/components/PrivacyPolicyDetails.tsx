@@ -8,12 +8,11 @@ const PrivacyPolicyDetails = () => {
           Privacy Policy
         </h1>
         <p className="text-gray-600 mb-4">
-          Weworkperhour understands that your privacy is important and cares
-          about using your data. We do not take you for granted and value and
-          respect all our esteemed clients. We take it as a responsibility never
-          to transfer your data to a third party outside our premises and use it
-          in a way that is in line with our obligations and your rights under
-          the law.
+          Workason Ltd complies with UK GDPR and the Data Protection Act 2018. We collect and process personal data such as names, emails, phone numbers, freelancer profiles, employer details, cookies, and payment information.
+          <br />
+Your Rights:
+You may access, update, or delete your data at any time by contacting support@workason.com.
+
         </p>
         <section className="mb-8">
           <h2 className="text-xl md:text-2xl font-semibold text-gray-700 mb-3">

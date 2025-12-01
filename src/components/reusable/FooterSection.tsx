@@ -6,6 +6,7 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
 import { UilEnvelope } from '@iconscout/react-unicons';
+import { FaWhatsapp } from "react-icons/fa";
 
 const FooterSection: React.FC = () => {
   const { ref, inView } = useInView({
@@ -47,9 +48,21 @@ const FooterSection: React.FC = () => {
         </p>
         <div className='w-full md:w-1/8 px-4 lg:w-auto mb-8'>
         <ul className='text-sm lg:flex items-center gap-4'>
-          <li className='flex items-center gap-2 [#1E2A38]'><UilEnvelope size={30} className="rounded-full" color="#0a2414" />workason.com</li>
-          <li className='flex items-center gap-2 [#1E2A38]'><UilEnvelope size={30} className="rounded-full" color="#0a2414" />contact@workason.com</li>
-        </ul>
+  <li className='flex items-center gap-2 text-[#1E2A38]'>
+    <UilEnvelope size={30} className="rounded-full" color="#0a2414" />
+    workason.com
+  </li>
+
+  <li className='flex items-center gap-2 text-[#1E2A38]'>
+    <UilEnvelope size={30} className="rounded-full" color="#0a2414" />
+    contact@workason.com
+  </li>
+
+  <li className='flex items-center gap-2 text-[#1E2A38]'>
+    <FaWhatsapp size={25} color="#25D366" />
+    WhatsApp: +447344616797
+  </li>
+</ul>
       </div>
         <div className="flex mt-4 mb-3 space-x-4 bg-white rounded-xl px-4 py-2">
           <Link to="/">
@@ -79,8 +92,8 @@ const FooterSection: React.FC = () => {
         <h2 className='text-white text-base md:text-lg font-semibold mb-4'>Product</h2>
         <ul className='text-sm'>
           <li><Link to="/career-tips"  className='text-white'>SmartGuide </Link></li>
-          <li className='py-[1rem]'><Link to="/find-job" className='text-white'>Smartstart</Link></li>
-          <li><Link to="/" className='text-white'>Bonafide Company</Link></li>
+          <li className='py-[1rem]'><Link to="/smart-start" className='text-white'>Smartstart</Link></li>
+          <li><Link to="/company" className='text-white'>Skillstamp</Link></li>
         </ul>
       </div>
       <div className='border-[1px] lg:hidden block border-[#f2fcef] w-[100%]'/>
@@ -89,16 +102,16 @@ const FooterSection: React.FC = () => {
         <ul className='text-sm'>
           <li><Link to="/faq" className='text-white'>FAQ</Link></li>
           <li className='py-[1rem]'><Link to="/about" className='text-white'>About Us</Link></li>
-          <li><Link to="/" className='text-white'>Call Center</Link></li>
+          <li><Link to="/" className='text-white'>Contact us</Link></li>
         </ul>
       </div>
       <div className='w-full md:w-1/8 px-4 lg:w-auto mt-8'>
   {/* Add addresses here */}
   <div className='mt-4 text-sm text-[#FFFFFF]'>
-    <p className='font-semibold'>LAGOS ADDRESS:</p>
-    <p>3 Uncle Oluyeba Ikosi</p>
+    <p className='font-semibold'>Operations Office (Nigeria):</p>
+    <p>Lagos, Nigeria</p>
     
-    <p className='font-semibold mt-3'>UK ADDRESS:</p>
+    <p className='font-semibold mt-3'>Head Office (UK):</p>
     <p>Office 123, Unit 5</p>
     <p>399-405 Oxford Street, Mayfair</p>
     <p>London W1C 2BU</p>

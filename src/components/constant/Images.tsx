@@ -72,6 +72,7 @@ import CareerCardImageTwelve from "../../images/career_twelve.png"
 import CareerCardImageThirteen from "../../images/career_thirteen.png"
 import CareerCardImageFourteen from "../../images/career_fourteen.png"
 import CareerCardImageFifteen from "../../images/Design_three.png"
+import CareerImageTag from "../../images/career_three.png"
 import OfficeSetting from "../../images/officeSetting.jpg"
 import WorkSpace from "../../images/workspace.jpg"
 import EditorMd from "../../images/editormd.jpg"
@@ -148,6 +149,7 @@ const assets: Assets = {
   delete_basket_y,
   NetflixImage,
   AmazonImage,
+  CareerImageTag,
   OracleImage,
   UberImage,
   AddosserImage,
