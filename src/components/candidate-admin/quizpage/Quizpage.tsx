@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { module1Questions } from '../../../data/module1Questions';
+import axios from 'axios';
+import BadgeModal from './BadgeModal';
+import { httpPostWithToken } from '../../../utils/http_utils';
 
 // 1️⃣ Define a type for a question
 interface Question {
@@ -11,11 +14,13 @@ interface Question {
 }
 
 export default function QuizPage() {
-  const navigate = useNavigate(); // ✅ Add this to enable navigation
+  const [showBadge, setShowBadge] = useState(false);
+  const navigate = useNavigate(); // Add this to enable navigation
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
+  
 
   const handleAnswerSelect = (optionIndex: number) => {
     setSelectedAnswers({
@@ -40,16 +45,37 @@ export default function QuizPage() {
     navigate('/paid-course'); // ✅ Navigate to paid course
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let calculatedScore = 0;
-    (module1Questions as Question[]).forEach((q: Question, index: number) => {
+    module1Questions.forEach((q: Question, index: number) => {
       if (selectedAnswers[index] === q.answer) {
         calculatedScore++;
       }
     });
+  
     setScore(calculatedScore);
+  
+    try {
+      const response = await httpPostWithToken('skillstamp/award', {
+        course_name: "Virtual Assistant Level 1",
+        score: calculatedScore, // raw score
+        total_questions: module1Questions.length, // total questions dynamically
+      });
+  
+      console.log("Award response:", response);
+  
+      if (response.skillstamp_issued) {
+        setShowBadge(true);
+      }
+    } catch (err) {
+      console.error("Error awarding skillstamp:", err);
+    }
+  
     setShowResults(true);
   };
+  
+  
+  
 
   const handleRestart = () => {
     setCurrentQuestion(0);
@@ -121,6 +147,13 @@ export default function QuizPage() {
                 })}
               </div>
             </div>
+
+            {showBadge && (
+                          <BadgeModal
+                          message="You earned a SkillStamp!"
+                          onClose={() => setShowBadge(false)}
+                        />                        
+                        )}
 
             {/* ✅ Buttons side by side */}
             <div className="flex justify-between w-full mt-4">
