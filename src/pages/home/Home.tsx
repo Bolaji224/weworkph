@@ -6,8 +6,6 @@ import FindJobSection from './components/FindJobSection';
 import OneStepSection from './components/OneStepSection';
 import SimpleProcessSection from './components/SimpleProcessSection';
 import OurPlatformSection from './components/OurPlatformSection';
-import FeaturesJobSection from './components/FeaturesJobSection';
-import TabSection from './components/jobs_tabs/TabSection';
 import ComeJoinUsSection from './components/ComeJoinUsSection';
 import FooterSection from '../../components/reusable/FooterSection';
 import ReviewSection from './components/ReviewSection';
@@ -67,9 +65,7 @@ export const Home = () => {
       <OneStepSection />
       <SimpleProcessSection />
       <WorkasonLanding/>
-      <OurPlatformSection />
-      <FeaturesJobSection />
-      <TabSection />
+      <OurPlatformSection />   
       <ReviewSection/>
       <ComeJoinUsSection />
       <FooterSection />

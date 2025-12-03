@@ -2,7 +2,7 @@ import React from 'react';
 
 const ForCompanyAndJobSeeker: React.FC = () => {
   return (
-    <div className="bg-gray-100 p-8 md:p-12 lg:p-20">
+    <div className="bg-gray-100 p-8 md:p-12 lg:p-20 mt-12">
       <div className="max-w-8xl mx-auto bg-white shadow-lg rounded-lg p-6 md:p-10 lg:p-12 space-y-12">
         <section>
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-4">

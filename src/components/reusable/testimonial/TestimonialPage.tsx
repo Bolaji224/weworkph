@@ -48,7 +48,7 @@ const TestimonialsPage: React.FC = () => {
   return (
     <div>
       <div className="bg-gray-100 py-12 mt-[4rem]">
-        <h2 className="text-3xl font-bold text-center text-green-700 sm:text-3xl md:text-4xl font-sans mb-8">
+        <h2 className="text-3xl font-bold mt-12 text-center text-green-700 sm:text-3xl md:text-4xl font-sans mb-8">
           What Our Clients Say
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">

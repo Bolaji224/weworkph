@@ -102,7 +102,7 @@ const FooterSection: React.FC = () => {
         <ul className='text-sm'>
           <li><Link to="/faq" className='text-white'>FAQ</Link></li>
           <li className='py-[1rem]'><Link to="/about" className='text-white'>About Us</Link></li>
-          <li><Link to="/" className='text-white'>Contact us</Link></li>
+          <li><Link to="/contact" className='text-white'>Contact us</Link></li>
         </ul>
       </div>
       <div className='w-full md:w-1/8 px-4 lg:w-auto mt-8'>
@@ -121,7 +121,7 @@ const FooterSection: React.FC = () => {
     <div className='xl:max-w-[1200px] lg:max-w-[900px] mx-auto border-[1px] border-[#f2fcef] mt-[-4rem]'/>
     <section className='flex lg:flex-row xl:flex-row flex-col-reverse md:flex justify-center xl:gap-[20rem] lg:gap-[4rem] py-[4rem] lg:px-0 px-[2rem]'>
 
-      <p className='text-sm md:text-base sm:mb-0 lg:mt-0 xl:mt-0 mt-[2rem] text-white'>@Copyright WWPH 2025. All rights reserved.</p>
+      <p className='text-sm md:text-base sm:mb-0 lg:mt-0 xl:mt-0 mt-[2rem] text-white'>@Copyright Workason 2025. All rights reserved.</p>
       <div className='lg:flex xl:gap-[4rem] lg:gap-[2rem] justify-center lg:space-y-0 space-y-[2rem]'> 
        <Link to="/privacy-policy">
        <h2 className='text-white text-[14px] md:text-lg font-semibold'>Privacy Policy</h2>
