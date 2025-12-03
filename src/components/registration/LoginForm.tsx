@@ -121,7 +121,7 @@ const LoginForm: React.FC = () => {
                 <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
                   Welcome to{" "}
                   <Link to="/">
-                    <span className="text-[#ee009d]">WeWorkPerHour</span>
+                    <span className="text-[#ee009d]">Workason</span>
                   </Link>
                 </h2>
                 <p className="text-lg text-gray-600">Sign in to your Account</p>

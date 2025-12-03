@@ -32,7 +32,7 @@ const SimpleProcessSection: React.FC = () => {
             The fast and <span className='text-[#EE009D]'>simple process.</span>
           </h1>
           <p className='lg:text-[14px] md:text-[16px] text-[10px] text-[#1E2A38] font-sans font-normal mt-[0.5rem]'>
-            Weworkperhour carries the theme of technology in <br /> helping you find a Job with an easy and fast process.
+            Workason carries the theme of technology in <br /> helping you find a Job with an easy and fast process.
           </p>
         </motion.div>
       </div>

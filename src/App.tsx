@@ -11,6 +11,7 @@ import Navbar from "./components/navigation/Navbar";
 import ScrollToTop from "./components/constant/ScrollToTop";
 import Loader from "./components/reusable/loader/loader";
 
+
 // Pages
 import { Home } from "./pages/home/Home";
 import Company from "./pages/company/Company";
@@ -80,6 +81,8 @@ import ClientCareerTips from "./components/employer-admin/client-career-tips/Cli
 import EmployerChatBox from "./components/employer-admin/message/components/EmployerChatBox";
 import ApprovedCandidatesPage from "./components/employer-admin/approved-candidates/ApprovedCandidates";
 import BrowseCandidates from "./components/employer-admin/browse-candidates/BrowseCandidates";
+import ContactUs from './components/reusable/contact/Contact';
+import CookieBanner from "./components/CookieBanner";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -96,7 +99,9 @@ function App() {
       <ScrollToTop />
       <Loader />
       <Main isLoggedIn={isLoggedIn} handleLoginSuccess={handleLoginSuccess} />
+      <CookieBanner/>
     </Router>
+    
   );
 }
 
@@ -146,6 +151,7 @@ function Main({
     "/smart-guide",
     "/paid-course",
     "/smart-cv",
+    "/contact",
     "/paid-course/quiz",
     "/smart-guide/va-advanced",
   ];
@@ -176,6 +182,7 @@ function Main({
 
         {/* <Route path="job-details/:slug" element={<JobDataPage />} /> */}
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="contact" element={<ContactUs />} />
         <Route path="for-company-footer" element={<ForCompany />} />
         <Route path="faq" element={<Faq />} />
         <Route path="testimonial" element={<TestimonialsPage />} />
@@ -304,6 +311,7 @@ function Main({
           path="employers-account-settings"
           element={<EmployersLayout element={<EmployersAccountSettings />} />}
         />
+        
         <Route
           path="employers-delete-account"
           element={<EmployersLayout element={<EmployersDeleteAccount />} />}
@@ -329,6 +337,7 @@ function Main({
           <Route path="job-details/:id" element={<AdminJobDetails />} />
         </Route>
       </Routes>
+       <CookieBanner />
     </div>
   );
 }
