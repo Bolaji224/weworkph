@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 export default function CookieBanner() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [showPrefs, setShowPrefs] = useState(false);
   const [preferences, setPreferences] = useState({
     analytics: true,
@@ -143,12 +143,12 @@ export default function CookieBanner() {
 const styles = {
   banner: {
     position: "fixed",
-    top: 0,
+    bottom: 0,
     left: 0,
     right: 0,
     background: "#ffffff",
-    borderBottom: "1px solid #e0e0e0",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    borderTop: "1px solid #e0e0e0",
+    boxShadow: "0 -2px 8px rgba(0,0,0,0.1)",
     zIndex: 9999,
     padding: "20px 40px",
   } as React.CSSProperties,
