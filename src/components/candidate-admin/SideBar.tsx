@@ -90,7 +90,7 @@ const SideNav: React.FC = () => {
     } else {
       const fetchSmartGuide = async () => {
         try {
-          const resp = await httpGetWithToken('/api/v1/smartguide');
+          const resp = await httpGetWithToken('smartguide');
           if (resp.status === 'success' && resp.data) {
             const id = resp.data.guide_id || resp.data.id;
             localStorage.setItem("selectedGuideId", id); // persist across sessions
@@ -353,10 +353,10 @@ const SideNav: React.FC = () => {
               )}
             </li>
 
-            <Link to="/resume-page">
+            <Link to="/smartstart-assessment">
               <li
                 className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
-                  isActive("/resume-page")
+                  isActive("/smartstart-assessment")
                     ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
                     : "text-[#1E2A38] hover:text-[#2AA100]"
                 }`}

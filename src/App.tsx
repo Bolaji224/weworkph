@@ -120,7 +120,7 @@ function Main({
     "/register",
     "/dashboard",
     "/profile-list",
-    "/resume-page",
+    "/smartstart-assessment",
     "/messages",
     "/job-alerts",
     "/candidate-profile/:id",
@@ -154,6 +154,9 @@ function Main({
     "/contact",
     "/paid-course/quiz",
     "/smart-guide/va-advanced",
+    "/smart-guide/va-beginner",
+    "/smart-guide/editor-advanced",
+    "/smart-guide/editor-beginner",
   ];
 
   const shouldHideNavbar = hideNavbarPaths.some((path) => {
@@ -209,7 +212,7 @@ function Main({
           element={<AdminLayout element={<ProfileDetails />} />}
         />
         <Route
-          path="resume-page"
+          path="smartstart-assessment"
           element={<AdminLayout element={<ResumeSection />} />}
         />
         <Route
