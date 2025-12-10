@@ -267,7 +267,7 @@ const SmartGuidePage: React.FC = () => {
         {/* Upgrade Button */}
         <div className="flex justify-center mt-12 mb-8">
           <button
-            onClick={() => navigate("/resume-page")}
+            onClick={() => navigate("/smartstart-assessment")}
             className="px-6 py-3 rounded-xl bg-[#2AA100] text-white font-semibold hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-300"
           >
             Upgrade Role 
