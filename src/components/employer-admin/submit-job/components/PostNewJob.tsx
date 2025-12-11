@@ -568,7 +568,7 @@ const PostNewJob: React.FC = () => {
               </div>
               <input
                 type="text"
-                placeholder="Add Skills"
+                placeholder="Add Skills and press enter to save skill "
                 className="mt-2 w-full px-4 py-4 border rounded-md"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && e.currentTarget.value.trim()) {
