@@ -83,6 +83,8 @@ import ApprovedCandidatesPage from "./components/employer-admin/approved-candida
 import BrowseCandidates from "./components/employer-admin/browse-candidates/BrowseCandidates";
 import ContactUs from './components/reusable/contact/Contact';
 import CookieBanner from "./components/CookieBanner";
+import EmployersWalletPage from "./components/employer-admin/employers-payment-account/components/EmployersWalletPage";
+import { iProfileCompany } from "./models/profle";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -167,6 +169,13 @@ function Main({
     return path === location.pathname;
   });
   
+const profile: iProfileCompany = {
+  id: 1,
+  email: "test@example.com",
+  wallet: "5000", // ✅ string
+};
+
+
 
   return (
     <div>
@@ -319,10 +328,15 @@ function Main({
           path="employers-delete-account"
           element={<EmployersLayout element={<EmployersDeleteAccount />} />}
         />
-        <Route
-          path="employers-wallet-account"
-          element={<EmployersLayout element={<EmployersWallet />} />}
-        />
+  <Route
+  path="employers-wallet-account"
+  element={
+    <EmployersLayout
+      element={<EmployersWalletPage profile={profile} />}
+    />
+  }
+/>
+
         <Route
           path="employers-logout-account"
           element={<EmployersLayout element={<EmployersLogoutPage />} />}

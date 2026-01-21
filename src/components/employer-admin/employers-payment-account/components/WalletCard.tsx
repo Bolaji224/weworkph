@@ -2,17 +2,17 @@ import React from 'react';
 import { iProfileCompany } from '../../../../models/profle';
 
 interface EmployersWalletCardProps {
-  onAddFundsClick: () => void;
-  onWithdrawClick: () => void;
+  onAddFundsClick: () => void; // Called when Add Funds button is clicked
+  onWithdrawClick: () => void; // Called when Withdraw button is clicked
   profile: iProfileCompany;
 }
 
 const EmployersWalletCard: React.FC<EmployersWalletCardProps> = ({
   onAddFundsClick,
   onWithdrawClick,
-  profile
+  profile,
 }) => {
-  // Treat wallet as a string/number safely
+  // Ensure wallet is treated as number
   const balance = Number(profile?.wallet) || 0;
 
   return (
@@ -24,11 +24,12 @@ const EmployersWalletCard: React.FC<EmployersWalletCardProps> = ({
 
       <div className="mt-4 flex gap-4">
         <button
-          onClick={onAddFundsClick}
+          onClick={onAddFundsClick} // Trigger modal open
           className="bg-[#2AA100] text-white py-2 px-4 rounded-[5px] hover:bg-[#2AA100] transform transition-transform duration-300 hover:scale-105"
         >
           Add Funds
         </button>
+
         <button
           onClick={onWithdrawClick}
           className="bg-[#ee009d] text-white py-2 px-4 rounded-[5px] transform transition-transform duration-300 hover:scale-105"
