@@ -2,6 +2,7 @@ import { iSocial } from "./social";
 
 export interface iProfile {
   id?: number;
+  first_name?: string;
   name?: string;
   email?: string;
   avatar?: string;

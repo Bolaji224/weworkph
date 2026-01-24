@@ -78,6 +78,10 @@ const LoginForm: React.FC = () => {
       sessionStorage.setItem("wwph_usr", JSON.stringify(response.user));
       ls.set("wwph_token", response.access_token, { encrypt: true });
       ls.set("wwph_usr", response.user, { encrypt: true });
+
+      localStorage.setItem('userId', response.user.id.toString());
+      localStorage.setItem('email', response.user.email);
+
       updateUser(response.user);
 
       const role = Number(response.user.role);

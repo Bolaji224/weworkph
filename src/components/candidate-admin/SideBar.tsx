@@ -214,12 +214,10 @@ const SideNav: React.FC = () => {
             alt="Profile"
           />
           <div className="flex items-center gap-[0.3rem]">
-            <h1
-              className="text-md font-bold text-[#2AA100] cursor-pointer"
-              onClick={toggleDropdown}
-            >
-              {user?.name}
-            </h1>
+          <h1 className="text-md font-bold text-[#2AA100] cursor-pointer" onClick={toggleDropdown}>
+  {user?.first_name || user?.name || "User"}
+</h1>
+
             <button
               className="mt-2 text-gray-400 hover:text-white"
               onClick={toggleDropdown}
