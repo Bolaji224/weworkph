@@ -139,26 +139,27 @@ const ModernTabSignupForm = () => {
       const response = await httpPostWithoutToken("register", data)
       setCandidateSubmitting(false);
 
-      // Uncomment when integrating with your actual API
       if(response.status === "success") {
         toast({
           status : "success",
-          title : "Registration successful, proceed to login",
+          title : "Registration successful!",
+          description: "Please check your email to verify your account.",
           isClosable : true,
-        })
-        let userEmail = candidateState.email
-        setTimeout(() => {
-          navigate(`/verify-account?token${generateToken(20)}=&u=${userEmail}`)
-        }, 1000);
-      }else{
-        candidateDispatch({ type: 'SET_ERROR', payload: response.message });
-        console.log('Account created:', response.data);
-      }
-    } catch (err) {
-      setCandidateSubmitting(false);
-      candidateDispatch({ type: 'SET_ERROR', payload: 'An error occurred during registration.' });
-      console.error(err);
+        });
+         // Optional: If backend returns signed URL, navigate directly
+      // if(response.data?.verification_url) {
+      //   window.location.href = response.data.verification_url;
+      // }
+      // Otherwise, redirect to login page
+      setTimeout(() => navigate("/login"), 1500);
+    } else {
+      candidateDispatch({ type: 'SET_ERROR', payload: response.message });
     }
+  } catch (err) {
+    setCandidateSubmitting(false);
+    candidateDispatch({ type: 'SET_ERROR', payload: 'An error occurred during registration.' });
+    console.error(err);
+  }
   };
 
   // Employer form submission handler
@@ -179,25 +180,21 @@ const ModernTabSignupForm = () => {
       const response = await httpPostWithoutToken("register", data)
       setEmployerSubmitting(false);
 
-      // Uncomment when integrating with your actual API
       if(response.status == "success") {
         toast({
           status : "success",
-          title : "Registration successful, proceed to login",
+          title : "Registration successful!",
+          description: "Please check your email to verify your account.",
           isClosable : true,
-        })
-        let userEmail = employerState.email
-        setTimeout(() => {
-          navigate(`/verify-account?token${generateToken(20)}=&u=${userEmail}`)
-        }, 1000);
-      }else{
-        employerDispatch({ type: 'SET_ERROR', payload: response.message });
-        console.log('Account created:', response.data);
-      }
-    } catch (err) {
-      setEmployerSubmitting(false);
-      employerDispatch({ type: 'SET_ERROR', payload: 'An error occurred during registration.' });
-      console.error(err);
+        });
+        setTimeout(() => navigate("/login"), 1500);
+    } else {
+      employerDispatch({ type: 'SET_ERROR', payload: response.message });
+    }
+  } catch (err) {
+    setEmployerSubmitting(false);
+    employerDispatch({ type: 'SET_ERROR', payload: 'An error occurred during registration.' });
+    console.error(err);
     }
   };
 

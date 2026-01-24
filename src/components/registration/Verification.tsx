@@ -12,115 +12,77 @@ const AccountVerification: React.FC = () => {
   const search = location.search;
   const navigate = useNavigate();
   const toast = useToast();
+
+  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   
   useEffect(() => {
-    let e = (search).substring(search.indexOf("&u="))
-    e = e.replace("&u=", '');
-    if(!validateEmail(e)){
-        return navigate('/login')
-    }else{
-      setEmail(e.toString())
-    }
-}, []);
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+    const hash = params.get("hash");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      const response = await httpPostWithoutToken("verify-account", {
-          email: email, // Example email or retrieved from the form
-          token: code, // Code from user input
+    if (!id || !hash) {
+      toast({
+        status: "error",
+        title: "Invalid verification link",
+        isClosable: true,
       });
-      console.log(response)
-      if (response.status === "success") {
+      navigate("/login");
+      return;
+    }
+
+   // Call Laravel backend to verify email
+   const verifyEmail = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/email/verify/${id}/${hash}`, {
+        method: "GET",
+        headers: {
+          "Accept": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        setStatus("success");
         toast({
-          status : "success",
-          title : "Account verified successful!",
-          isClosable : true,
-        })
-        navigate("/login")  
-        setSubmitted(true);
+          status: "success",
+          title: "Account verified successfully!",
+          isClosable: true,
+        });
+
+        // Redirect to login after 2 seconds
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       } else {
+        setStatus("error");
+        const data = await response.json();
         toast({
-          status : "error",
-          title : response.message,
-          isClosable : true,
-        })
+          status: "error",
+          title: data.message || "Verification failed",
+          isClosable: true,
+        });
       }
-    } catch (error) {
-      console.error("Error verifying account:", error);
+    } catch (err) {
+      setStatus("error");
+      toast({
+        status: "error",
+        title: "An error occurred during verification",
+        isClosable: true,
+      });
+      console.error(err);
     }
   };
 
-  const resendToken = async () => {
-    const resp = await httpPostWithoutToken("resend-verification", {
-         email : email
-    })
-    if(resp.status === "success") {
-      toast({
-        status : "success",
-        title : `Email verification code sent ${email}`,
-        isClosable : true,
-      })
-    }else {
-      toast({
-        status : "error",
-        title : resp.message,
-        isClosable : true,
-      })
-    }
-    }
+  verifyEmail();
+}, [location.search, navigate, toast]);
+
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white shadow-md xl:max-w-[1300px] lg:max-w-[900px] mx-auto gap-8 flex flex-col lg:flex-row items-center">
         <div className="w-full lg:w-1/2 p-8">
-          {submitted ? (
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">Account Verified</h2>
-              <p>Your account has been successfully verified!</p>
-            </div>
-          ) : (
-            <>
-              <h2 className="text-3xl font-bold text-center mb-6">
-                Verify Your Account
-              </h2>
-              <p className="text-center mb-6 text-gray-700">
-                Please enter the verification code sent to your email.
-              </p>
-              <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                  <label
-                    className="block text-gray-700 font-bold mb-2"
-                    htmlFor="code"
-                  >
-                    Verification Code
-                  </label>
-                  <input
-                    id="code"
-                    type="text"
-                    className="w-full px-4 py-2 border-[1px] rounded-[2px] text-gray-700 focus:outline-none focus:border-[#2aa100]"
-                    placeholder="Enter verification code"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-               className="w-full bg-[#ee009d] text-white font-bold py-2 px-4 rounded hover:bg-[#2aa100] transition-transform ease-in-out duration-300 hover:scale-110"
-                >
-                  Verify Account
-                </button>
-              </form>
-              <p className="text-center mt-4 text-gray-600">
-                Didn't receive a code?{" "}
-                <Link onClick={()=>resendToken()} to="#?" className="text-[#2aa100] hover:underline">
-                  Resend
-                </Link>
-              </p>
-            </>
-          )}
+        {status === "loading" && <p>Verifying your account, please wait...</p>}
+        {status === "success" && <p className="text-green-600 font-bold">Your account has been successfully verified! Redirecting to login...</p>}
+        {status === "error" && <p className="text-red-600 font-bold">Account verification failed. Please try again or contact support.</p>}
         </div>
         <div className="w-full lg:w-1/2">
           <img src={Images.LoginImage} alt="login" className="w-full" />
