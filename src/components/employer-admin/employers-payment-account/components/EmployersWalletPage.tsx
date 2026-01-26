@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import EmployersWalletCard from './WalletCard';
 import AddFundsModal from './AddFundModal';
 import { iProfileCompany } from '../../../../models/profle';
+import PaymentsHistory from './PaymentsHistory';
 
 interface Props {
   profile: iProfileCompany;
@@ -9,9 +10,10 @@ interface Props {
 
 const EmployersWalletPage: React.FC<Props> = ({ profile }) => {
   const [showAddFunds, setShowAddFunds] = useState(false);
+  const [refreshHistory, setRefreshHistory] = useState(0);
 
   return (
-    <div>
+    <div className="space-y-6">
       <EmployersWalletCard
         profile={profile}
         onAddFundsClick={() => setShowAddFunds(true)} // opens modal
@@ -24,10 +26,14 @@ const EmployersWalletPage: React.FC<Props> = ({ profile }) => {
           onClose={() => setShowAddFunds(false)} // closes modal
           paymentDone={() => {
             console.log("Payment successful!");
-            setShowAddFunds(false); // close modal after payment
+            setShowAddFunds(false);
+            setRefreshHistory(refreshHistory + 1); 
           }}
         />
       )}
+
+      {/* Payments History */}
+      <PaymentsHistory key={refreshHistory} />
     </div>
   );
 };
