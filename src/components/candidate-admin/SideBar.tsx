@@ -424,6 +424,17 @@ const SideNav: React.FC = () => {
                 <Zap size={25} /> Career Tips
               </li>
             </Link>
+            <Link to="/reports">
+              <li
+                className={`py-2 hover:text-[#2AA100] mt-[1.5rem] hover:rounded-lg mx-[2rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
+                  isActive("/job-alerts")
+                    ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
+                    : "text-[#1E2A38] hover:text-[#2AA100]"
+                }`}
+              >
+                <FaFileAlt  size={25} /> Reports
+              </li>
+            </Link>
           </ul>
           <div className="px-[2rem] py-[2rem]">
             <p className="hover:text-[#2aa100] text-[#1E2A38] py-[1rem] font-sans text-[18px] font-medium">

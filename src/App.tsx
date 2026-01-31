@@ -85,6 +85,8 @@ import ContactUs from './components/reusable/contact/Contact';
 import CookieBanner from "./components/CookieBanner";
 import EmployersWalletPage from "./components/employer-admin/employers-payment-account/components/EmployersWalletPage";
 import { iProfileCompany } from "./models/profle";
+import DisputeResolution from "./components/candidate-admin/reports/Disputes";
+import DisputeResolutions from "./components/employer-admin/employers-report/Report";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -125,6 +127,8 @@ function Main({
     "/smartstart-assessment",
     "/messages",
     "/job-alerts",
+     "/reports",
+     "/employers-report",
     "/candidate-profile/:id",
     "/saved-jobs",
     "/my-jobs",
@@ -232,6 +236,15 @@ const profile: iProfileCompany = {
           path="job-alerts"
           element={<AdminLayout element={<JobAlert />} />}
         />
+        <Route
+  path="employers-report"
+  element={<EmployersLayout element={<DisputeResolutions />} />}
+/>
+
+        <Route
+  path="reports"
+  element={<AdminLayout element={<DisputeResolution />} />}
+/>
         <Route
           path="saved-jobs"
           element={<AdminLayout element={<SavedJobs />} />}

@@ -226,6 +226,18 @@ const SideNav: React.FC = () => {
                 <UilWallet size={25} /> Career Tips
               </li>
             </Link>
+        <Link to="/employers-report">
+  <li
+    className={`py-2 hover:text-[#2AA100] hover:rounded-lg mt-[1.5rem] text-[16px] font-sans font-semibold flex items-center gap-[1rem] ${
+      isActive("/employers-report")
+        ? "outline outline-1 outline-[#EE009D] rounded-lg px-[1rem] text-[#2AA100]"
+        : "text-[#1E2A38] hover:text-[#2AA100]"
+    }`}
+  >
+    <UilWallet size={25} /> Report
+  </li>
+</Link>
+
           </ul>
 
           {/* Progress bar */}
