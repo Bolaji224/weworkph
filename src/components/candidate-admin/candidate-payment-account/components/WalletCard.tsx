@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { httpGetWithToken, httpPostWithToken } from '../../../../utils/http_utils';
+import WithdrawalModal from './WithdrawalModal';
+
 
 interface WalletCardProps {
   email: string;
@@ -12,7 +14,7 @@ const WalletCard: React.FC<WalletCardProps> = ({ email, userId }) => {
   const [isGeneratingToken, setIsGeneratingToken] = useState(false);
   const [copiedToken, setCopiedToken] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const publicKey = 'pk_live_b9775a07f7874d2ffbbc7f87ace22b250eecc535';
+  const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
 
   useEffect(() => {
     if (userId) {
@@ -68,71 +70,72 @@ const WalletCard: React.FC<WalletCardProps> = ({ email, userId }) => {
     }
   };
 
-  const handlePaystackWithdrawal = () => {
-    const handler = (window as any).PaystackPop.setup({
-      key: publicKey,
-      email,
-      amount: 0,
-      currency: 'NGN',
-      channels: ['bank'],
-      callback: (response: any) => {
-        console.log('Withdrawal request submitted:', response);
-      },
-      onClose: () => {
-        console.log('Withdrawal process closed');
-      },
-    });
-    handler.openIframe();
+  const handleWithdrawalSuccess = () => {
+    // Refresh wallet data after successful withdrawal
+    fetchWalletData();
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-      <h2 className="text-xl font-semibold font-sans mb-4">Available Balance</h2>
-      <p className="text-3xl font-bold text-green-500 font-merri">₦{balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
-      
-      <button
-        onClick={handlePaystackWithdrawal}
-        className="mt-4 bg-[#EE009D] text-white font-sans font-light text-[16px] py-2 px-4 rounded-[5px] hover:bg-[#2AA100] transform transition-transform duration-300 hover:scale-105"
-      >
-        Withdraw Funds
-      </button>
-
-      {/* Wallet Token Section */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-semibold mb-3">Wallet Token</h3>
-        <p className="text-sm text-gray-600 mb-4">
-          Share this token with employers to receive payments
+    <>
+      <div className="bg-white shadow-md rounded-lg p-6 mb-6">
+        <h2 className="text-xl font-semibold font-sans mb-4">Available Balance</h2>
+        <p className="text-3xl font-bold text-green-500 font-merri">
+          ₦{balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
         </p>
-
-        {isLoading ? (
-          <p className="text-sm text-gray-500 mb-4">Loading token...</p>
-        ) : walletToken ? (
-          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-            <div className="flex items-center justify-between gap-2">
-              <code className="text-sm font-mono break-all text-gray-700">
-                {walletToken}
-              </code>
-              <button
-                onClick={copyToClipboard}
-                className="flex-shrink-0 ml-2 bg-blue-500 hover:bg-blue-600 text-white font-sans font-light text-[14px] py-2 px-3 rounded-[5px] transition-colors duration-200"
-              >
-                {copiedToken ? 'Copied!' : 'Copy'}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <p className="text-sm text-gray-500 mb-4">No token generated yet</p>
-        )}
-
+        
         <button
-          onClick={generateWalletToken}
-          disabled={isGeneratingToken}
-          className="mt-4 bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-sans font-light text-[16px] py-2 px-4 rounded-[5px] transform transition-transform duration-300 hover:scale-105"
+          onClick={() => setShowWithdrawalModal(true)}
+          disabled={balance <= 0}
+          className="mt-4 bg-[#EE009D] text-white font-sans font-light text-[16px] py-2 px-4 rounded-[5px] hover:bg-[#2AA100] disabled:bg-gray-400 disabled:cursor-not-allowed transform transition-transform duration-300 hover:scale-105 disabled:hover:scale-100"
         >
-          {isGeneratingToken ? 'Generating...' : walletToken ? 'Regenerate Token' : 'Generate Token'}
+          Withdraw Funds
         </button>
+
+        {/* Wallet Token Section */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <h3 className="text-lg font-semibold mb-3">Wallet Token</h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Share this token with employers to receive payments
+          </p>
+
+          {isLoading ? (
+            <p className="text-sm text-gray-500 mb-4">Loading token...</p>
+          ) : walletToken ? (
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center justify-between gap-2">
+                <code className="text-sm font-mono break-all text-gray-700">
+                  {walletToken}
+                </code>
+                <button
+                  onClick={copyToClipboard}
+                  className="flex-shrink-0 ml-2 bg-blue-500 hover:bg-blue-600 text-white font-sans font-light text-[14px] py-2 px-3 rounded-[5px] transition-colors duration-200"
+                >
+                  {copiedToken ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500 mb-4">No token generated yet</p>
+          )}
+
+          <button
+            onClick={generateWalletToken}
+            disabled={isGeneratingToken}
+            className="mt-4 bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-sans font-light text-[16px] py-2 px-4 rounded-[5px] transform transition-transform duration-300 hover:scale-105"
+          >
+            {isGeneratingToken ? 'Generating...' : walletToken ? 'Regenerate Token' : 'Generate Token'}
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* Withdrawal Modal */}
+      <WithdrawalModal
+        isOpen={showWithdrawalModal}
+        onClose={() => setShowWithdrawalModal(false)}
+        onSuccess={handleWithdrawalSuccess}
+        userId={userId}
+      />
+    </>
   );
 };
 
