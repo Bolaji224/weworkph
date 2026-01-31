@@ -8,7 +8,10 @@ import ls from "localstorage-slim";
 import { AppContext } from "../../global/state";
 import { Lock, User } from "lucide-react";
 
-// Define the State interface
+
+// -----------------------------
+// State & Reducer
+// -----------------------------
 interface State {
   email: string;
   password: string;
@@ -16,14 +19,12 @@ interface State {
   error: string | null;
 }
 
-// Define the Action types
 type Action =
   | { type: "SET_EMAIL"; payload: string }
   | { type: "SET_PASSWORD"; payload: string }
   | { type: "TOGGLE_SHOW_PASSWORD" }
   | { type: "SET_ERROR"; payload: string | null };
 
-// Initial state
 const initialState: State = {
   email: "",
   password: "",
@@ -31,7 +32,6 @@ const initialState: State = {
   error: null,
 };
 
-// Reducer function
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "SET_EMAIL":
@@ -47,6 +47,9 @@ function reducer(state: State, action: Action): State {
   }
 }
 
+// -----------------------------
+// Component
+// -----------------------------
 const LoginForm: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,57 +57,77 @@ const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const { updateUser }: any = useContext(AppContext);
 
+  // -----------------------------
+  // Handle Login Submit
+  // -----------------------------
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    let d = {
+    const payload = {
       email: state.email,
       password: state.password,
     };
     setIsSubmitting(true);
-    const response = await httpPostWithoutToken("login", d);
-    setIsSubmitting(false);
 
-    if (response.status === "success") {
-      console.log("Login success response:", response);
-      console.log("Logged in user:", response.user);
+    try {
+      // LOGIN: No token needed
+      const response = await httpPostWithoutToken("login", payload);
+      const data = response.data || response;
 
+      if (data.status === "success") {
+        toast({
+          status: "success",
+          title: "Login successful!",
+          isClosable: true,
+        });
+
+        // Save token and user
+        sessionStorage.setItem("wwph_token", data.access_token);
+        sessionStorage.setItem("wwph_usr", JSON.stringify(data.user));
+        ls.set("wwph_token", data.access_token, { encrypt: true });
+        ls.set("wwph_usr", data.user, { encrypt: true });
+
+        localStorage.setItem("userId", data.user.id.toString());
+        localStorage.setItem("email", data.user.email);
+
+        updateUser(data.user);
+
+        const role = Number(data.user.role);
+
+        setTimeout(() => {
+          if (role === 2) {
+            if (!data.user.about_company) navigate("/submit-jobs");
+            else navigate("/employers-dashboard");
+          } else if (role === 1) {
+            navigate("/candidate-dashboard");
+          } else {
+            navigate("/");
+          }
+        }, 1000);
+      } else {
+        dispatch({ type: "SET_ERROR", payload: data.message || "Login failed" });
+        toast({
+          status: "error",
+          title: data.message || "Login failed",
+          isClosable: true,
+        });
+      }
+    } catch (err: any) {
+      console.error("Login error:", err);
+      const msg = err.response?.data?.message || err.message || "Login failed";
+      dispatch({ type: "SET_ERROR", payload: msg });
       toast({
-        status: "success",
-        title: "Login successful!",
+        status: "error",
+        title: msg,
         isClosable: true,
       });
-
-      sessionStorage.setItem("wwph_token", response.access_token);
-      sessionStorage.setItem("wwph_usr", JSON.stringify(response.user));
-      ls.set("wwph_token", response.access_token, { encrypt: true });
-      ls.set("wwph_usr", response.user, { encrypt: true });
-
-      localStorage.setItem('userId', response.user.id.toString());
-      localStorage.setItem('email', response.user.email);
-
-      updateUser(response.user);
-
-      const role = Number(response.user.role);
-
-      setTimeout(() => {
-        if (role === 2) {
-          // Employer / Company
-          if (!response.user.about_company) {
-            navigate("/submit-jobs");
-          } else {
-            navigate("/employers-dashboard");
-          }
-        } else if (role === 1) {
-          // Candidate
-          navigate("/candidate-dashboard"); // or "/resume-page" if you prefer
-        } else {
-          // fallback
-          navigate("/");
-        }
-      }, 1000);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  // -----------------------------
+  // Social logins
+  // -----------------------------
   const handleGoogleLogin = () => {
     // Add logic for Google login
   };
@@ -112,6 +135,10 @@ const LoginForm: React.FC = () => {
   const handleAppleLogin = () => {
     // Add logic for Apple ID login
   };
+
+  // -----------------------------
+  // Render Form
+  // -----------------------------
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center p-4">

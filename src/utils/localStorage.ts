@@ -1,5 +1,53 @@
 // src/utils/localstorage.ts
 
+
+// src/utils/localstorage.ts
+
+// ---------------------------
+// Auth Keys
+// ---------------------------
+export const LS_AUTH_KEY = "auth";
+
+// ---------------------------
+// Types
+// ---------------------------
+export type AuthData = {
+  token: string;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    // add more fields if needed
+  };
+};
+
+// Save auth info
+export function saveAuth(auth: AuthData) {
+  localStorage.setItem(LS_AUTH_KEY, JSON.stringify(auth));
+}
+
+// Load auth info
+export function loadAuth(): AuthData | null {
+  const raw = localStorage.getItem(LS_AUTH_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as AuthData;
+  } catch {
+    return null;
+  }
+}
+
+// Remove auth info (logout)
+export function clearAuth() {
+  localStorage.removeItem(LS_AUTH_KEY);
+}
+
+// Get token only
+export function getToken(): string | null {
+  const auth = loadAuth();
+  return auth?.token || null;
+}
+
 // ---------------------------
 // Types
 // ---------------------------
