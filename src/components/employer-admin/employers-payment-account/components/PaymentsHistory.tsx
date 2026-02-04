@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { httpGetWithToken, httpPostWithToken } from '../../../../utils/http_utils';
 import { useToast } from '@chakra-ui/react';
-import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
+
+interface Milestone {
+  id: number;
+  title: string;
+  percentage: number;
+  amount: number;
+  status: string;
+  work_status: 'pending' | 'submitted' | 'approved' | 'rejected';
+  work_approved_at: string | null;
+  employer_note: string | null;
+}
 
 interface Payment {
   id: number;
@@ -22,13 +33,7 @@ interface Payment {
     last_name: string;
     email: string;
   };
-  milestones?: Array<{
-    id: number;
-    title: string;
-    percentage: number;
-    amount: number;
-    status: string;
-  }>;
+  milestones?: Milestone[];
 }
 
 interface PaginatedResponse {
@@ -48,9 +53,14 @@ const PaymentsHistory: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'completed' | 'failed'>('all');
   const [filterType, setFilterType] = useState<'all' | 'escrow' | 'milestone'>('all');
   const [processingId, setProcessingId] = useState<number | null>(null);
-  const [rejectModal, setRejectModal] = useState<{ show: boolean; payment: Payment | null; reason: string }>({
+  const [expandedPayment, setExpandedPayment] = useState<number | null>(null);
+  const [rejectModal, setRejectModal] = useState<{
+    show: boolean;
+    payment?: Payment;
+    milestone?: Milestone;
+    reason: string;
+  }>({
     show: false,
-    payment: null,
     reason: '',
   });
   const toast = useToast();
@@ -91,6 +101,7 @@ const PaymentsHistory: React.FC = () => {
     }
   };
 
+  // For ESCROW payments - approve entire work
   const handleApproveWork = async (payment: Payment) => {
     if (!window.confirm(`Approve work completed by ${payment.candidate?.first_name} ${payment.candidate?.last_name}?\n\nThis will allow them to withdraw ₦${payment.amount.toLocaleString()}`)) {
       return;
@@ -109,7 +120,7 @@ const PaymentsHistory: React.FC = () => {
           description: 'Candidate can now withdraw funds.',
           isClosable: true,
         });
-        fetchPayments(currentPage); // Refresh list
+        fetchPayments(currentPage);
       } else {
         toast({
           status: 'error',
@@ -129,8 +140,47 @@ const PaymentsHistory: React.FC = () => {
     }
   };
 
-  const handleRejectWork = async () => {
-    if (!rejectModal.payment || !rejectModal.reason.trim()) {
+  // For MILESTONE payments - approve individual milestone
+  const handleApproveMilestone = async (milestone: Milestone, payment: Payment) => {
+    if (!window.confirm(`Approve milestone "${milestone.title}"?\n\nAmount: ₦${milestone.amount.toLocaleString()}\n\nThis will allow the candidate to withdraw these funds.`)) {
+      return;
+    }
+
+    setProcessingId(milestone.id);
+    try {
+      const response = await httpPostWithToken('employer/approve-milestone', {
+        milestone_id: milestone.id,
+      });
+
+      if (response?.status === 'success') {
+        toast({
+          status: 'success',
+          title: 'Milestone Approved!',
+          description: `"${milestone.title}" approved. Candidate can withdraw ₦${milestone.amount.toLocaleString()}.`,
+          isClosable: true,
+        });
+        fetchPayments(currentPage);
+      } else {
+        toast({
+          status: 'error',
+          title: response?.error || 'Failed to approve milestone',
+          isClosable: true,
+        });
+      }
+    } catch (error: any) {
+      console.error('Error approving milestone:', error);
+      toast({
+        status: 'error',
+        title: error?.response?.data?.error || 'Failed to approve milestone',
+        isClosable: true,
+      });
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!rejectModal.reason.trim()) {
       toast({
         status: 'error',
         title: 'Please provide a reason for rejection',
@@ -139,34 +189,39 @@ const PaymentsHistory: React.FC = () => {
       return;
     }
 
-    setProcessingId(rejectModal.payment.id);
+    const isMilestone = !!rejectModal.milestone;
+    const id = isMilestone ? rejectModal.milestone!.id : rejectModal.payment!.id;
+    
+    setProcessingId(id);
     try {
-      const response = await httpPostWithToken('employer/reject-work', {
-        payment_id: rejectModal.payment.id,
-        reason: rejectModal.reason,
-      });
+      const endpoint = isMilestone ? 'employer/reject-milestone' : 'employer/reject-work';
+      const payload = isMilestone 
+        ? { milestone_id: id, reason: rejectModal.reason }
+        : { payment_id: id, reason: rejectModal.reason };
+
+      const response = await httpPostWithToken(endpoint, payload);
 
       if (response?.status === 'success') {
         toast({
           status: 'success',
-          title: 'Work Rejected',
+          title: isMilestone ? 'Milestone Rejected' : 'Work Rejected',
           description: 'Candidate has been notified.',
           isClosable: true,
         });
-        setRejectModal({ show: false, payment: null, reason: '' });
-        fetchPayments(currentPage); // Refresh list
+        setRejectModal({ show: false, reason: '' });
+        fetchPayments(currentPage);
       } else {
         toast({
           status: 'error',
-          title: response?.error || 'Failed to reject work',
+          title: response?.error || 'Failed to reject',
           isClosable: true,
         });
       }
     } catch (error: any) {
-      console.error('Error rejecting work:', error);
+      console.error('Error rejecting:', error);
       toast({
         status: 'error',
-        title: error?.response?.data?.error || 'Failed to reject work',
+        title: error?.response?.data?.error || 'Failed to reject',
         isClosable: true,
       });
     } finally {
@@ -190,11 +245,13 @@ const PaymentsHistory: React.FC = () => {
   const getWorkStatusBadge = (workStatus: string) => {
     switch (workStatus) {
       case 'approved':
-        return { color: 'bg-green-100 text-green-800', text: 'Work Approved' };
+        return { color: 'bg-green-100 text-green-800', text: 'Approved' };
       case 'rejected':
-        return { color: 'bg-red-100 text-red-800', text: 'Work Rejected' };
+        return { color: 'bg-red-100 text-red-800', text: 'Rejected' };
+      case 'submitted':
+        return { color: 'bg-blue-100 text-blue-800', text: 'Submitted' };
       default:
-        return { color: 'bg-amber-100 text-amber-800', text: 'Pending Review' };
+        return { color: 'bg-amber-100 text-amber-800', text: 'Pending' };
     }
   };
 
@@ -299,9 +356,6 @@ const PaymentsHistory: React.FC = () => {
                   Payment Status
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">
-                  Work Status
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-900 uppercase">
                   Date
                 </th>
                 <th className="px-4 py-3 text-center text-xs font-semibold text-gray-900 uppercase">
@@ -311,86 +365,174 @@ const PaymentsHistory: React.FC = () => {
             </thead>
             <tbody>
               {payments.map((payment) => {
-                const workStatusBadge = getWorkStatusBadge(payment.work_status || 'pending');
+                const isExpanded = expandedPayment === payment.id;
+                const hasMilestones = payment.type === 'milestone' && payment.milestones && payment.milestones.length > 0;
+
                 return (
-                  <tr key={payment.id} className="border-b border-gray-200 hover:bg-gray-50">
-                    <td className="px-4 py-4">
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {payment.candidate?.first_name} {payment.candidate?.last_name}
+                  <React.Fragment key={payment.id}>
+                    <tr className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="px-4 py-4">
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {payment.candidate?.first_name} {payment.candidate?.last_name}
+                          </p>
+                          <p className="text-sm text-gray-500">{payment.candidate?.email}</p>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <p className="font-semibold text-gray-900">
+                          ₦{payment.amount.toLocaleString()}
                         </p>
-                        <p className="text-sm text-gray-500">{payment.candidate?.email}</p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <p className="font-semibold text-gray-900">
-                        ₦{payment.amount.toLocaleString()}
-                      </p>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getTypeBadgeColor(
-                          payment.type
-                        )}`}
-                      >
-                        {payment.type.charAt(0).toUpperCase() + payment.type.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
-                          payment.status
-                        )}`}
-                      >
-                        {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${workStatusBadge.color}`}
-                      >
-                        {workStatusBadge.text}
-                      </span>
-                      {payment.employer_note && (
-                        <p className="text-xs text-gray-500 mt-1">Note: {payment.employer_note}</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-4">
-                      <p className="text-sm text-gray-600">{formatDate(payment.created_at)}</p>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex items-center justify-center gap-2">
-                        {payment.status === 'completed' && payment.work_status === 'pending' ? (
-                          <>
+                      </td>
+                      <td className="px-4 py-4">
+                        <span
+                          className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getTypeBadgeColor(
+                            payment.type
+                          )}`}
+                        >
+                          {payment.type.charAt(0).toUpperCase() + payment.type.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <span
+                          className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
+                            payment.status
+                          )}`}
+                        >
+                          {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <p className="text-sm text-gray-600">{formatDate(payment.created_at)}</p>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          {/* For ESCROW payments */}
+                          {payment.type === 'escrow' && payment.status === 'completed' && payment.work_status === 'pending' ? (
+                            <>
+                              <button
+                                onClick={() => handleApproveWork(payment)}
+                                disabled={processingId === payment.id}
+                                className="flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded text-xs font-medium transition-colors"
+                                title="Approve completed work"
+                              >
+                                <CheckCircle className="w-3 h-3" />
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => setRejectModal({ show: true, payment, reason: '' })}
+                                disabled={processingId === payment.id}
+                                className="flex items-center gap-1 px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded text-xs font-medium transition-colors"
+                                title="Reject work"
+                              >
+                                <XCircle className="w-3 h-3" />
+                                Reject
+                              </button>
+                            </>
+                          ) : payment.type === 'escrow' && payment.work_status === 'approved' ? (
+                            <span className="text-xs text-green-600 font-medium">✓ Approved</span>
+                          ) : payment.type === 'escrow' && payment.work_status === 'rejected' ? (
+                            <span className="text-xs text-red-600 font-medium">✗ Rejected</span>
+                          ) : payment.type === 'escrow' && payment.status === 'pending' ? (
+                            <span className="text-xs text-amber-600 font-medium">⏳ Awaiting Admin Approval</span>
+                          ) : payment.type === 'escrow' && payment.status === 'failed' ? (
+                            <span className="text-xs text-red-600 font-medium">✗ Payment Failed</span>
+                          ) : null}
+
+                          {/* For MILESTONE payments - show expand button */}
+                          {hasMilestones && payment.status === 'completed' && (
                             <button
-                              onClick={() => handleApproveWork(payment)}
-                              disabled={processingId === payment.id}
-                              className="flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded text-xs font-medium transition-colors"
-                              title="Approve completed work"
+                              onClick={() => setExpandedPayment(isExpanded ? null : payment.id)}
+                              className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded text-xs font-medium transition-colors"
                             >
-                              <CheckCircle className="w-3 h-3" />
-                              Approve
+                              {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                              {isExpanded ? 'Hide' : 'View'} Milestones
                             </button>
-                            <button
-                              onClick={() => setRejectModal({ show: true, payment, reason: '' })}
-                              disabled={processingId === payment.id}
-                              className="flex items-center gap-1 px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded text-xs font-medium transition-colors"
-                              title="Reject work"
-                            >
-                              <XCircle className="w-3 h-3" />
-                              Reject
-                            </button>
-                          </>
-                        ) : payment.work_status === 'approved' ? (
-                          <span className="text-xs text-green-600 font-medium">✓ Approved</span>
-                        ) : payment.work_status === 'rejected' ? (
-                          <span className="text-xs text-red-600 font-medium">✗ Rejected</span>
-                        ) : payment.status !== 'completed' ? (
-                          <span className="text-xs text-gray-500">Awaiting payment</span>
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
+                          )}
+
+                          {payment.type === 'milestone' && payment.status === 'pending' && (
+                            <span className="text-xs text-amber-600 font-medium">⏳ Awaiting Admin Approval</span>
+                          )}
+                          {payment.type === 'milestone' && payment.status === 'failed' && (
+                            <span className="text-xs text-red-600 font-medium">✗ Payment Failed</span>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+
+                    {/* Expanded milestones view */}
+                    {isExpanded && hasMilestones && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-4 bg-purple-50">
+                          <div className="space-y-3">
+                            <h4 className="font-semibold text-gray-900 mb-3">Milestones</h4>
+                            {payment.milestones!.map((milestone) => {
+                              const milestoneStatus = getWorkStatusBadge(milestone.work_status || 'pending');
+                              return (
+                                <div
+                                  key={milestone.id}
+                                  className="bg-white rounded-lg border border-purple-200 p-4"
+                                >
+                                  <div className="flex items-start justify-between">
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <h5 className="font-medium text-gray-900">{milestone.title}</h5>
+                                        <span
+                                          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${milestoneStatus.color}`}
+                                        >
+                                          {milestoneStatus.text}
+                                        </span>
+                                      </div>
+                                      <div className="text-sm text-gray-600 space-y-1">
+                                        <p>Amount: <span className="font-semibold">₦{milestone.amount.toLocaleString()}</span> ({milestone.percentage}%)</p>
+                                        {milestone.work_approved_at && (
+                                          <p className="text-green-600">Approved on {formatDate(milestone.work_approved_at)}</p>
+                                        )}
+                                        {milestone.employer_note && (
+                                          <p className="text-red-600">Rejection reason: {milestone.employer_note}</p>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Milestone actions */}
+                                    <div className="flex items-center gap-2 ml-4">
+                                      {/* Admin hasn't approved the payment yet — buttons stay hidden */}
+                                      {payment.status !== 'completed' ? (
+                                        <span className="text-xs text-amber-600 font-medium">⏳ Awaiting Admin Approval</span>
+                                      ) : milestone.work_status === 'pending' ? (
+                                        <>
+                                          <button
+                                            onClick={() => handleApproveMilestone(milestone, payment)}
+                                            disabled={processingId === milestone.id}
+                                            className="flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded text-xs font-medium transition-colors"
+                                          >
+                                            <CheckCircle className="w-3 h-3" />
+                                            Approve
+                                          </button>
+                                          <button
+                                            onClick={() => setRejectModal({ show: true, milestone, reason: '' })}
+                                            disabled={processingId === milestone.id}
+                                            className="flex items-center gap-1 px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded text-xs font-medium transition-colors"
+                                          >
+                                            <XCircle className="w-3 h-3" />
+                                            Reject
+                                          </button>
+                                        </>
+                                      ) : milestone.work_status === 'approved' ? (
+                                        <span className="text-xs text-green-600 font-medium">✓ Approved</span>
+                                      ) : milestone.work_status === 'rejected' ? (
+                                        <span className="text-xs text-red-600 font-medium">✗ Rejected</span>
+                                      ) : null}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 );
               })}
             </tbody>
@@ -443,7 +585,7 @@ const PaymentsHistory: React.FC = () => {
       )}
 
       {/* Reject Modal */}
-      {rejectModal.show && rejectModal.payment && (
+      {rejectModal.show && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
             <div className="p-6">
@@ -451,11 +593,17 @@ const PaymentsHistory: React.FC = () => {
                 <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
                   <XCircle className="w-6 h-6 text-red-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">Reject Work</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Reject {rejectModal.milestone ? 'Milestone' : 'Work'}
+                </h3>
               </div>
 
               <p className="text-gray-600 mb-4">
-                Rejecting work from <strong>{rejectModal.payment.candidate?.first_name} {rejectModal.payment.candidate?.last_name}</strong>
+                {rejectModal.milestone ? (
+                  <>Rejecting milestone: <strong>{rejectModal.milestone.title}</strong></>
+                ) : (
+                  <>Rejecting work from <strong>{rejectModal.payment?.candidate?.first_name} {rejectModal.payment?.candidate?.last_name}</strong></>
+                )}
               </p>
 
               <div className="mb-4">
@@ -465,7 +613,7 @@ const PaymentsHistory: React.FC = () => {
                 <textarea
                   value={rejectModal.reason}
                   onChange={(e) => setRejectModal({ ...rejectModal, reason: e.target.value })}
-                  placeholder="Please explain why the work is being rejected..."
+                  placeholder="Please explain why this is being rejected..."
                   rows={4}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500"
                   maxLength={500}
@@ -475,18 +623,18 @@ const PaymentsHistory: React.FC = () => {
 
               <div className="flex gap-3">
                 <button
-                  onClick={() => setRejectModal({ show: false, payment: null, reason: '' })}
-                  disabled={processingId === rejectModal.payment.id}
+                  onClick={() => setRejectModal({ show: false, reason: '' })}
+                  disabled={!!processingId}
                   className="flex-1 px-6 py-3 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 disabled:bg-gray-100 font-medium text-gray-700"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={handleRejectWork}
-                  disabled={processingId === rejectModal.payment.id || !rejectModal.reason.trim()}
+                  onClick={handleReject}
+                  disabled={!!processingId || !rejectModal.reason.trim()}
                   className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium"
                 >
-                  {processingId === rejectModal.payment.id ? 'Processing...' : 'Reject Work'}
+                  {processingId ? 'Processing...' : 'Reject'}
                 </button>
               </div>
             </div>
