@@ -173,22 +173,24 @@ const SmartCvForm: React.FC = () => {
     }, 'image/jpeg', 0.95);
   };
 
-  const handleSubmit = async () => {
+const handleSubmit = async () => {
+  try {
+    // Create FormData
     const form = new FormData();
 
-     // DEBUG: Check what we're sending
-  console.log('Form data before sending:', formData);
-  console.log('experienceTitle specifically:', formData.experienceTitle);
+    // DEBUG logs
+    console.log('Form data before sending:', formData);
+    console.log('experienceTitle specifically:', formData.experienceTitle);
 
-  // Append photo 
-  if (finalImage) {
-    form.append("photo", finalImage, finalImage.name);
-    console.log('Photo attached:', finalImage.name, finalImage.type);
-  } else {
-    console.warn('No photo uploaded!');
-  }
-  
-    // Append all text fields
+    // Append photo
+    if (finalImage) {
+      form.append("photo", finalImage, finalImage.name);
+      console.log('Photo attached:', finalImage.name, finalImage.type);
+    } else {
+      console.warn('No photo uploaded!');
+    }
+
+    // Append all other fields
     Object.keys(formData).forEach((key) => {
       const value = (formData as any)[key];
       if (Array.isArray(value)) {
@@ -197,35 +199,32 @@ const SmartCvForm: React.FC = () => {
         form.append(key, value);
       }
     });
-  
-    try {
-      const response = await axios.post(`${APP_API_URL}/cv`, form, {
-          headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}`,
-          }
-      });
-  
-      // Backend returns the URL of the saved SmartCV
-      const cvUrl = response.data.cv_url;
-  
-      // Save SmartCV URL to user profile if needed
-      await axios.post(`${APP_API_URL}/profile/update-smartcv`, {
-          smartcv: cvUrl
-      }, {
-          headers: {
-              Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}`
-          }
-      });
-  
-      alert("SmartCV saved! You can now view it in your profile.");
-  
-  } catch (err) {
-      console.error("CV generation failed:", err);
-      alert("Something went wrong");
+
+    // Send to CV generation endpoint
+    const response = await axios.post(`${APP_API_URL}/cv`, form, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}`,
+      }
+    });
+
+    // The backend already saved the SmartCV to user profile
+    const cvUrl = response.data.cv_url;
+    console.log("SmartCV saved at:", cvUrl);
+
+    alert("SmartCV saved! You can now view it in your profile.");
+
+  } catch (err: any) {
+    console.error("CV generation failed:", err);
+    const message = err.response?.data?.message || err.message || "Something went wrong";
+    alert(message);
   }
+};
+
+
+
+
   
-}
 
   const skillOptions = [
     'Calendar Management',

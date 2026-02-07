@@ -87,6 +87,7 @@ import EmployersWalletPage from "./components/employer-admin/employers-payment-a
 import { iProfileCompany } from "./models/profle";
 import DisputeResolution from "./components/candidate-admin/reports/Disputes";
 import DisputeResolutions from "./components/employer-admin/employers-report/Report";
+import { GoogleOAuthProvider } from '@react-oauth/google'; 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -184,6 +185,7 @@ const profile: iProfileCompany = {
   return (
     <div>
       {!shouldHideNavbar && <Navbar />}
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ""}>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
@@ -368,6 +370,7 @@ const profile: iProfileCompany = {
         </Route>
       </Routes>
        <CookieBanner />
+      </GoogleOAuthProvider>
     </div>
   );
 }

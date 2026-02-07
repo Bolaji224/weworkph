@@ -7,6 +7,7 @@ import { useToast } from "@chakra-ui/react";
 import ls from "localstorage-slim";
 import { AppContext } from "../../global/state";
 import { Lock, User } from "lucide-react";
+import { useGoogleLogin } from '@react-oauth/google';
 
 
 // -----------------------------
@@ -56,6 +57,89 @@ const LoginForm: React.FC = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const { updateUser }: any = useContext(AppContext);
+
+  // Google Login Handler
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      console.log("Google token received:", tokenResponse);
+      
+      try {
+        // Get user info from Google
+        const userInfoResponse = await fetch(
+          'https://www.googleapis.com/oauth2/v3/userinfo',
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+            },
+          }
+        );
+        
+        const userInfo = await userInfoResponse.json();
+        console.log("Google user info:", userInfo);
+        
+        // Send to your backend for authentication
+        const response = await httpPostWithoutToken("auth/google", {
+          email: userInfo.email,
+          name: userInfo.name,
+          google_id: userInfo.sub,
+          picture: userInfo.picture,
+        });
+        
+        const data = response.data || response;
+        console.log("Backend response:", data);
+        
+        if (data.status === "success") {
+          toast({
+            status: "success",
+            title: "Login successful!",
+            isClosable: true,
+          });
+          
+          // Save token and user (same as regular login)
+          sessionStorage.setItem("wwph_token", data.access_token);
+          sessionStorage.setItem("wwph_usr", JSON.stringify(data.user));
+          ls.set("wwph_token", data.access_token, { encrypt: true });
+          ls.set("wwph_usr", data.user, { encrypt: true });
+          localStorage.setItem("userId", data.user.id.toString());
+          localStorage.setItem("email", data.user.email);
+          
+          updateUser(data.user);
+          
+          const role = Number(data.user.role);
+          setTimeout(() => {
+            if (role === 2) {
+              navigate(data.user.about_company ? "/employers-dashboard" : "/submit-jobs");
+            } else if (role === 1) {
+              navigate("/candidate-dashboard");
+            } else {
+              navigate("/");
+            }
+          }, 1000);
+        } else {
+          toast({
+            status: "error",
+            title: data.message || "Google login failed",
+            isClosable: true,
+          });
+        }
+      } catch (error: any) {
+        console.error("Google login error:", error);
+        toast({
+          status: "error",
+          title: error.response?.data?.message || "Google login failed",
+          isClosable: true,
+        });
+      }
+    },
+    onError: (error) => {
+      console.error("Google OAuth error:", error);
+      toast({
+        status: "error",
+        title: "Google login failed",
+        isClosable: true,
+      });
+    },
+  });
 
   // -----------------------------
   // Handle Login Submit
@@ -128,8 +212,8 @@ const LoginForm: React.FC = () => {
   // -----------------------------
   // Social logins
   // -----------------------------
-  const handleGoogleLogin = () => {
-    // Add logic for Google login
+   const handleGoogleLogin = () => {
+    googleLogin();
   };
 
   const handleAppleLogin = () => {
