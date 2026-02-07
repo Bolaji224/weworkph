@@ -155,6 +155,8 @@ const SmartStartAssessment: React.FC = () => {
       const selectedGuideId = `${role}-${exp}`;
   
       // ✅ Save to backend
+      console.log("Sending guideId:", selectedGuideId);
+console.log("Sending selections:", selections);
       await axios.post(
         `${APP_API_URL}/smartguide`,
         { selections, guideId: selectedGuideId },
@@ -167,10 +169,19 @@ const SmartStartAssessment: React.FC = () => {
   
       // Navigate
       navigate(`/smart-guide/${selectedGuideId}`);
-    } catch (err) {
-      console.error("Error saving SmartGuide:", err);
-      alert("Could not save your SmartGuide. Try again.");
-    }
+    }  catch (err: any) {
+  console.log("FULL ERROR:", err.response?.data);
+  console.log("STATUS:", err.response?.status);
+  console.log("VALIDATION ERRORS:", err.response?.data?.errors);
+
+  alert(
+    err.response?.data?.message ||
+    JSON.stringify(err.response?.data?.errors) ||
+    "Could not save SmartGuide"
+  );
+}
+
+
   };
 
   // =========================
@@ -363,6 +374,7 @@ const SmartStartAssessment: React.FC = () => {
           >
             {currentStep === questions.length - 1 ? 'View Results' : 'Next'}
             <ArrowRight className="w-4 h-4" />
+            
           </button>
         </div>
 
