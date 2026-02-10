@@ -371,7 +371,7 @@ const AddFundsModal: React.FC<AddFundsModalProps> = ({ onClose, profile, payment
                 <div className="bg-gray-50 border rounded-lg p-4">
                   <h3 className="font-semibold text-gray-800 mb-1">Milestone Breakdown</h3>
                   <p className="text-sm text-gray-500 mb-3">
-                    Define each phase and how much (%) of the total payment it gets.
+                    Define each phase and how much (%) of the total payment it gets.Total must equal 100%.
                   </p>
 
                   {steps.map((s, i) => (
