@@ -1,8 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { httpPostWithToken } from '../../../../utils/http_utils';
 import { iProfileCompany } from '../../../../models/profle';
 import { useToast } from '@chakra-ui/react';
 import PaystackPayment from './PaystackPayment';
+import { Info, AlertCircle } from 'lucide-react';
+
+interface PaymentBreakdown {
+  base_amount: number;
+  freelancer_commission: number;
+  freelancer_commission_vat: number;
+  freelancer_receives: number;
+  employer_fee: number;
+  employer_fee_vat: number;
+  employer_pays_total: number;
+  platform_earnings: number;
+  platform_vat: number;
+  platform_total: number;
+}
 
 interface AddFundsModalProps {
   onClose: () => void;
@@ -20,6 +34,8 @@ const AddFundsModal: React.FC<AddFundsModalProps> = ({ onClose, profile, payment
   const [candidateName, setCandidateName] = useState("");
   const [paymentId, setPaymentId] = useState<number | null>(null);
   const [paymentReference, setPaymentReference] = useState("");
+  const [breakdown, setBreakdown] = useState<PaymentBreakdown | null>(null);
+  const [loadingBreakdown, setLoadingBreakdown] = useState(false);
 
   const [mode, setMode] = useState<"idle" | "choose" | "escrow" | "milestone">("idle");
   const [steps, setSteps] = useState<{ title: string; percent: number | "" }[]>([
@@ -28,6 +44,32 @@ const AddFundsModal: React.FC<AddFundsModalProps> = ({ onClose, profile, payment
 
   const [userId, setUserId] = useState("");
   const toast = useToast();
+
+  // Fetch breakdown when amount changes
+  useEffect(() => {
+    if (amount >= 100 && tokenValid) {
+      fetchBreakdown();
+    } else {
+      setBreakdown(null);
+    }
+  }, [amount, tokenValid]);
+
+  const fetchBreakdown = async () => {
+    setLoadingBreakdown(true);
+    try {
+      const response = await httpPostWithToken('employer/payment-breakdown', {
+        amount: amount,
+      });
+
+      if (response?.status === 'success') {
+        setBreakdown(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching breakdown:', error);
+    } finally {
+      setLoadingBreakdown(false);
+    }
+  };
 
   // Validate candidate wallet token
   const validateToken = async () => {
@@ -198,7 +240,7 @@ const AddFundsModal: React.FC<AddFundsModalProps> = ({ onClose, profile, payment
         {showPayment && paymentId ? (
           <>
             <PaystackPayment
-              amount={amount}
+              amount={breakdown?.employer_pays_total || amount} 
               email={profile?.email || ""}
               reference={paymentReference}
               paymentId={paymentId}
@@ -273,22 +315,82 @@ const AddFundsModal: React.FC<AddFundsModalProps> = ({ onClose, profile, payment
             {tokenValid && mode === "idle" && (
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Amount (NGN)
+                  Base Amount (NGN)
                 </label>
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
                   placeholder="Enter amount"
-                  className="w-full border rounded-lg p-2 mb-4"
+                  className="w-full border rounded-lg p-2 mb-2"
                 />
 
-                <button
-                  onClick={() => setMode("choose")}
-                  className="bg-[#2AA100] text-white py-2 px-4 rounded w-full"
-                >
-                  Next: Choose Payment Type
-                </button>
+                {/* Fee Breakdown */}
+                {loadingBreakdown && (
+                  <div className="text-center py-3 text-sm text-gray-500">
+                    Calculating fees...
+                  </div>
+                )}
+
+                {breakdown && !loadingBreakdown && (
+                  <div className="space-y-3 mt-4">
+                    {/* Info Banner */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <div className="flex items-start gap-2">
+                        <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-blue-900">
+                          Platform charges 20% from freelancer + 5% from you. VAT (7.5%) applies only to platform earnings.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Breakdown Grid */}
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* Freelancer Side */}
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                        <div className="text-xs font-semibold text-green-800 mb-2">Freelancer Gets</div>
+                        <div className="text-lg font-bold text-green-600">
+                          ₦{breakdown.freelancer_receives.toLocaleString()}
+                        </div>
+                        <div className="text-xs text-gray-600 mt-1">
+                          <div>-₦{breakdown.freelancer_commission.toLocaleString()} (20%)</div>
+                          <div>-₦{breakdown.freelancer_commission_vat.toLocaleString()} (VAT)</div>
+                        </div>
+                      </div>
+
+                      {/* Employer Side */}
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <div className="text-xs font-semibold text-blue-800 mb-2">You Pay Total</div>
+                        <div className="text-lg font-bold text-blue-600">
+                          ₦{breakdown.employer_pays_total.toLocaleString()}
+                        </div>
+                        <div className="text-xs text-gray-600 mt-1">
+                          <div>+₦{breakdown.employer_fee.toLocaleString()} (5%)</div>
+                          <div>+₦{breakdown.employer_fee_vat.toLocaleString()} (VAT)</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Important Note */}
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-2">
+                      <div className="flex items-start gap-2">
+                        <AlertCircle className="w-3 h-3 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-amber-900">
+                          The candidate will receive <strong>₦{breakdown.freelancer_receives.toLocaleString()}</strong> after platform fees.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {amount >= 100 && breakdown && (
+                  <button
+                    onClick={() => setMode("choose")}
+                    className="bg-[#2AA100] text-white py-2 px-4 rounded w-full mt-4"
+                  >
+                    Next: Choose Payment Type
+                  </button>
+                )}
               </div>
             )}
 
@@ -337,13 +439,28 @@ const AddFundsModal: React.FC<AddFundsModalProps> = ({ onClose, profile, payment
             )}
 
             {/* Escrow Confirmation */}
-            {mode === "escrow" && (
+            {mode === "escrow" && breakdown && (
               <div className="space-y-4">
-                <div className="p-3 bg-gray-50 rounded">
-                  <p className="text-sm text-gray-600">
-                    Amount: <strong className="text-lg">₦{amount.toLocaleString()}</strong>
-                  </p>
-                  <p className="text-sm text-gray-600">
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Base Amount:</span>
+                      <span className="font-medium">₦{breakdown.base_amount.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-blue-600">
+                      <span>Platform Fee + VAT:</span>
+                      <span>+₦{(breakdown.employer_fee + breakdown.employer_fee_vat).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-lg pt-2 border-t">
+                      <span>You Pay:</span>
+                      <span className="text-blue-600">₦{breakdown.employer_pays_total.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-green-600 text-xs pt-2 border-t">
+                      <span>Candidate Receives:</span>
+                      <span>₦{breakdown.freelancer_receives.toLocaleString()}</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
                     To: <strong>{candidateName}</strong>
                   </p>
                 </div>
@@ -351,9 +468,9 @@ const AddFundsModal: React.FC<AddFundsModalProps> = ({ onClose, profile, payment
                 <button
                   onClick={handleEscrow}
                   disabled={loading}
-                  className="bg-[#2AA100] hover:bg-[#25920a] disabled:bg-gray-400 text-white py-2 px-4 rounded w-full font-semibold"
+                  className="bg-[#2AA100] hover:bg-[#25920a] disabled:bg-gray-400 text-white py-3 px-4 rounded w-full font-semibold"
                 >
-                  {loading ? "Processing..." : "Continue to Payment"}
+                  {loading ? "Processing..." : `Pay ₦${breakdown.employer_pays_total.toLocaleString()}`}
                 </button>
 
                 <button
@@ -422,12 +539,25 @@ const AddFundsModal: React.FC<AddFundsModalProps> = ({ onClose, profile, payment
                   </button>
                 </div>
 
+                {breakdown && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm">
+                    <div className="flex justify-between font-semibold">
+                      <span>Total You'll Pay:</span>
+                      <span className="text-blue-600">₦{breakdown.employer_pays_total.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>Candidate Will Get:</span>
+                      <span className="text-green-600">₦{breakdown.freelancer_receives.toLocaleString()}</span>
+                    </div>
+                  </div>
+                )}
+
                 <button
                   onClick={handleMilestoneSubmit}
                   disabled={loading}
-                  className="bg-[#2AA100] hover:bg-[#25920a] disabled:bg-gray-400 text-white py-2 px-4 rounded w-full font-semibold"
+                  className="bg-[#2AA100] hover:bg-[#25920a] disabled:bg-gray-400 text-white py-3 px-4 rounded w-full font-semibold"
                 >
-                  {loading ? "Processing..." : "Continue to Payment"}
+                  {loading ? "Processing..." : breakdown ? `Pay ₦${breakdown.employer_pays_total.toLocaleString()}` : 'Continue to Payment'}
                 </button>
 
                 <button
