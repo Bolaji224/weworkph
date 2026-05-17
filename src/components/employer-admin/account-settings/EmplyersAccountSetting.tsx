@@ -137,12 +137,12 @@ const EmployerAccountSetting: React.FC = () => {
 
   return (
     <div className="max-w-[1100px] mx-auto py-16 mt-[4rem]">
-      <h1 className="text-green-700 text-2xl sm:text-3xl md:text-4xl mb-4 font-poppins font-semibold">
+      {/* <h1 className="text-green-700 text-2xl sm:text-3xl md:text-4xl mb-4 font-poppins font-semibold">
         Account Settings
-      </h1>
+      </h1> */}
 
       {/* Account Information Section */}
-      <form onSubmit={handleAccountInfoSubmit} className="space-y-4">
+      {/* <form onSubmit={handleAccountInfoSubmit} className="space-y-4">
         <section className="bg-white rounded-2xl py-16 px-[3rem] mt-8">
           <h2 className="text-[#EE009D] text-[18px] sm:text-xl font-poppins font-semibold">Edit & Update</h2>
           <section className="py-8">
@@ -191,7 +191,7 @@ const EmployerAccountSetting: React.FC = () => {
             </div>
           </section>
         </section>
-      </form>
+      </form> */}
 
       {/* Change Password Section */}
       <form onSubmit={handleChangePasswordSubmit} className="mt-16 space-y-4">

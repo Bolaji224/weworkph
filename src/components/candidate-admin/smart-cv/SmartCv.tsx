@@ -175,22 +175,12 @@ const SmartCvForm: React.FC = () => {
 
 const handleSubmit = async () => {
   try {
-    // Create FormData
     const form = new FormData();
 
-    // DEBUG logs
-    console.log('Form data before sending:', formData);
-    console.log('experienceTitle specifically:', formData.experienceTitle);
-
-    // Append photo
     if (finalImage) {
       form.append("photo", finalImage, finalImage.name);
-      console.log('Photo attached:', finalImage.name, finalImage.type);
-    } else {
-      console.warn('No photo uploaded!');
     }
 
-    // Append all other fields
     Object.keys(formData).forEach((key) => {
       const value = (formData as any)[key];
       if (Array.isArray(value)) {
@@ -200,23 +190,26 @@ const handleSubmit = async () => {
       }
     });
 
-    // Send to CV generation endpoint
     const response = await axios.post(`${APP_API_URL}/cv`, form, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${ls.get("wwph_token", { decrypt: true })}`,
-      }
+      },
+      timeout: 120000,
     });
 
-    // The backend already saved the SmartCV to user profile
-    const cvUrl = response.data.cv_url;
-    console.log("SmartCV saved at:", cvUrl);
-
-    alert("SmartCV saved! You can now view it in your profile.");
+    if (response.data?.status === 'success') {
+      alert("SmartCV saved successfully! You can now view it in your profile.");
+    } else {
+      alert(response.data?.message || "Something went wrong. Please try again.");
+    }
 
   } catch (err: any) {
-    console.error("CV generation failed:", err);
-    const message = err.response?.data?.message || err.message || "Something went wrong";
+    const message =
+      err.response?.data?.message ||
+      err.response?.data?.error ||
+      err.message ||
+      "CV generation failed. Please try again.";
     alert(message);
   }
 };
@@ -382,8 +375,37 @@ const handleSubmit = async () => {
             />
           </div>
 
-          {/* Contact Information */}
-          l
+          {/* Contact */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-2">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                id="phoneNumber"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleInputChange}
+                placeholder="+234 800 000 0000"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="you@example.com"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
 
           {/* Location */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
